@@ -150,12 +150,13 @@ REST_FRAMEWORK = {
 
 # jwt配置信息
 JWT_AUTH = {
-    # jwt头标识
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    # 规定传入token时的前缀头标识
+    # 例如： Bearer [eyJ0eXAiOiJKV1QiL....]
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     # token有效时间
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
     # 自定义jwt认证成功返回数据
     'JWT_RESPONSE_PAYLOAD_HANDLER':
-        'UserAuth.views.login_return',  # 以该函数返回值作为认证成功返回数据
+        'UserAuth.utils.login_return',  # 以该函数返回值作为认证成功返回数据
 }
 
