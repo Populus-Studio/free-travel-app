@@ -425,3 +425,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+/back-end/KKTravel/.idea
+__pycache__
+
