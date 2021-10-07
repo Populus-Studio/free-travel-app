@@ -10,7 +10,7 @@
 
 分支命名为：后端-以API文档中的功能编号命名，前端-根据编写人和编写功能妥善命名
 
-分支编写完成后在Github上提交`pull request`。提交时选择wht或hy作为审核人（viewers) 。提交**并合并Merge**完成以后**删除这个新分支**。
+分支编写完成后在Github上提交`pull request`（一定要合并到`develop`分支而不是`main`分支）。提交时选择wht或hy作为审核人（viewers) 。提交**并合并Merge**完成以后**删除这个新分支**。
 
 > 如果出现Merge冲突，手动解决或是撤销提交发issue找人解决
 
