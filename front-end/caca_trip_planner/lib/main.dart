@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-const url = 'https://192.168.0.1/'; // TODO: 改用真实URL
+const url = 'http://127.0.0.1:8000';
 
 void main() {
   runApp(MaterialApp(
@@ -28,7 +28,9 @@ class _State extends State<MyApp> {
             content: content,
             actions: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
                 child: const Text('OK'),
               )
             ],
@@ -37,26 +39,39 @@ class _State extends State<MyApp> {
   }
 
   void _login(BuildContext context) {
-    http
-        .post(Uri.parse(url + '/auth/login/registered'),
-            body: json.encode({
-              'phoneNumber': nameController.text,
-              'password': passwordController.text,
-            }))
-        .then((response) {
+    http.post(
+      Uri.parse(url + '/auth/login/registered'),
+      body: json.encode({
+        'username': nameController.text,
+        'password': passwordController.text,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json"
+      },
+    ).then((response) {
       var body = json.decode(response.body);
+      // print(body);
       if (response.statusCode == 200) {
+        // response.body {
+        // }
         _createAlertDialog(
             context,
             '登录成功！',
             Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('token: ' + body['token']),
+                Text('token: ' + body['token'] + '\n'),
                 Text('username: ' + body['username'])
               ],
             ));
       } else {
-        _createAlertDialog(context, '登录失败！', Text('Response Body: ' + body));
+        _createAlertDialog(
+            // TODO: handle exception
+            context,
+            '登录失败！',
+            Text('Error: ' + body["non_field_errors"][0]));
       }
     });
   }
@@ -89,7 +104,7 @@ class _State extends State<MyApp> {
                     controller: nameController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: '手机号',
+                      labelText: '用户名/手机号',
                     ),
                   ),
                 ),
