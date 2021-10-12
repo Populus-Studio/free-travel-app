@@ -426,5 +426,10 @@ dmypy.json
 cython_debug/
 
 /back-end/KKTravel/.idea
+/back-end/KKTravel/Pipefile
+/back-end/KKTravel/Pipefile.lock
+/back-end/KKTravel/KKTravel.sock
+/back-end/KKTravel/static
 __pycache__
+migrations
 
