@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import datetime
+import os
 from pathlib import Path
 import rest_framework
 
@@ -129,7 +130,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# 确定访问静态资源使用的URL后缀
 STATIC_URL = '/static/'
+# 确定静态资源在系统的存储目录（Ubuntu目录为例）
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")  # static可改为你需要的目录
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -160,3 +164,8 @@ JWT_AUTH = {
         'UserAuth.utils.login_return',  # 以该函数返回值作为认证成功返回数据
 }
 
+# 微信授权配置信息
+WECHAT_AUTH = {
+    'APPID': 'wx65d1559cb410594a',
+    'SECRET': '7c1e471230e737033f862f5f1f4119ff'
+}
