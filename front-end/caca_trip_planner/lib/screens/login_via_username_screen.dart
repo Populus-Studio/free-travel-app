@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:logintunisia/screens/singup_screen.dart';
 
+import '../utils.dart';
+
 const url = 'http://152.136.233.65:';
 
 class LoginViaUsernameScreen extends StatefulWidget {
@@ -30,29 +32,6 @@ class _State extends State<LoginViaUsernameScreen> {
     nameController.addListener(_checkInfo);
     passwordController.addListener(_checkInfo);
     portController.addListener(_checkInfo);
-  }
-
-  _showMaterialAlertDialog(BuildContext ctx, String caption, Widget content) {
-    return showDialog(
-        context: ctx,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(caption),
-            content: Expanded(
-              child: SingleChildScrollView(
-                child: content,
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              )
-            ],
-          );
-        });
   }
 
   void _checkInfo() {
@@ -82,7 +61,7 @@ class _State extends State<LoginViaUsernameScreen> {
         )
         .timeout(const Duration(seconds: 3))
         .catchError((error) {
-          _showMaterialAlertDialog(
+          Utils.showMaterialAlertDialog(
               ctx, '登录失败', Text(error.toString() + '\n\n请检查端口号!'));
           setState(() {
             _isLoading = false;
@@ -94,7 +73,7 @@ class _State extends State<LoginViaUsernameScreen> {
           });
           if (response.statusCode == 200) {
             var body = json.decode(response.body);
-            _showMaterialAlertDialog(
+            Utils.showMaterialAlertDialog(
                 ctx,
                 '登录成功',
                 Column(
@@ -106,7 +85,7 @@ class _State extends State<LoginViaUsernameScreen> {
                   ],
                 ));
           } else {
-            _showMaterialAlertDialog(
+            Utils.showMaterialAlertDialog(
               ctx,
               '登录失败',
               Text('Error: ' +

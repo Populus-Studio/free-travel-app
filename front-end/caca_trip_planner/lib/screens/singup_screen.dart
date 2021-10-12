@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:debounce_throttle/debounce_throttle.dart';
 
+import '../utils.dart';
+
 const url = 'http://152.136.233.65:';
 const jsonHeaders = {
   "Accept": "application/json",
@@ -106,10 +108,10 @@ class _SignupScreenState extends State<SignupScreen> {
           headers: jsonHeaders,
         )
         .timeout(const Duration(seconds: 3),
-            onTimeout: () => _showMaterialAlertDialog(
+            onTimeout: () => Utils.showMaterialAlertDialog(
                 ctx, '注册失败', const Text('请求超时' '\n\n请检查端口号!')))
         .catchError((error) {
-      _showMaterialAlertDialog(
+      Utils.showMaterialAlertDialog(
           ctx, '注册失败', Text(error.toString() + '\n\n请检查端口号!'));
       setState(() {
         _isLoading = false;
@@ -120,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       if (response.statusCode >= 200 && response.statusCode < 300) {
         var body = json.decode(response.body);
-        _showMaterialAlertDialog(
+        Utils.showMaterialAlertDialog(
             ctx,
             '注册成功',
             Column(
@@ -136,20 +138,20 @@ class _SignupScreenState extends State<SignupScreen> {
         var body = json.decode(response.body);
         // Check if has duplicate phone number.
         if ((body['msg'] as String).contains('phone')) {
-          _showMaterialAlertDialog(
+          Utils.showMaterialAlertDialog(
             ctx,
             '注册失败',
             const Text('手机号已存在！'),
           );
         } else if ((body['msg'] as String).contains('name')) {
-          _showMaterialAlertDialog(
+          Utils.showMaterialAlertDialog(
             ctx,
             '注册失败',
             const Text('用户名已存在！'),
           );
         }
       } else {
-        _showMaterialAlertDialog(
+        Utils.showMaterialAlertDialog(
           ctx,
           '注册失败',
           Text('Error: ' +
@@ -159,29 +161,6 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       }
     });
-  }
-
-  _showMaterialAlertDialog(BuildContext ctx, String caption, Widget content) {
-    return showDialog(
-        context: ctx,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(caption),
-            content: Expanded(
-              child: SingleChildScrollView(
-                child: content,
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              )
-            ],
-          );
-        });
   }
 
   @override
@@ -286,7 +265,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       '《用户协议》',
                       style: TextStyle(color: Colors.blue),
                     ),
-                    onTap: () => _showMaterialAlertDialog(
+                    onTap: () => Utils.showMaterialAlertDialog(
                       context,
                       '用户协议',
                       const Text('示例用户协议'),
