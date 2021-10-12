@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.3
   roundcheckbox: ^2.0.3
+  debounce_throttle: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -38,3 +38,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// 发布安卓APK： flutter build apk --split-per-abi

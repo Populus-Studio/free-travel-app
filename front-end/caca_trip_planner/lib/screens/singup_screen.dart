@@ -25,13 +25,13 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController phoneController = TextEditingController();
 
   bool _isLoading = false;
-  bool _isValidInfo = false;
   bool _isChecked = false;
+  bool _isValidInfo = false; // 不用get是因为_isValidInfo在一次build中多次被访问，尽量减少开销。
   bool _hasDuplicateUsername = false;
   bool get _isLegalPhoneNumber => _checkPhoneNumber();
   bool get _disableButton => _isLoading == true || _isValidInfo == false;
   final nameDebouncer = Debouncer<String>(
-    const Duration(milliseconds: 200),
+    const Duration(milliseconds: 100),
     initialValue: '',
   );
 
@@ -50,15 +50,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
     nameController.addListener(() {
       nameDebouncer.value = nameController.text;
-      // 如果之前处于重名状态，马上显示为不重名
-      if (_hasDuplicateUsername) {
-        _hasDuplicateUsername = false;
-        _checkInfo();
-      }
     });
     nameDebouncer.values.listen((username) {
-      _checkDuplicateUsername();
-      // _checkInfo();
+      _checkDuplicateUsername(); // 该函数中间接调用了setState()
     });
     portController.addListener(_checkInfo);
     phoneController.addListener(_checkInfo);
@@ -77,15 +71,11 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _checkDuplicateUsername() {
-    print('_checkDuplicateUsername()');
     http
         .get(Uri.parse(
             '$url${portController.text}/auth/check/username?username=${nameDebouncer.value}'))
-        .catchError((err) {
-      print(err);
-    }).then((response) {
+        .then((response) {
       if (response.statusCode == 200) {
-        print(json.decode(response.body)['result']);
         _hasDuplicateUsername = json.decode(response.body)['result'];
       } else {
         _hasDuplicateUsername = false;
@@ -142,6 +132,22 @@ class _SignupScreenState extends State<SignupScreen> {
                 Text('token: ' + body['data']['token'] + '\n'),
               ],
             ));
+      } else if (response.statusCode == 409) {
+        var body = json.decode(response.body);
+        // Check if has duplicate phone number.
+        if ((body['msg'] as String).contains('phone')) {
+          _showMaterialAlertDialog(
+            ctx,
+            '注册失败',
+            const Text('手机号已存在！'),
+          );
+        } else if ((body['msg'] as String).contains('name')) {
+          _showMaterialAlertDialog(
+            ctx,
+            '注册失败',
+            const Text('用户名已存在！'),
+          );
+        }
       } else {
         _showMaterialAlertDialog(
           ctx,
@@ -151,7 +157,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   ? '未知错误：${response.statusCode}'
                   : response.body)),
         );
-        print(json.decode(response.body)['msg']);
       }
     });
   }
