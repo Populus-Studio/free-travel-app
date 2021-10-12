@@ -145,9 +145,9 @@ class UserLoginWechat(APIView):
             raise AuthenticationFailed("认证失败")
 
         res_data = {
-            'token': '',
+            'token': None,
             'openid': open_id,
-            'username': ''
+            'username': None
         }
 
         # 从微信返回的用户信息中获取微信昵称，查找对应用户是否存在
@@ -162,8 +162,9 @@ class UserLoginWechat(APIView):
             # 用户不存在，新建用户
             userdata = {
                 'username': user_info.get('nickname'),
+                'password': open_id,  # 暂时默认以open_id作为密码
                 'openid': open_id,
-                'phoneNumber': ''
+                'phoneNumber': None
             }
             user = UserRegistSerializer(data=userdata)
             if user.is_valid():

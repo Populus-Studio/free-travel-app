@@ -19,8 +19,8 @@ def create_token(user):
 class UserRegistSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
-    openid = serializers.CharField(required=False, allow_blank=True)
-    phoneNumber = serializers.CharField(required=False, allow_blank=True)
+    openid = serializers.CharField(required=False, allow_null=True)
+    phoneNumber = serializers.CharField(required=False, allow_null=True)
     token = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
