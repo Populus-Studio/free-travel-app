@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSwatch(
             accentColor: Colors.amber,
-            primarySwatch: Colors.pink,
+            primarySwatch: Colors.indigo,
             backgroundColor: const Color.fromRGBO(255, 254, 229, 1),
           ),
           fontFamily: 'Raleway',
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
                 // TODO: Add textTheme for: heading1
               ),
         ),
-        home: const SelectScreen(),
+        home: const MainScreen(),
         routes: {
           SignupScreen.routeName: (context) => const SignupScreen(),
           MainScreen.routeName: (context) => const MainScreen(),

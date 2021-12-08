@@ -102,4 +102,10 @@ class Locations with ChangeNotifier {
         .where((loc) => _recommendedLocationIds.any((id) => id == loc.id))
         .toList();
   }
+
+  Future loadImages() async {
+    for (Location loc in _locationPool) {
+      await loc.loadImage();
+    }
+  }
 }

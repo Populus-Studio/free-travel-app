@@ -29,19 +29,21 @@ class Location with ChangeNotifier {
   final int rate; // range: [0, 5]
   final int heat; // range: [0, 1000]
   final String imageUrl;
-  Color dominantColor = Colors.black;
+
+  late final PaletteColor palette;
   late final Image img;
   bool isLoaded = false;
   bool isFavorite;
 
   Future loadImage() async {
+    // lazy load image, always call this before accessing images and palettes!
     if (!isLoaded) {
       img = Image.network(imageUrl);
       final generator = await PaletteGenerator.fromImageProvider(
         img.image,
         size: const Size(200, 200),
       );
-      dominantColor = generator.dominantColor!.color;
+      palette = generator.darkMutedColor ?? PaletteColor(Colors.purple, 2);
       isLoaded = true;
     }
   }
@@ -60,9 +62,7 @@ class Location with ChangeNotifier {
     required this.heat,
     required this.imageUrl,
     required this.isFavorite,
-  }) {
-    loadImage();
-  }
+  });
 }
 
 extension ToChineseString on LocationType {

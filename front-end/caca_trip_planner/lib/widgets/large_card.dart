@@ -6,7 +6,14 @@ import '../providers/location.dart';
 class LargeCard extends StatelessWidget {
   // final Location loc;
   final double maxHeight;
-  const LargeCard(this.maxHeight, {Key? key}) : super(key: key);
+  late final imageHeight;
+  late final separatorHeight;
+  final double rw;
+
+  LargeCard(this.maxHeight, this.rw, {Key? key}) : super(key: key) {
+    imageHeight = maxHeight * 0.35;
+    separatorHeight = maxHeight * 0.005;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,34 +32,39 @@ class LargeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Stack(
           children: [
-            // FIXME: Change color as dominantColor updates.
-            Consumer<Location>(
-              builder: (ctx, loc, child) => Container(
-                  decoration: BoxDecoration(color: loc.dominantColor)),
+            Container(
+              decoration: BoxDecoration(color: loc.palette.color),
             ),
             SizedBox(
               child: Image(image: loc.img.image, fit: BoxFit.cover),
-              height: maxHeight * 0.35,
+              height: imageHeight,
               width: double.infinity,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: EdgeInsets.only(left: 14.0 * rw),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: maxHeight * 0.35), // empty space for image
+                  SizedBox(
+                      height: imageHeight +
+                          separatorHeight), // empty space for image
                   Text(
                     loc.name,
-                    style: Theme.of(context).textTheme.headline1,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                    ),
                   ),
-                  SizedBox(height: maxHeight * 0.02),
+                  SizedBox(height: separatorHeight),
                   Text(
-                    // FIXME: Use black color when dominant color is light.
                     loc.type.toChineseString(),
-                    style: Theme.of(context).textTheme.headline2,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
                   ),
-                  SizedBox(height: maxHeight * 0.02),
+                  SizedBox(height: separatorHeight),
                   Row(
                     children: [
                       for (int i = 1; i <= 5; i++)
@@ -63,15 +75,31 @@ class LargeCard extends StatelessWidget {
                     ],
                     mainAxisAlignment: MainAxisAlignment.start,
                   ),
-                  SizedBox(height: maxHeight * 0.02),
+                  SizedBox(height: separatorHeight * 5),
                   Row(
                     children: [
                       const Icon(
-                        Icons.money,
+                        Icons.attach_money_rounded,
                         color: Colors.white,
                       ),
                       Text(
                         "人均￥${loc.cost}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: separatorHeight),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.pin_drop,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        loc.address,
                         style: Theme.of(context).textTheme.headline3,
                       ),
                     ],
