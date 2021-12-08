@@ -428,5 +428,5 @@ cython_debug/
 /back-end/KKTravel/.idea
 __pycache__
 
-.DS_Store
+*/.DS_Store
 back-end/KKTravel/.vscode/launch.json
