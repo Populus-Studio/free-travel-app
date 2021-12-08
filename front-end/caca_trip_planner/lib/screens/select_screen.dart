@@ -27,6 +27,7 @@ class _SelectScreenState extends State<SelectScreen> {
     final locations =
         Provider.of<Locations>(context, listen: false).recommendedLocations;
     var len = locations.length;
+    var controller;
 
     return Scaffold(
         appBar: AppBar(
@@ -36,20 +37,21 @@ class _SelectScreenState extends State<SelectScreen> {
         ),
         backgroundColor: Colors.white,
         body: Padding(
-          padding: EdgeInsets.only(bottom: 40 * rh),
+          // Wrap TinderSwapCard in Padding otherwise the animation is weird.
+          padding: EdgeInsets.only(bottom: 120.0 * rh),
           child: TinderSwapCard(
             // FIXME: Animation is weird.
             totalNum: len,
             maxWidth: w,
             maxHeight: h * 0.75,
             minWidth: w * 0.75,
-            minHeight: h * 0.5,
+            minHeight: h * 0.6,
             cardBuilder: (context, index) => ChangeNotifierProvider.value(
               value: locations[index],
               child: LargeCard(h * 0.75, rw, key: UniqueKey()),
             ),
-            // cardController:
-            // CardController(), // This triggers swipe without swiping.
+            cardController: controller =
+                CardController(), // This triggers swipe without swiping.
             swipeUpdateCallback:
                 (DragUpdateDetails details, Alignment alignment) {
               if (alignment.x < 0) {
