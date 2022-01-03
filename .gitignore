@@ -30,14 +30,14 @@
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
+.idea/artifacts
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
 
 # CMake
 cmake-build-*/
@@ -433,3 +433,9 @@ cython_debug/
 __pycache__
 migrations
 
+kkSpider
+back-end/.idea/inspectionProfiles/profiles_settings.xml
+back-end/.idea/inspectionProfiles/Project_Default.xml
+back-end/.idea/misc.xml
+back-end/.idea/modules.xml
+back-end/.idea/vcs.xml
