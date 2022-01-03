@@ -21,5 +21,6 @@ from KKTravel import settings
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
-                  path('', include('UserAuth.urls'))
+                  path('', include('UserAuth.urls')),
+                  path('', include('DestinationService.urls'))
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

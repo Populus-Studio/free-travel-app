@@ -99,7 +99,6 @@ class UserManager(APIView):
                 "msg": "禁止访问"
             }
             return Response(res_data, status=status.HTTP_403_FORBIDDEN)
-        pass
 
     def delete(self, request, pk):
         user = self.get_object(pk)
