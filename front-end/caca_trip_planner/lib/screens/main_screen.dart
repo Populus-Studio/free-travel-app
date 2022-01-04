@@ -39,7 +39,7 @@ class MainScreen extends StatelessWidget {
               child: const Text("选择地点"),
               onPressed: () {
                 Provider.of<Locations>(context, listen: false)
-                    .loadImages()
+                    .loadImages(num: 2, type: 2) // preload images
                     .then((_) {
                   Navigator.of(context).pushNamed(SelectScreen.routeName);
                 });

@@ -88,6 +88,7 @@ class Locations with ChangeNotifier {
   ];
 
   List<Location> get favoriteLocations {
+    // Load Image Type: 1
     // TODO: update _favoriteLocations list, and add locations to the pool if
     // they are not already there
     return _locationPool
@@ -96,6 +97,7 @@ class Locations with ChangeNotifier {
   }
 
   List<Location> get recommendedLocations {
+    // Load Image Type: 2
     // TODO: update _pendingLocations list, and add locations to the pool if
     // they are not already there
     return _locationPool
@@ -103,9 +105,28 @@ class Locations with ChangeNotifier {
         .toList();
   }
 
-  Future loadImages() async {
-    for (Location loc in _locationPool) {
-      await loc.loadImage();
+  /// Load images of [num] locations of type [type].
+  Future loadImages({int num = 10, int type = 0}) async {
+    final List<Location> locations;
+    switch (type) {
+      case 0:
+        locations = _locationPool;
+        break;
+      case 1:
+        locations = favoriteLocations;
+        break;
+      case 2:
+        locations = recommendedLocations;
+        break;
+      default:
+        return;
+    }
+    for (int i = 0; i < num; i++) {
+      if (i <= num && i <= locations.length) {
+        await locations[i].loadImage();
+      } else {
+        break;
+      }
     }
   }
 }

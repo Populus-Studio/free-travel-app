@@ -3,11 +3,11 @@ import 'package:provider/provider.dart';
 
 import '../providers/location.dart';
 
-class LargeCard extends StatelessWidget {
+class LargeCard extends StatefulWidget {
   // final Location loc;
   final double maxHeight;
-  late final imageHeight;
-  late final separatorHeight;
+  late final double imageHeight;
+  late final double separatorHeight;
   final double rw;
 
   LargeCard(this.maxHeight, this.rw, {Key? key}) : super(key: key) {
@@ -15,6 +15,11 @@ class LargeCard extends StatelessWidget {
     separatorHeight = maxHeight * 0.005;
   }
 
+  @override
+  State<LargeCard> createState() => _LargeCardState();
+}
+
+class _LargeCardState extends State<LargeCard> {
   @override
   Widget build(BuildContext context) {
     final loc = Provider.of<Location>(context, listen: false);
@@ -33,57 +38,122 @@ class LargeCard extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(color: loc.palette.color),
+              decoration: BoxDecoration(color: loc.palette!.color),
             ),
             SizedBox(
-              child: Image(image: loc.img.image, fit: BoxFit.cover),
-              height: imageHeight,
+              child: Image(image: loc.img!.image, fit: BoxFit.cover),
+              height: widget.imageHeight,
               width: double.infinity,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 14.0 * rw),
+              padding: EdgeInsets.symmetric(horizontal: 20 * widget.rw),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                      height: imageHeight +
-                          separatorHeight), // empty space for image
-                  Text(
-                    loc.name,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                              height: widget.imageHeight +
+                                  widget.separatorHeight *
+                                      4), // empty space for image
+                          Text(
+                            loc.name,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: widget.separatorHeight),
+                          Text(
+                            loc.type.toChineseString(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: widget.separatorHeight),
+                          Row(
+                            children: [
+                              for (int i = 1; i <= 5; i++)
+                                Icon(
+                                  loc.rate < i ? Icons.star_border : Icons.star,
+                                  color: Colors.white,
+                                ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.start,
+                          ),
+                          SizedBox(height: widget.separatorHeight * 5),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(
+                              height: widget.imageHeight +
+                                  widget.separatorHeight * 4),
+                          IconButton(
+                            icon: Icon(
+                              loc.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                            onPressed: () => setState(() {
+                              loc.toggleFavorite();
+                            }),
+                          ),
+                          const Text(
+                            '收藏',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(height: separatorHeight),
-                  Text(
-                    loc.type.toChineseString(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: separatorHeight),
                   Row(
                     children: [
-                      for (int i = 1; i <= 5; i++)
-                        Icon(
-                          loc.rate < i ? Icons.star_border : Icons.star,
-                          color: Colors.white,
-                        ),
+                      const Icon(
+                        Icons.thumb_up_alt_outlined,
+                        color: Colors.white,
+                        // size: 20,
+                      ),
+                      Text(
+                        " 推荐指数：${loc.heat}",
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
                     ],
-                    mainAxisAlignment: MainAxisAlignment.start,
                   ),
-                  SizedBox(height: separatorHeight * 5),
+                  SizedBox(height: widget.separatorHeight),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.watch_later_outlined,
+                        color: Colors.white,
+                        // size: 20,
+                      ),
+                      Text(
+                        " 推荐耗时：${loc.timeCost.toStringAsFixed(0)}分钟",
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: widget.separatorHeight),
                   Row(
                     children: [
                       const Icon(
                         Icons.attach_money_rounded,
                         color: Colors.white,
+                        // size: 20,
                       ),
                       Text(
-                        "人均￥${loc.cost}",
+                        " 人均花费：￥${loc.cost.toStringAsFixed(0)}元",
                         style: const TextStyle(
                           fontSize: 15,
                           color: Colors.white,
@@ -91,19 +161,19 @@ class LargeCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: separatorHeight),
+                  SizedBox(height: widget.separatorHeight),
                   Row(
                     children: [
                       const Icon(
-                        Icons.pin_drop,
+                        Icons.pin_drop_outlined,
                         color: Colors.white,
                       ),
                       Text(
-                        loc.address,
+                        " ${loc.address}",
                         style: Theme.of(context).textTheme.headline3,
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
