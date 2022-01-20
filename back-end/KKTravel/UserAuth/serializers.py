@@ -31,19 +31,9 @@ class UserRegistSerializer(serializers.Serializer):
         user.token = create_token(user)
         return user
 
-    def update(self, instance, validated_data):
-        # 第二个参数表明，如果get到的有效数据为空，仍使用instance的原数据更新其本身（相当于没变）
-        instance.username = validated_data.get('username', instance.username)
-        password = make_password(validated_data.get("password"), instance.password)
-        instance.password = password
-        instance.openid = validated_data.get('openid', instance.openid)
-        instance.phoneNumber = validated_data.get('phoneNumber', instance.phoneNumber)
-        instance.save()
-        return instance
-
 
 # 获取用户信息的序列化类
 class UserLoginInfoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserModel
-        fields = ['url', 'username', 'openid', 'phoneNumber', 'avatar']
+        fields = ['url', 'username', 'openid', 'phoneNumber']
