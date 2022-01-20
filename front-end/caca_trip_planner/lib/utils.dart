@@ -1,10 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
+import 'package:vibration/vibration.dart';
+
 class Utils {
   static const double h13pm = 926.0;
   static const double w13pm = 428.0;
+  // TODO: Delete this debug token
+  static String token = '';
+  // to save the trouble of logging in when testing, use the following token
+  // 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6Im5pY2tiaXQiLCJleHAiOjE2NDEzOTM3MDgsImVtYWlsIjoiIn0.-89f9Ptk5dTr_XlHslHEumDpnrL-Wz5y5NYk6v37wfc';
+  static final Random rng = Random();
 
   static Future<Object?> showMaterialAlertDialog(
       BuildContext ctx, String caption, Widget content) {

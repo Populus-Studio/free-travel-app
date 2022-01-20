@@ -1,3 +1,4 @@
+import 'package:cacatripplanner/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:wechat_kit/wechat_kit.dart';

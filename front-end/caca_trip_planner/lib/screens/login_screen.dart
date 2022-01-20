@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:vibration/vibration.dart';
 // import 'package:wechat_kit/wechat_kit.dart';
 
 import '../screens/main_screen.dart';
@@ -106,31 +108,29 @@ class _State extends State<LoginViaUsernameScreen> {
             });
             if (response.statusCode == 200) {
               var body = json.decode(response.body);
+              Utils.token = body['token'];
               Utils.showMaterialAlertDialog(
-                      ctx,
-                      '登录成功',
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('token: ' + body['token'] + '\n'),
-                          Text('username: ' + body['username'])
-                        ],
-                      ))
-                  .then((_) => Navigator.of(context)
-                      .pushReplacementNamed(MainScreen.routeName));
+                  ctx,
+                  '登录成功',
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('token: ' + body['token'] + '\n'),
+                      Text('username: ' + body['username'])
+                    ],
+                  )).then((_) => Navigator.of(context).pop());
             } else {
               Utils.showMaterialAlertDialog(
-                ctx,
-                '登录失败',
-                Text('Error: ' +
-                    (response.body.isEmpty
-                        ? '未知错误：${response.statusCode}'
-                        : response.body)),
-              );
+                  ctx,
+                  '登录失败',
+                  response.body.isEmpty
+                      ? Text('未知错误：${response.statusCode}')
+                      : const Text('用户名或密码有误！'));
             }
           },
         );
+    HapticFeedback.mediumImpact();
   }
 
   void _goToSingupScreen(BuildContext ctx) {

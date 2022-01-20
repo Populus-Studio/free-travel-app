@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/location.dart';
@@ -53,42 +54,47 @@ class _LargeCardState extends State<LargeCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                              height: widget.imageHeight +
-                                  widget.separatorHeight *
-                                      4), // empty space for image
-                          Text(
-                            loc.name,
-                            style: const TextStyle(
-                              fontSize: 30,
-                              color: Colors.white,
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                                height: widget.imageHeight +
+                                    widget.separatorHeight *
+                                        4), // empty space for image
+                            Text(
+                              loc.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 30,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: widget.separatorHeight),
-                          Text(
-                            loc.type.toChineseString(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
+                            SizedBox(height: widget.separatorHeight),
+                            Text(
+                              loc.type.toChineseString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: widget.separatorHeight),
-                          Row(
-                            children: [
-                              for (int i = 1; i <= 5; i++)
-                                Icon(
-                                  loc.rate < i ? Icons.star_border : Icons.star,
-                                  color: Colors.white,
-                                ),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.start,
-                          ),
-                          SizedBox(height: widget.separatorHeight * 5),
-                        ],
+                            SizedBox(height: widget.separatorHeight),
+                            Row(
+                              children: [
+                                for (int i = 1; i <= 5; i++)
+                                  Icon(
+                                    loc.rate < i
+                                        ? Icons.star_border
+                                        : Icons.star,
+                                    color: Colors.white,
+                                  ),
+                              ],
+                              mainAxisAlignment: MainAxisAlignment.start,
+                            ),
+                            SizedBox(height: widget.separatorHeight * 5),
+                          ],
+                        ),
                       ),
                       Column(
                         children: [
@@ -103,13 +109,16 @@ class _LargeCardState extends State<LargeCard> {
                               color: Colors.white,
                               size: 30,
                             ),
-                            onPressed: () => setState(() {
-                              loc.toggleFavorite();
-                            }),
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              setState(() {
+                                loc.toggleFavorite();
+                              });
+                            },
                           ),
-                          const Text(
-                            '收藏',
-                            style: TextStyle(
+                          Text(
+                            loc.isFavorite ? '已收藏' : '收藏',
+                            style: const TextStyle(
                               color: Colors.white,
                             ),
                           ),
@@ -168,9 +177,12 @@ class _LargeCardState extends State<LargeCard> {
                         Icons.pin_drop_outlined,
                         color: Colors.white,
                       ),
-                      Text(
-                        " ${loc.address}",
-                        style: Theme.of(context).textTheme.headline3,
+                      Expanded(
+                        child: Text(
+                          " ${loc.address}",
+                          style: Theme.of(context).textTheme.headline3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),

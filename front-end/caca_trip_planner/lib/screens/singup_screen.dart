@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:vibration/vibration.dart';
 
 import '../utils.dart';
 
@@ -29,7 +31,8 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isChecked = false;
   bool get _isValidInfo =>
       (_form.currentState?.validate() ?? false) && _isChecked;
-  bool get _disableButton => _isLoading == true || _isChecked == false;
+  bool get _disableButton =>
+      _isValidInfo == false || _isLoading == true || _isChecked == false;
   final _nameDebouncer = Debouncer(milliseconds: 100);
   final _values = {
     'port': '',
@@ -107,7 +110,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 Text('password: ' + body['data']['password'] + '\n'),
                 Text('token: ' + body['data']['token'] + '\n'),
               ],
-            ));
+            )).then((_) {
+          Navigator.of(context).pop();
+        });
       } else if (response.statusCode == 409) {
         var body = json.decode(response.body);
         // Check if has duplicate phone number.
@@ -135,6 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       }
     });
+    HapticFeedback.selectionClick();
   }
 
   @override

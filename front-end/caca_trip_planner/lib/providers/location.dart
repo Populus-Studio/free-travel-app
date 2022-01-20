@@ -28,6 +28,7 @@ class Location with ChangeNotifier {
   final double timeCost; // minutes
   final int rate; // range: [0, 5]
   final int heat; // range: [0, 1000]
+  final String opentime;
   final String imageUrl;
 
   PaletteColor? palette;
@@ -58,6 +59,7 @@ class Location with ChangeNotifier {
     required this.timeCost,
     required this.rate,
     required this.heat,
+    required this.opentime,
     required this.imageUrl,
     required this.isFavorite,
   }) {
@@ -70,7 +72,7 @@ class Location with ChangeNotifier {
   }
 }
 
-extension ToChineseString on LocationType {
+extension LocationTypeExtension on LocationType {
   String toChineseString() {
     switch (this) {
       case LocationType.business:
@@ -99,6 +101,14 @@ extension ToChineseString on LocationType {
         return "公共设施";
       default:
         return "未知";
+    }
+  }
+
+// TODO: Return LocationType based on string received from server
+  static LocationType fromString(String string) {
+    switch (string) {
+      default:
+        return LocationType.attraction;
     }
   }
 }
