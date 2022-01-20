@@ -4,14 +4,6 @@ import re
 from UserAuth.models import UserModel
 
 
-# 自定义 登陆成功 后jwt返回的数据包
-def login_return(token, user=None, request=None):
-    return {
-        'token': token,
-        'username': user.username,
-    }
-
-
 def get_user_by_account(account):
     """
     根据帐号获取user对象
@@ -34,7 +26,6 @@ def get_user_by_account(account):
 # 在这里可以自定义认证后端的方式，也可以使用其他的方式，在authenticate方法里进行定义
 class UsernameMobileAuthBackend(ModelBackend):
 
-    # 传入的username可以是手机号或用户名
     # 自定义用户名或手机号认证，如果认证没通过，默认返回None
     def authenticate(self, request, username=None, password=None, **kwargs):
         user = get_user_by_account(username)
