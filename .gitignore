@@ -431,6 +431,11 @@ cython_debug/
 /back-end/KKTravel/KKTravel.sock
 /back-end/KKTravel/static
 __pycache__
+
+
+*/.DS_Store
+back-end/KKTravel/.vscode/launch.json
+
 migrations
 
 kkSpider
@@ -439,3 +444,4 @@ back-end/.idea/inspectionProfiles/Project_Default.xml
 back-end/.idea/misc.xml
 back-end/.idea/modules.xml
 back-end/.idea/vcs.xml
+

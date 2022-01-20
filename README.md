@@ -24,3 +24,14 @@
 
 github提交指南参考见`docs`文件夹里的文档。
 
+### 环境配置
+
+#### 后端
+- 在仓库根目录运行`pip install -r requirements.txt`安装所需要的包
+- TODO
+
+#### 前端
+- 安装Dart
+- 安装Flutter
+- 安装IDE（VS Code, IntelliJ IDEA, 或Android Studio）
+- 配置Android SDK及虚拟机
