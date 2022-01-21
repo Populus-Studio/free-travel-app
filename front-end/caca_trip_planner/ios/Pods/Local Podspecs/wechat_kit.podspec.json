@@ -1,0 +1,52 @@
+{
+  "name": "wechat_kit",
+  "version": "3.0.0",
+  "summary": "WeChat SDKs as Flutter plugin.",
+  "description": "A powerful Flutter plugin allowing developers to auth/share/pay with natvie Android & iOS WeChat SDKs.",
+  "homepage": "https://github.com/RxReader/wechat_kit",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "RxReader": "email@example.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "public_header_files": "Classes/**/*.h",
+  "dependencies": {
+    "Flutter": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "static_framework": true,
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "subspecs": [
+    {
+      "name": "vendor",
+      "source_files": "Libraries/OpenSDK1.9.2/*.h",
+      "public_header_files": "Libraries/OpenSDK1.9.2/*.h",
+      "vendored_libraries": "Libraries/OpenSDK1.9.2/*.a",
+      "frameworks": [
+        "CoreGraphics",
+        "Security",
+        "WebKit"
+      ],
+      "libraries": [
+        "c++",
+        "z",
+        "sqlite3.0"
+      ],
+      "pod_target_xcconfig": {
+        "OTHER_LDFLAGS": "$(inherited) -ObjC -all_load"
+      }
+    }
+  ]
+}
