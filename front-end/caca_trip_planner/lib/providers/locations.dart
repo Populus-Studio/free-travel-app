@@ -102,7 +102,7 @@ class Locations with ChangeNotifier {
   // TODO: This function dynamically allocates/manages RAM!!
   void updateLocationPool() {}
 
-  void updateRecommendedLocations() {
+  void updateRecommendedLocationIds() {
     /// for now, every time the recommended locations are fetched, we add a new
     /// one into it.
     // _recommendedLocationIds
@@ -132,7 +132,7 @@ class Locations with ChangeNotifier {
   Future<List<Location>> get recommendedLocations async {
     // Load Image Type: 2
     // update _recommendedLocations list
-    updateRecommendedLocations();
+    updateRecommendedLocationIds();
     // add location to pool if it's not there
     for (var id in _recommendedLocationIds) {
       // _recommendedLocationIds.forEach((id) async {
@@ -175,8 +175,6 @@ class Locations with ChangeNotifier {
       // });
     }
     updateLocationPool();
-    print(_recommendedLocationIds);
-    print(_locationPool.length);
     recommendedLocationList = _locationPool
         .where((loc) => _recommendedLocationIds.any((id) => id == loc.id))
         .toList();

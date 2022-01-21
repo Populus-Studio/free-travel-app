@@ -9,6 +9,8 @@ import 'package:vibration/vibration.dart';
 class Utils {
   static const double h13pm = 926.0;
   static const double w13pm = 428.0;
+  static const url = 'http://152.136.233.65:';
+  static const port = '80';
   // TODO: Delete this debug token
   static String token = '';
   // to save the trouble of logging in when testing, use the following token
