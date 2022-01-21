@@ -1,7 +1,11 @@
+# FRONT-END RELATED GITIGNORES ARE BELOW
 # Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# IntelliJ IDEA
+.idea/
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -445,3 +449,122 @@ back-end/.idea/misc.xml
 back-end/.idea/modules.xml
 back-end/.idea/vcs.xml
 
+# FRONT-END RELATED GITIGNORES
+# Miscellaneous
+front-end/caca_trip_planner/*.class
+front-end/caca_trip_planner/*.lock
+front-end/caca_trip_planner/*.log
+front-end/caca_trip_planner/*.pyc
+front-end/caca_trip_planner/*.swp
+front-end/caca_trip_planner/.DS_Store
+front-end/caca_trip_planner/.atom/
+front-end/caca_trip_planner/.buildlog/
+front-end/caca_trip_planner/.history
+front-end/caca_trip_planner/.svn/
+
+# IntelliJ related
+front-end/caca_trip_planner/*.iml
+front-end/caca_trip_planner/*.ipr
+front-end/caca_trip_planner/*.iws
+front-end/caca_trip_planner/.idea/
+
+# Visual Studio Code related
+front-end/caca_trip_planner/.classpath
+front-end/caca_trip_planner/.project
+front-end/caca_trip_planner/.settings/
+front-end/caca_trip_planner/.vscode/
+
+# Flutter repo-specific
+front-end/caca_trip_planner/bin/cache/
+front-end/caca_trip_planner/bin/internal/bootstrap.bat
+front-end/caca_trip_planner/bin/internal/bootstrap.sh
+front-end/caca_trip_planner/bin/mingit/
+front-end/caca_trip_planner/dev/benchmarks/mega_gallery/
+front-end/caca_trip_planner/dev/bots/.recipe_deps
+front-end/caca_trip_planner/dev/bots/android_tools/
+front-end/caca_trip_planner/dev/devicelab/ABresults*.json
+front-end/caca_trip_planner/dev/docs/doc/
+front-end/caca_trip_planner/dev/docs/flutter.docs.zip
+front-end/caca_trip_planner/dev/docs/lib/
+front-end/caca_trip_planner/dev/docs/pubspec.yaml
+front-end/caca_trip_planner/dev/integration_tests/**/xcuserdata
+front-end/caca_trip_planner/dev/integration_tests/**/Pods
+front-end/caca_trip_planner/packages/flutter/coverage/
+front-end/caca_trip_planner/version
+front-end/caca_trip_planner/analysis_benchmark.json
+
+# packages file containing multi-root paths
+front-end/caca_trip_planner/.packages.generated
+
+# Flutter/Dart/Pub related
+**/doc/api/
+front-end/caca_trip_planner/.dart_tool/
+front-end/caca_trip_planner/.flutter-plugins
+front-end/caca_trip_planner/.flutter-plugins-dependencies
+**/generated_plugin_registrant.dart
+front-end/caca_trip_planner/.packages
+front-end/caca_trip_planner/.pub-cache/
+front-end/caca_trip_planner/.pub/
+front-end/caca_trip_planner/build/
+front-end/caca_trip_planner/flutter_*.png
+front-end/caca_trip_planner/linked_*.ds
+front-end/caca_trip_planner/unlinked.ds
+front-end/caca_trip_planner/unlinked_spec.ds
+
+# Android related
+**/android/**/gradle-wrapper.jar
+front-end/caca_trip_planner/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+front-end/caca_trip_planner/*.jks
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Coverage
+front-end/caca_trip_planner/coverage/
+
+# Symbols
+front-end/caca_trip_planner/app.*.symbols
+
+# Exceptions to above rules.
+!front-end/caca_trip_planner/**/ios/**/default.mode1v3
+!front-end/caca_trip_planner/**/ios/**/default.mode2v3
+!front-end/caca_trip_planner/**/ios/**/default.pbxuser
+!front-end/caca_trip_planner/**/ios/**/default.perspectivev3
+!front-end/caca_trip_planner/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!front-end/caca_trip_planner/dev/ci/**/Gemfile.lock
