@@ -138,7 +138,7 @@ class Locations with ChangeNotifier {
       // _recommendedLocationIds.forEach((id) async {
       if (!_locationPool.any((loc) => id == loc.id)) {
         // fetch location info from server
-        var response = await http
+        final response = await http
             .get(
               Uri.parse(url + '/site/' + id),
               headers: {'Authorization': 'Bearer ${Utils.token}'},

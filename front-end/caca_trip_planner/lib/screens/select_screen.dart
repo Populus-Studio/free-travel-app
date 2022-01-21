@@ -28,8 +28,8 @@ class _SelectScreenState extends State<SelectScreen> {
     final rw = w / Utils.w13pm;
     final locations =
         Provider.of<Locations>(context, listen: false).recommendedLocationList;
-    var len = locations.length;
-    var controller;
+    final len = locations.length;
+    late final controller;
 
     print("locations.length = ${locations.length}");
 
