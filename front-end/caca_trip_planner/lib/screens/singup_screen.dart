@@ -24,8 +24,8 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _form = GlobalKey<FormState>();
 
-  double rw = 0;
-  double rh = 0;
+  late final rh = MediaQuery.of(context).size.height / Utils.h13pm;
+  late final rw = MediaQuery.of(context).size.width / Utils.w13pm;
 
   bool _isLoading = false;
   bool _isChecked = false;
@@ -40,23 +40,6 @@ class _SignupScreenState extends State<SignupScreen> {
     'password': '',
     'phoneNumber': '',
   };
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    rh = MediaQuery.of(context).size.height / Utils.h13pm;
-    rw = MediaQuery.of(context).size.width / Utils.w13pm;
-    super.didChangeDependencies();
-  }
 
   void _signup(BuildContext ctx) {
     if (_form.currentState!.validate() == false) {

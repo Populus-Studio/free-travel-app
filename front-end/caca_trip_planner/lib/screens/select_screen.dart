@@ -20,18 +20,14 @@ class SelectScreen extends StatefulWidget {
 }
 
 class _SelectScreenState extends State<SelectScreen> {
+  late final h = MediaQuery.of(context).size.height;
+  late final w = MediaQuery.of(context).size.width;
+  late final rh = h / Utils.h13pm;
+  late final rw = w / Utils.w13pm;
+
   @override
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
-    final w = MediaQuery.of(context).size.width;
-    final rh = h / Utils.h13pm;
-    final rw = w / Utils.w13pm;
-    final locations =
-        Provider.of<Locations>(context, listen: false).recommendedLocationList;
-    final len = locations.length;
-    late final controller;
-
-    print("locations.length = ${locations.length}");
+    late var controller;
 
     return Scaffold(
         appBar: AppBar(
@@ -43,44 +39,62 @@ class _SelectScreenState extends State<SelectScreen> {
         body: Padding(
           // Wrap TinderSwapCard in Padding otherwise the animation is weird.
           padding: EdgeInsets.only(bottom: 120.0 * rh),
-          child: TinderSwapCard(
-            totalNum: len,
-            maxWidth: w,
-            maxHeight: h * 0.75,
-            minWidth: w * 0.75,
-            minHeight: h * 0.6,
-            cardBuilder: (context, index) => ChangeNotifierProvider.value(
-              value: locations[index],
-              child: LargeCard(h * 0.75, rw, key: UniqueKey()),
-            ),
-            cardController: controller =
-                CardController(), // This triggers swipe without swiping.
-            swipeUpdateCallback:
-                (DragUpdateDetails details, Alignment alignment) {
-              if (alignment.x < 0) {
-                // TODO: left swiping
-              } else if (alignment.x > 0) {
-                // TODO: right swiping
-              }
-            },
-            swipeCompleteCallback:
-                (CardSwipeOrientation orientation, int index) {
-              if (index == (locations.length - 1)) {
-                // TODO: This is the last card! Probably need to call setState() here.
-                // If not, make this screen a stateless widget.
-                Utils.showMaterialAlertDialog(
-                        context, '选完啦！', const Text('你已经完成选择，轻触OK返回'))
-                    .then((_) {
-                  Navigator.of(context).pop();
-                });
+          child: FutureBuilder<List<Location>>(
+            // Set listen to false otherwize this will be invoked multiple times!
+            // Reason: when notifyListeners() is called during fetching the
+            // recommended locations, this widget will be rebuilt, which will
+            // invoke the getter again, causing endless fetching of random locations.
+            future: Provider.of<Locations>(context, listen: false)
+                .recommendedLocations,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final locations = snapshot.data as List<Location>;
+                final len = locations.length;
+                return TinderSwapCard(
+                  totalNum: len,
+                  maxWidth: w,
+                  maxHeight: h * 0.75,
+                  minWidth: w * 0.75,
+                  minHeight: h * 0.6,
+                  cardBuilder: (context, index) => ChangeNotifierProvider.value(
+                    value: locations[index],
+                    child: LargeCard(h * 0.75, rw, key: UniqueKey()),
+                  ),
+                  cardController: controller =
+                      CardController(), // This triggers swipe without swiping.
+                  swipeUpdateCallback:
+                      (DragUpdateDetails details, Alignment alignment) {
+                    if (alignment.x < 0) {
+                      // TODO: left swiping
+                    } else if (alignment.x > 0) {
+                      // TODO: right swiping
+                    }
+                  },
+                  swipeCompleteCallback:
+                      (CardSwipeOrientation orientation, int index) {
+                    if (index == (locations.length - 1)) {
+                      // TODO: This is the last card! Probably need to call setState() here.
+                      // If not, make this screen a stateless widget.
+                      Utils.showMaterialAlertDialog(
+                              context, '选完啦！', const Text('你已经完成选择，轻触OK返回'))
+                          .then((_) {
+                        Navigator.of(context).pop();
+                      });
+                    } else {
+                      HapticFeedback.selectionClick();
+                      // Vibration.vibrate();
+                      if (orientation == CardSwipeOrientation.left) {
+                        // TODO: Swiped to the left
+                      } else if (orientation == CardSwipeOrientation.right) {
+                        // TODO: Swiped to the right
+                      }
+                    }
+                  },
+                );
               } else {
-                HapticFeedback.selectionClick();
-                // Vibration.vibrate();
-                if (orientation == CardSwipeOrientation.left) {
-                  // TODO: Swiped to the left
-                } else if (orientation == CardSwipeOrientation.right) {
-                  // TODO: Swiped to the right
-                }
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                );
               }
             },
           ),

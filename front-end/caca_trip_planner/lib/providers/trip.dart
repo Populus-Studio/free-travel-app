@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import './activities.dart';
-
 class Trip extends ChangeNotifier {
   final String id;
   final String name;

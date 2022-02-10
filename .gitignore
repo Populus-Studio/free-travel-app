@@ -437,7 +437,6 @@ cython_debug/
 __pycache__
 
 
-*/.DS_Store
 back-end/KKTravel/.vscode/launch.json
 
 migrations
@@ -450,6 +449,9 @@ back-end/.idea/modules.xml
 back-end/.idea/vcs.xml
 
 # FRONT-END RELATED GITIGNORES
+# Hu Yang maintained gitignores
+front-end/caca_trip_planner/lib/helpers/test.dart
+**/.DS_Store
 # Miscellaneous
 front-end/caca_trip_planner/*.class
 front-end/caca_trip_planner/*.lock

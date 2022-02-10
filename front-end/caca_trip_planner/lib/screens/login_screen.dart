@@ -109,6 +109,7 @@ class _State extends State<LoginViaUsernameScreen> {
             if (response.statusCode == 200) {
               var body = json.decode(response.body);
               Utils.token = body['token'];
+              print(Utils.token);
               Utils.showMaterialAlertDialog(
                   ctx,
                   '登录成功',

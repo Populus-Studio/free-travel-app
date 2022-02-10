@@ -1,4 +1,4 @@
-import 'package:cacatripplanner/utils.dart';
+import 'package:cacatripplanner/providers/trips.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:wechat_kit/wechat_kit.dart';
@@ -9,6 +9,7 @@ import './screens/main_screen.dart';
 import './screens/singup_screen.dart';
 import './providers/location.dart';
 import './providers/locations.dart';
+import './utils.dart';
 
 // const String WECHAT_APPID = 'wx65d1559cb410594a';
 // const String WECHAT_UNIVERSAL_LINK = 'We don\'t have a link yet...';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Locations()),
+        ChangeNotifierProvider(create: (conntext) => Trips()),
       ],
       child: MaterialApp(
         title: '卡卡随心游',

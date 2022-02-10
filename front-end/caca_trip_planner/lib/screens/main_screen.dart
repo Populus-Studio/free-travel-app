@@ -45,11 +45,13 @@ class MainScreen extends StatelessWidget {
                       context, '请登录', const Text('您需要先登录才能访问此项功能'));
                   return;
                 }
-                Provider.of<Locations>(context, listen: false)
-                    .loadImages(num: 2, type: 2) // preload images
-                    .then((_) {
-                  Navigator.of(context).pushNamed(SelectScreen.routeName);
-                });
+                // With FutureBuilder, there's no need to do pre-fetching here.
+                // Provider.of<Locations>(context, listen: false)
+                //     .loadImages(num: 2, type: 2) // preload images
+                //     .then((_) {
+                //   Navigator.of(context).pushNamed(SelectScreen.routeName);
+                // });
+                Navigator.of(context).pushNamed(SelectScreen.routeName);
               },
             ),
           ),

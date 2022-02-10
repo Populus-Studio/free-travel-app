@@ -23,7 +23,8 @@ class LargeCard extends StatefulWidget {
 class _LargeCardState extends State<LargeCard> {
   @override
   Widget build(BuildContext context) {
-    final loc = Provider.of<Location>(context, listen: false);
+    // Here is the receiver of the Location Provider.
+    final loc = Provider.of<Location>(context, listen: true);
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -39,10 +40,15 @@ class _LargeCardState extends State<LargeCard> {
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(color: loc.palette!.color),
+              decoration: BoxDecoration(
+                  color:
+                      loc.palette == null ? Colors.black : loc.palette!.color),
             ),
             SizedBox(
-              child: Image(image: loc.img!.image, fit: BoxFit.cover),
+              child: Image(
+                image: loc.img!.image,
+                fit: BoxFit.cover,
+              ),
               height: widget.imageHeight,
               width: double.infinity,
             ),
