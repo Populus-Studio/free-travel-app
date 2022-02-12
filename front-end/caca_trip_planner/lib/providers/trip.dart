@@ -1,44 +1,77 @@
+import 'package:cacatripplanner/providers/activity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import './location.dart';
 
 class Trip extends ChangeNotifier {
   final String id;
   final String name;
-  final String type;
   final String description;
   final String departureId;
   final int numOfTourists;
   final DateTime startDate;
   final DateTime endDate;
   final int duration; // days
-  final List<String> activityIds;
-  final int totalActivities;
+  final List<Activity> activities;
   final int totalCost;
   final String remarks;
 
-  late String coverLocationId;
+  String? coverLocationId;
 
   Trip({
     required this.id,
     required this.name,
-    required this.type,
     required this.description,
     required this.departureId,
     required this.numOfTourists,
     required this.startDate,
     required this.endDate,
     required this.duration,
-    required this.activityIds,
-    required this.totalActivities,
+    required this.activities,
     required this.totalCost,
     required this.remarks,
+    this.coverLocationId,
   }) {
     // determine cover location
-    // 1. find longest-lasting activity
-    // 2. find its location
-    // 3. use the location's image as cover image of the trip
-    // activities =
-    // int maxActTime= 0;
-    // String maxActId = '';
+    if (coverLocationId == null) {
+      updateCoverLocationId();
+    }
+  }
+
+  void updateCoverLocationId() {
+    coverLocationId =
+        activities.reduce((a, b) => a.duration > b.duration ? a : b).locationId;
+  }
+
+  static Trip fromJsonBody(dynamic body) {
+    final List<Activity> activities = (body['activities'] as List<dynamic>)
+        .map(
+          (act) => Activity(
+            locationId: act['id'],
+            startTime: DateTime.parse(act['startTime']),
+            endTime: DateTime.parse(act['endTime']),
+            cost: act['cost'],
+            type: LocationTypeExtension.fromString(act['type']),
+            name: act['name'],
+            remarks: act['remarks'],
+            duration: act['duration'],
+          ),
+        )
+        .toList();
+    final Trip trip = Trip(
+      id: body['id'],
+      name: body['name'],
+      description: body['description'],
+      departureId: body['departureId'],
+      numOfTourists: body['numOfTourists'],
+      startDate: DateTime.parse(body['startDate']),
+      endDate: DateTime.parse(body['endDate']),
+      duration: body['duration'],
+      activities: activities,
+      totalCost: body['totalCost'],
+      remarks: body['remarks'],
+    );
+    return trip;
   }
 }

@@ -166,7 +166,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/ # FIXME: 这个项目会匹配所有名为lib的文件夹，导致前端开发不便，请将其细化。下同 - 胡杨
 lib64/
 parts/
 sdist/
@@ -306,7 +306,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/ # FIXME: This matches all directories named lib/, causing trouble for front-end. Please specify! - Hu Yang
 lib64/
 parts/
 sdist/

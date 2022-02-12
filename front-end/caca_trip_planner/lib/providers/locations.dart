@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:cacatripplanner/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import './location.dart';
-
-const url = 'http://152.136.233.65:80';
 
 // Always add 'listen: false' when accessing this provider because it changes
 // every time the pool updates (which happens very frequently), and listeners
@@ -25,14 +25,14 @@ class Locations with ChangeNotifier {
     if (!_locationPool.any((loc) => id == loc.id)) {
       // fetch location info from server
       final response = await http.get(
-        Uri.parse(url + '/site/' + id),
-        headers: {'Authorization': 'Bearer ${Utils.token}'},
+        Uri.http(Utils.authority, '/site/' + id),
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
       );
       // Don't user timeout if you're not ready to handle the error!!!
       // ).timeout(const Duration(seconds: 1));
 
       if (response.statusCode == 200) {
-        var body = json.decode(
+        final body = json.decode(
             const Utf8Decoder().convert(response.body.codeUnits))['site'];
         Location location = Location(
           id: body['id'].toString(),

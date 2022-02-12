@@ -6,7 +6,6 @@ import 'package:vibration/vibration.dart';
 
 import '../utils.dart';
 
-const url = 'http://152.136.233.65:';
 const jsonHeaders = {
   "Accept": "application/json",
   "content-type": "application/json"
@@ -35,7 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _isValidInfo == false || _isLoading == true || _isChecked == false;
   final _nameDebouncer = Debouncer(milliseconds: 100);
   final _values = {
-    'port': '',
+    // 'port': '',
     'username': '',
     'password': '',
     'phoneNumber': '',
@@ -59,7 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     http
         .post(
-      Uri.parse(url + _values['port']! + '/auth/register'),
+      Uri.http(Utils.authority, '/auth/register'),
       body: json.encode({
         'username': _values['username'],
         if (_values['phone']!.isNotEmpty) 'phoneNumber': _values['phone'],
@@ -81,7 +80,7 @@ class _SignupScreenState extends State<SignupScreen> {
         _isLoading = false;
       });
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        var body = json.decode(response.body);
+        final body = json.decode(response.body);
         Utils.showMaterialAlertDialog(
             ctx,
             '注册成功',
@@ -97,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
           Navigator.of(context).pop();
         });
       } else if (response.statusCode == 409) {
-        var body = json.decode(response.body);
+        final body = json.decode(response.body);
         // Check if has duplicate phone number.
         if ((body['msg'] as String).contains('phone')) {
           Utils.showMaterialAlertDialog(
@@ -149,28 +148,28 @@ class _SignupScreenState extends State<SignupScreen> {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
                     )),
-                TextFormField(
-                  keyboardType: const TextInputType.numberWithOptions(
-                      signed: false, decimal: false),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10 * rh),
-                    ),
-                    labelText: '端口号',
-                  ),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return '端口号不能为空！';
-                    }
-                    if (!(value?.isValidPort() ?? false)) {
-                      return '端口号应为1-4位数字';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => _values['port'] = value!,
-                ),
+                // TextFormField(
+                //   keyboardType: const TextInputType.numberWithOptions(
+                //       signed: false, decimal: false),
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //   textInputAction: TextInputAction.next,
+                //   decoration: InputDecoration(
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10 * rh),
+                //     ),
+                //     labelText: '端口号',
+                //   ),
+                //   validator: (value) {
+                //     if (value?.isEmpty ?? true) {
+                //       return '端口号不能为空！';
+                //     }
+                //     if (!(value?.isValidPort() ?? false)) {
+                //       return '端口号应为1-4位数字';
+                //     }
+                //     return null;
+                //   },
+                //   onSaved: (value) => _values['port'] = value!,
+                // ),
                 SizedBox(height: 20 * rh),
                 TextFormField(
                   textInputAction: TextInputAction.next,
@@ -186,7 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       () => {
                         http
                             .get(Uri.parse(
-                                '$url${_values['port']}/auth/check/username?username=$value'))
+                                '${Utils.authority}/auth/check/username?username=$value'))
                             .then(
                           (response) {
                             if (response.statusCode == 200) {

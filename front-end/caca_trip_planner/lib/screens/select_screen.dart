@@ -40,10 +40,10 @@ class _SelectScreenState extends State<SelectScreen> {
           // Wrap TinderSwapCard in Padding otherwise the animation is weird.
           padding: EdgeInsets.only(bottom: 120.0 * rh),
           child: FutureBuilder<List<Location>>(
-            // Set listen to false otherwize this will be invoked multiple times!
-            // Reason: when notifyListeners() is called during fetching the
-            // recommended locations, this widget will be rebuilt, which will
-            // invoke the getter again, causing endless fetching of random locations.
+            // SET LISTEN TO FALSE!! Because otherwize this FutureBuilder is
+            // going to be rebuilt every time notifyListeners() is called during
+            // fetching, causing endless rebuilding of the builder and thus
+            // endless fetching of random locations!
             future: Provider.of<Locations>(context, listen: false)
                 .recommendedLocations,
             builder: (context, snapshot) {
