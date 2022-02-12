@@ -1,6 +1,243 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:cacatripplanner/helpers/dummy_data.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:http/http.dart' as http;
 
-/// TODO: How does the "local database" of this app work?
+import './trip.dart';
+import './activity.dart';
+import './location.dart';
+import '../utils.dart';
+
+class Trips extends ChangeNotifier {
+  /// This is for testing purposes, which uses dummy data instead.
+  static const bool testMode = true;
+
+  /// This pool saves all cached trips.
+  final List<Trip> _tripPool = [];
+
+  // Following lists save catagorized cached trips.
+  final List<Trip> _favoriteTrips = [];
+  final List<Trip> _finishedTrips = [];
+  final List<Trip> _ongoingTrips = [];
+  final List<Trip> _futureTrips = [];
+  final List<Trip> _recommendedTrips = [];
+
+  Future<Trip?> createTrip({
+    required String name,
+    required String description,
+    required String departureId,
+    required int numOfTourists,
+    required DateTime startDate,
+    required DateTime endDate,
+    required int duration,
+    required List<String> locationIds,
+    required int totalCost,
+    required String remarks,
+  }) async {
+    if (testMode) {
+      // FIXME
+      return DummyData.dummyTrips[0];
+    }
+
+    final response = await http.post(
+      Uri.http(Utils.authority, '/trip'),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+      body: json.encode(
+        {
+          'name': name,
+          'description': description,
+          'departureId': departureId,
+          'numOfTourists': numOfTourists,
+          'startDate': startDate.toIso8601String(),
+          'endDate': endDate.toIso8601String(),
+          'duration': duration,
+          'remarks': remarks,
+          'locations': locationIds, // automatically encodes list of strings
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      final body =
+          json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+      final trip = Trip.fromJsonBody(body);
+      _tripPool.add(trip);
+      return trip;
+    } else {
+      return null;
+    }
+  }
+
+  /// This method returns a trip of a specific ID.
+  Future<Trip?> fetchTripById(String id) async {
+    if (testMode) {
+      // FIXME
+      return DummyData.dummyTrips[0];
+    }
+
+    if (!_tripPool.any((trip) => trip.id == id)) {
+      final response = await http.get(
+        Uri.http(Utils.authority, '/trip/$id'),
+        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+      );
+      if (response.statusCode == 200) {
+        final body =
+            json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+        final trip = Trip.fromJsonBody(body);
+        _tripPool.add(trip);
+        return trip;
+      } else {
+        return null;
+      }
+    } else {
+      return _tripPool.firstWhere((trip) => trip.id == id);
+    }
+  }
+
+  /// This method utilizes API D1-5. See Apifox for more info.
+  /// 0) trigger updateList() according to type
+  /// 1) check if current list is emtpy
+  /// 2) if not, return current list
+  /// 3) else, wait for updateList(), and then return
+  /// 4) when updateList() is finished, AND the list is updated, notifyListeners()
+  Future<List<Trip>?> fetchTripByType({
+    bool isFavorite = false,
+    bool finished = false,
+    bool ongoing = false,
+    bool future = false,
+    bool recommended = false,
+  }) async {
+    if (testMode) {
+      // FIXME
+      return DummyData.dummyTrips;
+    }
+
+    if (isFavorite) {
+      if (_favoriteTrips.isEmpty) {
+        if (!await updateList(isFavorite: true)) {
+          return null;
+        }
+      } else {
+        updateList(isFavorite: true);
+      }
+      return _favoriteTrips;
+    }
+    if (finished) {
+      if (_finishedTrips.isEmpty) {
+        if (!await updateList(finished: true)) {
+          return null;
+        }
+      } else {
+        updateList(finished: true);
+      }
+      return _finishedTrips;
+    }
+    if (ongoing) {
+      if (_ongoingTrips.isEmpty) {
+        if (!await updateList(ongoing: true)) {
+          return null;
+        }
+      } else {
+        updateList(ongoing: true);
+      }
+      return _ongoingTrips;
+    }
+    if (future) {
+      if (_futureTrips.isEmpty) {
+        if (!await updateList(future: true)) {
+          return null;
+        }
+      } else {
+        updateList(future: true);
+      }
+      return _futureTrips;
+    }
+    if (recommended) {
+      if (_recommendedTrips.isEmpty) {
+        if (!await updateList(recommended: true)) {
+          return null;
+        }
+      } else {
+        updateList(recommended: true);
+      }
+      return _recommendedTrips;
+    }
+    return null;
+  }
+
+  Future<bool> updateList({
+    bool isFavorite = false,
+    bool finished = false,
+    bool ongoing = false,
+    bool future = false,
+    bool recommended = false,
+  }) async {
+    bool updated = false;
+    final response = await http.get(
+      Uri.http(Utils.authority, '/trip', {
+        if (isFavorite) 'isFavorite': 1,
+        if (finished) 'finished': 1,
+        if (ongoing) 'ongoing': 1,
+        if (future) 'future': 1,
+        if (recommended) 'recommended': 1,
+      }),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+    );
+    if (response.statusCode == 200) {
+      late final List<Trip> resultList;
+      if (isFavorite) {
+        resultList = _favoriteTrips;
+      } else if (finished) {
+        resultList = _finishedTrips;
+      } else if (ongoing) {
+        resultList = _ongoingTrips;
+      } else if (future) {
+        resultList = _futureTrips;
+      } else if (recommended) {
+        resultList = _recommendedTrips;
+      }
+      final body =
+          json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+      // add new trips to result list if they aren't there
+      for (var jsonTrip in body) {
+        late final Trip trip;
+        if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
+          // add to pool first
+          trip = Trip.fromJsonBody(jsonTrip);
+          _tripPool.add(trip);
+          resultList.add(trip);
+          updated = true;
+        } else {
+          trip = _tripPool.firstWhere((t) => t.id == jsonTrip['id']);
+          if (!resultList.any((t) => t.id == jsonTrip['id'])) {
+            resultList.add(trip);
+            updated = true;
+          }
+        }
+      }
+      // remove deprecated trips in result list
+      for (Trip trip in resultList) {
+        bool isDeprecated = true;
+        for (var jsonTrip in body) {
+          if (jsonTrip['id'] == trip.id) {
+            isDeprecated = false;
+          }
+        }
+        if (isDeprecated) {
+          resultList.remove(trip);
+          updated = true;
+        }
+      }
+      if (updated) notifyListeners();
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+/// How does the "local database" of this app work?
 ///
 /// I. Initialization
 /// 1. On initialization, fetch tripIds, then trips according their ids.
@@ -8,6 +245,7 @@ import 'package:flutter/material.dart';
 /// 3. On instantiating activities, fetch locations according to their ids.
 /// 4. On instantiating locations, fetch destinations according to their ids.
 /// Also, destination fetching can wait, more important are the first 3 steps.
+/// 
 /// TODO: Write APIs to implement these functionalities.
 ///
 /// II. Memory Management
@@ -37,4 +275,3 @@ import 'package:flutter/material.dart';
 /// "shared_preferences".
 /// 3. Downloaded files like images can be managed via "flutter_cache_manager".
 
-class Trips extends ChangeNotifier {}

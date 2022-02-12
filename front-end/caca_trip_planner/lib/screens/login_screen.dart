@@ -11,8 +11,6 @@ import '../screens/main_screen.dart';
 import '../screens/singup_screen.dart';
 import '../utils.dart';
 
-const url = 'http://152.136.233.65:';
-
 class LoginViaUsernameScreen extends StatefulWidget {
   static const routeName = '/auth/login-via-username';
 
@@ -25,7 +23,7 @@ class LoginViaUsernameScreen extends StatefulWidget {
 class _State extends State<LoginViaUsernameScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController portController = TextEditingController();
+  // TextEditingController portController = TextEditingController();
   bool _isLoading = false;
   bool _isValidInfo = false;
   bool get _disableButton => _isLoading == true || _isValidInfo == false;
@@ -52,7 +50,7 @@ class _State extends State<LoginViaUsernameScreen> {
 
     nameController.addListener(_checkInfo);
     passwordController.addListener(_checkInfo);
-    portController.addListener(_checkInfo);
+    // portController.addListener(_checkInfo);
   }
 
   @override
@@ -70,9 +68,9 @@ class _State extends State<LoginViaUsernameScreen> {
 
   void _checkInfo() {
     setState(() {
-      _isValidInfo = portController.text.isNotEmpty &&
-          nameController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty;
+      _isValidInfo =
+          // portController.text.isNotEmpty &&
+          nameController.text.isNotEmpty && passwordController.text.isNotEmpty;
     });
   }
 
@@ -83,7 +81,7 @@ class _State extends State<LoginViaUsernameScreen> {
 
     http
         .post(
-          Uri.parse(url + portController.text + '/auth/login/registered'),
+          Uri.http(Utils.authority, '/auth/login/registered'),
           body: json.encode({
             'username': nameController.text,
             'password': passwordController.text,
@@ -107,8 +105,9 @@ class _State extends State<LoginViaUsernameScreen> {
               _isLoading = false;
             });
             if (response.statusCode == 200) {
-              var body = json.decode(response.body);
+              final body = json.decode(response.body);
               Utils.token = body['token'];
+              print(Utils.token);
               Utils.showMaterialAlertDialog(
                   ctx,
                   '登录成功',
@@ -162,21 +161,21 @@ class _State extends State<LoginViaUsernameScreen> {
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
                   )),
               // const SizedBox(height: 40,)
-              Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 10 * rw, vertical: 10 * rh),
-                child: TextField(
-                  keyboardType: const TextInputType.numberWithOptions(
-                      signed: false, decimal: false),
-                  controller: portController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10 * rw),
-                    ),
-                    labelText: '端口号',
-                  ),
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.symmetric(
+              //       horizontal: 10 * rw, vertical: 10 * rh),
+              //   child: TextField(
+              //     keyboardType: const TextInputType.numberWithOptions(
+              //         signed: false, decimal: false),
+              //     controller: portController,
+              //     decoration: InputDecoration(
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(10 * rw),
+              //       ),
+              //       labelText: '端口号',
+              //     ),
+              //   ),
+              // ),
               Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: 10 * rw, vertical: 10 * rh),

@@ -9,12 +9,10 @@ import 'package:vibration/vibration.dart';
 class Utils {
   static const double h13pm = 926.0;
   static const double w13pm = 428.0;
-  static const url = 'http://152.136.233.65:';
-  static const port = '80';
+  static const authority = '152.136.233.65:80'; // authority is domain + port
   // TODO: Delete this debug token
-  static String token = '';
-  // to save the trouble of logging in when testing, use the following token
-  // 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozLCJ1c2VybmFtZSI6Im5pY2tiaXQiLCJleHAiOjE2NDEzOTM3MDgsImVtYWlsIjoiIn0.-89f9Ptk5dTr_XlHslHEumDpnrL-Wz5y5NYk6v37wfc';
+  static String token =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo5LCJ1c2VybmFtZSI6Imh1eWFuZyIsImV4cCI6MTY0NDY4MTMwOCwiZW1haWwiOiIifQ.rjFaCWNFW9n0BLpKBSIGQEI-wsbAYRMA1Gi-0gPhJWA';
   static final Random rng = Random();
 
   static Future<Object?> showMaterialAlertDialog(

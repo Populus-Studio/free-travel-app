@@ -35,7 +35,7 @@ class Location with ChangeNotifier {
   Image? img;
   bool isFavorite;
 
-  Future loadImage() async {
+  Future<void> loadImage() async {
     // lazy load image, always call this before accessing images and palettes!
     if (img == null || palette == null) {
       img = Image.network(imageUrl);
@@ -45,6 +45,7 @@ class Location with ChangeNotifier {
       );
       palette = generator.darkMutedColor ?? PaletteColor(Colors.purple, 2);
     }
+    notifyListeners();
   }
 
   Location({
@@ -68,7 +69,7 @@ class Location with ChangeNotifier {
 
   void toggleFavorite() {
     isFavorite = !isFavorite;
-    // TODO: Update to server
+    // TODO: Update to server (toggle back if it's unsuccessful)
   }
 }
 
@@ -104,11 +105,34 @@ extension LocationTypeExtension on LocationType {
     }
   }
 
-// TODO: Return LocationType based on string received from server
   static LocationType fromString(String string) {
     switch (string) {
-      default:
+      case "商圈":
+        return LocationType.business;
+      case "住宿":
+        return LocationType.accommodation;
+      case "景点":
         return LocationType.attraction;
+      case "地标性建筑":
+        return LocationType.landmark;
+      case "游乐园:":
+        return LocationType.resort;
+      case "娱乐场所":
+        return LocationType.entertainment;
+      case "展览":
+        return LocationType.exhibition;
+      case "网红打卡点":
+        return LocationType.internetFamous;
+      case "餐饮":
+        return LocationType.resort;
+      case "其它":
+        return LocationType.others;
+      case "交通":
+        return LocationType.transportation;
+      case "公共设施":
+        return LocationType.publicFacility;
+      default:
+        return LocationType.others;
     }
   }
 }
