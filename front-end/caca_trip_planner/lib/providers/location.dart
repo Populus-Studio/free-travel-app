@@ -32,15 +32,15 @@ class Location with ChangeNotifier {
   final String imageUrl;
 
   PaletteColor? palette;
-  Image? img;
+  late Image img = Image.network(imageUrl);
   bool isFavorite;
 
+  /// Lazy-load image & palette. Always call this before accessing palettes!
   Future<void> loadImage() async {
-    // lazy load image, always call this before accessing images and palettes!
-    if (img == null || palette == null) {
-      img = Image.network(imageUrl);
+    if (palette == null) {
+      // This implicitly waits for the image to be downloaded.
       final generator = await PaletteGenerator.fromImageProvider(
-        img!.image,
+        img.image,
         size: const Size(200, 200),
       );
       palette = generator.darkMutedColor ?? PaletteColor(Colors.purple, 2);
@@ -64,7 +64,7 @@ class Location with ChangeNotifier {
     required this.imageUrl,
     required this.isFavorite,
   }) {
-    loadImage(); // This allows automatic lazy loading images.
+    loadImage(); // Automatically lazy download image and load palette.
   }
 
   void toggleFavorite() {

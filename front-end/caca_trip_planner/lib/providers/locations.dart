@@ -21,7 +21,7 @@ class Locations with ChangeNotifier {
   List<Location> _recommendedLocationList = [];
 
   /// This method returns a location and save it to _locationPool if it exists.
-  Future<Location?> fetchLocationById(String id) async {
+  Future<Location> fetchLocationById(String id) async {
     if (!_locationPool.any((loc) => id == loc.id)) {
       // fetch location info from server
       final response = await http.get(
@@ -53,9 +53,8 @@ class Locations with ChangeNotifier {
         _locationPool.add(location);
         return location;
       } else {
-        print("Error in fetching location $id:");
         print(response.body);
-        return null;
+        throw 'Error in fetching location $id';
       }
     } else {
       return _locationPool.firstWhere((loc) => loc.id == id);
