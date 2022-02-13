@@ -9,22 +9,38 @@ import './trip.dart';
 import './activity.dart';
 import './location.dart';
 import '../utils.dart';
+import './locations.dart';
 
 class Trips extends ChangeNotifier {
   /// This is for testing purposes, which uses dummy data instead.
   static const bool testMode = true;
 
+  // Simply because we need to fetch Locations when initializing a trip,
+// Trips is a ProxyProvider that needs to have access to Locations.
+  Locations locations;
+
+  Trips(this.locations, {Trips? oldTrips}) {
+    if (oldTrips != null) {
+      _tripPool = oldTrips._tripPool;
+      _favoriteTrips = oldTrips._favoriteTrips;
+      _finishedTrips = oldTrips._finishedTrips;
+      _futureTrips = oldTrips._futureTrips;
+      _ongoingTrips = oldTrips._ongoingTrips;
+      _recommendedTrips = oldTrips._recommendedTrips;
+    }
+  }
+
   /// This pool saves all cached trips.
-  final List<Trip> _tripPool = [];
+  List<Trip> _tripPool = [];
 
   // Following lists save catagorized cached trips.
-  final List<Trip> _favoriteTrips = [];
-  final List<Trip> _finishedTrips = [];
-  final List<Trip> _ongoingTrips = [];
-  final List<Trip> _futureTrips = [];
-  final List<Trip> _recommendedTrips = [];
+  List<Trip> _favoriteTrips = [];
+  List<Trip> _finishedTrips = [];
+  List<Trip> _ongoingTrips = [];
+  List<Trip> _futureTrips = [];
+  List<Trip> _recommendedTrips = [];
 
-  Future<Trip?> createTrip({
+  Future<Trip> createTrip({
     required String name,
     required String description,
     required String departureId,
@@ -61,16 +77,17 @@ class Trips extends ChangeNotifier {
     if (response.statusCode == 200) {
       final body =
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-      final trip = Trip.fromJsonBody(body);
+      final trip = await fromJsonBody(body);
       _tripPool.add(trip);
       return trip;
     } else {
-      return null;
+      print(response.body);
+      throw 'error in createTrip()';
     }
   }
 
   /// This method returns a trip of a specific ID.
-  Future<Trip?> fetchTripById(String id) async {
+  Future<Trip> fetchTripById(String id) async {
     if (testMode) {
       // FIXME
       return DummyData.dummyTrips[0];
@@ -82,13 +99,17 @@ class Trips extends ChangeNotifier {
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
       );
       if (response.statusCode == 200) {
-        final body =
-            json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-        final trip = Trip.fromJsonBody(body);
-        _tripPool.add(trip);
-        return trip;
+        try {
+          final body =
+              json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+          final trip = await fromJsonBody(body);
+          _tripPool.add(trip);
+          return trip;
+        } catch (_) {
+          rethrow;
+        }
       } else {
-        return null;
+        throw 'error in fetchTripById';
       }
     } else {
       return _tripPool.firstWhere((trip) => trip.id == id);
@@ -101,7 +122,7 @@ class Trips extends ChangeNotifier {
   /// 2) if not, return current list
   /// 3) else, wait for updateList(), and then return
   /// 4) when updateList() is finished, AND the list is updated, notifyListeners()
-  Future<List<Trip>?> fetchTripByType({
+  Future<List<Trip>> fetchTripByType({
     bool isFavorite = false,
     bool finished = false,
     bool ongoing = false,
@@ -113,60 +134,54 @@ class Trips extends ChangeNotifier {
       return DummyData.dummyTrips;
     }
 
-    if (isFavorite) {
-      if (_favoriteTrips.isEmpty) {
-        if (!await updateList(isFavorite: true)) {
-          return null;
+    try {
+      if (isFavorite) {
+        if (_favoriteTrips.isEmpty) {
+          await updateList(isFavorite: true);
+        } else {
+          updateList(isFavorite: true);
         }
-      } else {
-        updateList(isFavorite: true);
+        return _favoriteTrips;
       }
-      return _favoriteTrips;
-    }
-    if (finished) {
-      if (_finishedTrips.isEmpty) {
-        if (!await updateList(finished: true)) {
-          return null;
+      if (finished) {
+        if (_finishedTrips.isEmpty) {
+          await updateList(finished: true);
+        } else {
+          updateList(finished: true);
         }
-      } else {
-        updateList(finished: true);
+        return _finishedTrips;
       }
-      return _finishedTrips;
-    }
-    if (ongoing) {
-      if (_ongoingTrips.isEmpty) {
-        if (!await updateList(ongoing: true)) {
-          return null;
+      if (ongoing) {
+        if (_ongoingTrips.isEmpty) {
+          await updateList(ongoing: true);
+        } else {
+          updateList(ongoing: true);
         }
-      } else {
-        updateList(ongoing: true);
+        return _ongoingTrips;
       }
-      return _ongoingTrips;
-    }
-    if (future) {
-      if (_futureTrips.isEmpty) {
-        if (!await updateList(future: true)) {
-          return null;
+      if (future) {
+        if (_futureTrips.isEmpty) {
+          await updateList(future: true);
+        } else {
+          updateList(future: true);
         }
-      } else {
-        updateList(future: true);
+        return _futureTrips;
       }
-      return _futureTrips;
-    }
-    if (recommended) {
-      if (_recommendedTrips.isEmpty) {
-        if (!await updateList(recommended: true)) {
-          return null;
+      if (recommended) {
+        if (_recommendedTrips.isEmpty) {
+          await updateList(recommended: true);
+        } else {
+          updateList(recommended: true);
         }
-      } else {
-        updateList(recommended: true);
+        return _recommendedTrips;
       }
-      return _recommendedTrips;
+    } catch (_) {
+      rethrow;
     }
-    return null;
+    throw 'error in fetchTripByType()';
   }
 
-  Future<bool> updateList({
+  Future<void> updateList({
     bool isFavorite = false,
     bool finished = false,
     bool ongoing = false,
@@ -204,7 +219,7 @@ class Trips extends ChangeNotifier {
         late final Trip trip;
         if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
           // add to pool first
-          trip = Trip.fromJsonBody(jsonTrip);
+          trip = await fromJsonBody(jsonTrip);
           _tripPool.add(trip);
           resultList.add(trip);
           updated = true;
@@ -230,10 +245,50 @@ class Trips extends ChangeNotifier {
         }
       }
       if (updated) notifyListeners();
-      return true;
     } else {
-      return false;
+      throw 'error in updateList()';
     }
+  }
+
+  Future<Trip> fromJsonBody(dynamic body) async {
+    final List<Activity> activities = [];
+    for (var act in (body['activities'] as List<dynamic>)) {
+      try {
+        final location = await locations.fetchLocationById(act['id']);
+        // Note that ChangeNotifier serves the purpose of signaling the UI
+        // to rebuild when some values changed, but not signaling some objects
+        // to refresh in memory when some other object changed. Therefore, you
+        // cannot and should not initialize Activity with a ProxyProvider here,
+        // but do so later when building a UI widget for an Activity.
+        activities.add(Activity(
+          location: location,
+          locationId: act['id'],
+          startTime: DateTime.parse(act['startTime']),
+          endTime: DateTime.parse(act['endTime']),
+          cost: act['cost'],
+          type: LocationTypeExtension.fromString(act['type']),
+          name: act['name'],
+          remarks: act['remarks'],
+          duration: act['duration'],
+        ));
+      } catch (_) {
+        rethrow;
+      }
+    }
+    final Trip trip = Trip(
+      id: body['id'],
+      name: body['name'],
+      description: body['description'],
+      departureId: body['departureId'],
+      numOfTourists: body['numOfTourists'],
+      startDate: DateTime.parse(body['startDate']),
+      endDate: DateTime.parse(body['endDate']),
+      duration: body['duration'],
+      activities: activities,
+      totalCost: body['totalCost'],
+      remarks: body['remarks'],
+    );
+    return trip;
   }
 }
 

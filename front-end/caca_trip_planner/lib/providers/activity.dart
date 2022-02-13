@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import './location.dart';
 
+/// Activity relies on Location. So it must be initialized with a ProxyProvider!
+/// Example:
+/// ```dart
+/// // We use ChangeNotifierProxyProvider here because Activity is a ChangeNotifer.
+/// ChangeNotifierProxyProvider<Location, Activity>(
+/// // First, create an Activity using a previously provided Location.
+/// create: (context) => Activity(location: loc, ...,),
+/// // Next, define a function to be called when location updates
+/// update: (context, newLoc, oldAct) => Activity(location: newLoc, ...,),
+/// );
+/// ```
 class Activity extends ChangeNotifier {
   /// for transportation, locationId is -1
   final String locationId;
@@ -11,7 +22,7 @@ class Activity extends ChangeNotifier {
   final double cost; // CNY
   String remarks;
 
-  Location? location;
+  Location location;
   // following fields are the same as in Location object
   final LocationType type;
   final String name; // See reserved names at the end.
@@ -30,10 +41,10 @@ class Activity extends ChangeNotifier {
     required this.name,
     required this.remarks,
     required this.duration,
+    required this.location,
     this.tripId,
     this.id,
     this.destinationId,
-    this.location,
   });
 }
 

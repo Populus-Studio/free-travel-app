@@ -32,7 +32,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Locations()),
-        ChangeNotifierProvider(create: (conntext) => Trips()),
+        ChangeNotifierProxyProvider<Locations, Trips>(
+          create: (context) => Trips(
+            // we can set listen: false because create is only called once
+            Provider.of<Locations>(context, listen: false),
+          ),
+          update: (context, locations, oldTrips) => Trips(locations),
+        ),
       ],
       child: MaterialApp(
         title: '卡卡随心游',

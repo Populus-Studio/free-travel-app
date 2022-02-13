@@ -46,7 +46,7 @@ class _LargeCardState extends State<LargeCard> {
             ),
             SizedBox(
               child: Image(
-                image: loc.img!.image,
+                image: loc.img.image,
                 fit: BoxFit.cover,
               ),
               height: widget.imageHeight,
