@@ -1,4 +1,5 @@
 import 'package:cacatripplanner/providers/activity.dart';
+import 'package:cacatripplanner/providers/location.dart';
 import 'package:flutter/material.dart';
 
 class Trip extends ChangeNotifier {
@@ -43,8 +44,17 @@ class Trip extends ChangeNotifier {
   }
 
   void updateCoverLocationId() {
-    coverLocationId =
-        activities.reduce((a, b) => a.duration > b.duration ? a : b).locationId;
+    coverLocationId = activities.reduce((a, b) {
+      // ignore transportation activities
+      if (a.type == LocationType.transportation) {
+        return b;
+      } else if (b.type == LocationType.transportation) {
+        return a;
+      } else {
+        return a.duration > b.duration ? a : b;
+      }
+    }).locationId;
+    print(coverLocationId);
     notifyListeners();
   }
 }

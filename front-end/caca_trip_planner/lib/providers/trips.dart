@@ -82,7 +82,8 @@ class Trips extends ChangeNotifier {
       return trip;
     } else {
       print(response.body);
-      throw 'error in createTrip()';
+      print(response.body);
+      throw 'error in createTrip(). Response was: ${response.body}';
     }
   }
 
@@ -99,17 +100,14 @@ class Trips extends ChangeNotifier {
         headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
       );
       if (response.statusCode == 200) {
-        try {
-          final body =
-              json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-          final trip = await fromJsonBody(body);
-          _tripPool.add(trip);
-          return trip;
-        } catch (_) {
-          rethrow;
-        }
+        final body =
+            json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+        final trip = await fromJsonBody(body).catchError((err) => throw err);
+        _tripPool.add(trip);
+        return trip;
       } else {
-        throw 'error in fetchTripById';
+        print(response.body);
+        throw 'error in fetchTripById Response was: ${response.body}';
       }
     } else {
       return _tripPool.firstWhere((trip) => trip.id == id);
@@ -178,7 +176,7 @@ class Trips extends ChangeNotifier {
     } catch (_) {
       rethrow;
     }
-    throw 'error in fetchTripByType()';
+    throw 'error in fetchTripByType(). Reason unknown.';
   }
 
   Future<void> updateList({
@@ -246,34 +244,33 @@ class Trips extends ChangeNotifier {
       }
       if (updated) notifyListeners();
     } else {
-      throw 'error in updateList()';
+      print(response.body);
+      throw 'error in updateList(). Response was: ${response.body}';
     }
   }
 
   Future<Trip> fromJsonBody(dynamic body) async {
     final List<Activity> activities = [];
     for (var act in (body['activities'] as List<dynamic>)) {
-      try {
-        final location = await locations.fetchLocationById(act['id']);
-        // Note that ChangeNotifier serves the purpose of signaling the UI
-        // to rebuild when some values changed, but not signaling some objects
-        // to refresh in memory when some other object changed. Therefore, you
-        // cannot and should not initialize Activity with a ProxyProvider here,
-        // but do so later when building a UI widget for an Activity.
-        activities.add(Activity(
-          location: location,
-          locationId: act['id'],
-          startTime: DateTime.parse(act['startTime']),
-          endTime: DateTime.parse(act['endTime']),
-          cost: act['cost'],
-          type: LocationTypeExtension.fromString(act['type']),
-          name: act['name'],
-          remarks: act['remarks'],
-          duration: act['duration'],
-        ));
-      } catch (_) {
-        rethrow;
-      }
+      final location = await locations
+          .fetchLocationById(act['id'])
+          .catchError((e) => throw e);
+      // Note that ChangeNotifier serves the purpose of signaling the UI
+      // to rebuild when some values changed, but not signaling some objects
+      // to refresh in memory when some other object changed. Therefore, you
+      // cannot and should not initialize Activity with a ProxyProvider here,
+      // but do so later when building a UI widget for an Activity.
+      activities.add(Activity(
+        location: location,
+        locationId: act['id'],
+        startTime: DateTime.parse(act['startTime']),
+        endTime: DateTime.parse(act['endTime']),
+        cost: act['cost'],
+        type: LocationTypeExtension.fromString(act['type']),
+        name: act['name'],
+        remarks: act['remarks'],
+        duration: act['duration'],
+      ));
     }
     final Trip trip = Trip(
       id: body['id'],
