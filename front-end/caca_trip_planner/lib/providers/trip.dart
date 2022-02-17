@@ -39,7 +39,7 @@ class Trip extends ChangeNotifier {
 
   Image getCoverImage() {
     updateCoverLocationId();
-    final act = activities.firstWhere((a) => a.id == coverLocationId);
+    final act = activities.firstWhere((a) => a.locationId == coverLocationId);
     return act.location.img;
   }
 

@@ -1,4 +1,5 @@
 import 'package:cacatripplanner/providers/trips.dart';
+import 'package:cacatripplanner/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:wechat_kit/wechat_kit.dart';
@@ -72,8 +73,8 @@ class MyApp extends StatelessWidget {
                   color: Colors.white,
                 ),
                 headline3: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
+                  fontSize: 17,
+                  color: Color.fromRGBO(255, 255, 255, 0.8),
                 ),
                 // TODO: Add textTheme for: heading1
               ),
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
           LoginViaUsernameScreen.routeName: (context) =>
               const LoginViaUsernameScreen(),
           SelectScreen.routeName: (context) => const SelectScreen(),
+          TripScreen.routeName: (context) => const TripScreen(),
         },
       ),
     );

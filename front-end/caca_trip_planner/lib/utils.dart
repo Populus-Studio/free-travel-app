@@ -65,8 +65,24 @@ extension DateFormatter on DateTime {
     final now = DateTime.now();
     if (year < now.year) {
       return '${now.year - year} 年前';
-    } else if ((day - now.day).abs() < 3) {}
-    return toString();
+    } else if ((day - now.day).abs() < 3) {
+      switch (day - now.day) {
+        case 2:
+          return '后天';
+        case 1:
+          return '明天';
+        case 0:
+          return '今天';
+        case -1:
+          return '昨天';
+        case -2:
+          return '前天';
+        default:
+          return toString();
+      }
+    } else {
+      return toString().substring(5, 10); // extract date and month
+    }
   }
 }
 
