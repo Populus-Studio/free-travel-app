@@ -54,7 +54,7 @@ class Locations with ChangeNotifier {
         return location;
       } else {
         print(response.body);
-        throw 'Error in fetching location $id';
+        throw 'Error in fetching location $id. Response was: ${response.body}';
       }
     } else {
       return _locationPool.firstWhere((loc) => loc.id == id);
@@ -73,6 +73,7 @@ class Locations with ChangeNotifier {
     //     .add('${int.parse(_recommendedLocationIds.last) + 1}');
     if (true) {
       _recommendedLocationIds.clear();
+      _recommendedLocationIds.add('6');
       for (int i = 0; i < 10; i++) {
         _recommendedLocationIds.add(Utils.rng.nextInt(7000).toString());
       }
@@ -103,7 +104,7 @@ class Locations with ChangeNotifier {
     updateRecommendedLocationIds();
     // add location to pool if it's not there
     for (var id in _recommendedLocationIds) {
-      await fetchLocationById(id);
+      await fetchLocationById(id).catchError((e) => throw e);
     }
     updateLocationPool();
     _recommendedLocationList = _locationPool

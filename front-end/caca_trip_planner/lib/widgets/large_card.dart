@@ -27,6 +27,7 @@ class _LargeCardState extends State<LargeCard> {
     final loc = Provider.of<Location>(context, listen: true);
     return Container(
       decoration: BoxDecoration(
+          color: loc.palette == null ? Colors.black : loc.palette!.color,
           borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
@@ -38,12 +39,13 @@ class _LargeCardState extends State<LargeCard> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
+          // TODO: Make this a Column maybe?
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  color:
-                      loc.palette == null ? Colors.black : loc.palette!.color),
-            ),
+            // Container(
+            //   decoration: BoxDecoration(
+            //       color:
+            //           loc.palette == null ? Colors.black : loc.palette!.color),
+            // ),
             SizedBox(
               child: Image(
                 image: loc.img.image,

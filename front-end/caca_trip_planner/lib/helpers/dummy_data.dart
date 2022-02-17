@@ -20,7 +20,7 @@ class DummyData {
       heat: 830,
       opentime: '周一至周日',
       imageUrl:
-          'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fccm.maotuying.com%2Fdiscovery%2Fproduction%2F1539925431_RackMultipart20181019-1-10jl425.jpg&refer=http%3A%2F%2Fccm.maotuying.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640521215&t=9ca9bb5ef58fbfca4fbc8451a4268f51',
+          'https://youimg1.c-ctrip.com/target/0106o120008632x65D55A_D_521_391.jpg',
       isFavorite: true,
     ),
     Location(
@@ -93,7 +93,7 @@ class DummyData {
   /// The location ids are real, but others are kinda dumb.
   static late final List<Activity> dummyActivities = [
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '49',
       startTime: DateTime.parse('2022-02-11T08:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T10:30:00.000000'),
@@ -104,7 +104,7 @@ class DummyData {
       duration: 150,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T10:30:00.000000'),
       endTime: DateTime.parse('2022-02-11T11:00:00.000000'),
@@ -115,7 +115,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '65',
       startTime: DateTime.parse('2022-02-11T11:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T11:30:00.000000'),
@@ -126,7 +126,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T11:30:00.000000'),
       endTime: DateTime.parse('2022-02-11T11:36:00.000000'),
@@ -137,7 +137,7 @@ class DummyData {
       duration: 6,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '104',
       startTime: DateTime.parse('2022-02-11T11:40:00.000000'),
       endTime: DateTime.parse('2022-02-11T12:40:00.000000'),
@@ -148,7 +148,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T12:40:00.000000'),
       endTime: DateTime.parse('2022-02-11T13:00:00.000000'),
@@ -159,7 +159,7 @@ class DummyData {
       duration: 11,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '36',
       startTime: DateTime.parse('2022-02-11T13:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T15:00:00.000000'),
@@ -170,7 +170,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T15:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T16:00:00.000000'),
@@ -181,7 +181,7 @@ class DummyData {
       duration: 45,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '6',
       startTime: DateTime.parse('2022-02-11T16:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T19:00:00.000000'),
@@ -192,7 +192,7 @@ class DummyData {
       duration: 180,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '49',
       startTime: DateTime.parse('2022-02-12T08:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T10:30:00.000000'),
@@ -203,7 +203,7 @@ class DummyData {
       duration: 150,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T10:30:00.000000'),
       endTime: DateTime.parse('2022-02-12T11:00:00.000000'),
@@ -214,7 +214,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '65',
       startTime: DateTime.parse('2022-02-12T11:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T11:30:00.000000'),
@@ -225,7 +225,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T11:30:00.000000'),
       endTime: DateTime.parse('2022-02-12T11:36:00.000000'),
@@ -236,7 +236,7 @@ class DummyData {
       duration: 6,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '104',
       startTime: DateTime.parse('2022-02-12T11:40:00.000000'),
       endTime: DateTime.parse('2022-02-12T12:40:00.000000'),
@@ -247,7 +247,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T12:40:00.000000'),
       endTime: DateTime.parse('2022-02-12T13:00:00.000000'),
@@ -258,7 +258,7 @@ class DummyData {
       duration: 11,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '36',
       startTime: DateTime.parse('2022-02-12T13:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T15:00:00.000000'),
@@ -269,7 +269,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T15:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T16:00:00.000000'),
@@ -280,7 +280,7 @@ class DummyData {
       duration: 45,
     ),
     Activity(
-      location: dummyLocations[0],
+      location: dummyLocations[1],
       locationId: '6',
       startTime: DateTime.parse('2022-02-12T16:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T19:00:00.000000'),

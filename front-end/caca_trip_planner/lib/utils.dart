@@ -59,6 +59,17 @@ extension Validator on String {
   }
 }
 
+extension DateFormatter on DateTime {
+  /// This will return strings like '1年前', '5.20', or '今天' depending on the date.
+  String toChineseString() {
+    final now = DateTime.now();
+    if (year < now.year) {
+      return '${now.year - year} 年前';
+    } else if ((day - now.day).abs() < 3) {}
+    return toString();
+  }
+}
+
 class Debouncer {
   final int milliseconds;
   VoidCallback? action;
