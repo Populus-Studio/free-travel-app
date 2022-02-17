@@ -91,7 +91,8 @@ class Trips extends ChangeNotifier {
   Future<Trip> fetchTripById(String id) async {
     if (testMode) {
       // FIXME
-      return DummyData.dummyTrips[0];
+      return Future.delayed(
+          const Duration(seconds: 2), () => DummyData.dummyTrips[0]);
     }
 
     if (!_tripPool.any((trip) => trip.id == id)) {
