@@ -43,6 +43,12 @@ class Trip extends ChangeNotifier {
     return act.location.img;
   }
 
+  Location getCoverLocation() {
+    return activities
+        .firstWhere((a) => a.locationId == coverLocationId)
+        .location;
+  }
+
   void updateCoverLocationId() {
     coverLocationId = activities.reduce((a, b) {
       // ignore transportation activities
@@ -54,7 +60,6 @@ class Trip extends ChangeNotifier {
         return a.duration > b.duration ? a : b;
       }
     }).locationId;
-    print(coverLocationId);
     notifyListeners();
   }
 }

@@ -82,7 +82,6 @@ class Trips extends ChangeNotifier {
       return trip;
     } else {
       print(response.body);
-      print(response.body);
       throw 'error in createTrip(). Response was: ${response.body}';
     }
   }
@@ -130,7 +129,8 @@ class Trips extends ChangeNotifier {
   }) async {
     if (testMode) {
       // FIXME
-      return DummyData.dummyTrips;
+      return Future.delayed(
+          const Duration(seconds: 2), () => DummyData.dummyTrips);
     }
 
     try {

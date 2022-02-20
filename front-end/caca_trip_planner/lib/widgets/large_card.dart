@@ -12,7 +12,7 @@ class LargeCard extends StatefulWidget {
   final double rw;
 
   LargeCard(this.maxHeight, this.rw, {Key? key}) : super(key: key) {
-    imageHeight = maxHeight * 0.35;
+    imageHeight = maxHeight * 0.4;
     separatorHeight = maxHeight * 0.005;
   }
 
@@ -27,25 +27,21 @@ class _LargeCardState extends State<LargeCard> {
     final loc = Provider.of<Location>(context, listen: true);
     return Container(
       decoration: BoxDecoration(
-          color: loc.palette == null ? Colors.black : loc.palette!.color,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 5,
-              spreadRadius: 2,
-            ),
-          ]),
+        color: loc.palette == null ? Colors.black : loc.palette!.color,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 5,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
           // TODO: Make this a Column maybe?
           children: [
-            // Container(
-            //   decoration: BoxDecoration(
-            //       color:
-            //           loc.palette == null ? Colors.black : loc.palette!.color),
-            // ),
             SizedBox(
               child: Image(
                 image: loc.img.image,

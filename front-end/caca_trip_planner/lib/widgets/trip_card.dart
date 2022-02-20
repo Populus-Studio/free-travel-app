@@ -26,13 +26,8 @@ class _TripCardState extends State<TripCard> {
   Future<Trip> loadData() async {
     final trip = await Provider.of<Trips>(context, listen: false)
         .fetchTripById(widget.id);
-    await trip.activities
-        .firstWhere((a) => a.locationId == trip.coverLocationId)
-        .location
-        .loadImage();
-    _coverLocation = trip.activities
-        .firstWhere((a) => a.locationId == trip.coverLocationId)
-        .location;
+    await trip.getCoverLocation().loadImage();
+    _coverLocation = trip.getCoverLocation();
     return trip;
   }
 
@@ -52,7 +47,7 @@ class _TripCardState extends State<TripCard> {
             return GestureDetector(
               onTap: () {
                 Navigator.of(context)
-                    .pushNamed(TripScreen.routeName, arguments: trip.id);
+                    .pushNamed(TripScreen.routeName, arguments: trip);
               },
               child: Container(
                 height: 120 * rh,
@@ -72,32 +67,42 @@ class _TripCardState extends State<TripCard> {
                   borderRadius: BorderRadius.circular(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         width: 190 * rw,
-                        padding: EdgeInsets.fromLTRB(10 * rw, 0, 0, 0),
+                        padding: EdgeInsets.symmetric(horizontal: 15 * rw),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              trip.name,
-                              style: Theme.of(context).textTheme.headline2,
+                            Hero(
+                              tag: trip.id + 'title',
+                              child: Text(
+                                trip.name,
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
                             ),
                             SizedBox(height: 5 * rh),
-                            Text(
-                              '${trip.activities.length} 个游玩点 | ${trip.startDate.toChineseString()}',
-                              style: Theme.of(context).textTheme.headline3,
-                            )
+                            Hero(
+                              tag: trip.id + 'info',
+                              child: Text(
+                                '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       SizedBox(
                         height: 120 * rh,
                         width: 190 * rw,
-                        child: Image(
-                          image: trip.getCoverImage().image,
-                          fit: BoxFit.cover,
+                        child: Hero(
+                          tag: trip.id + 'image',
+                          child: Image(
+                            image: trip.getCoverImage().image,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ],
