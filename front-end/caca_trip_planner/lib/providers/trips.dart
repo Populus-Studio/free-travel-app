@@ -91,7 +91,7 @@ class Trips extends ChangeNotifier {
     if (testMode) {
       // FIXME
       return Future.delayed(
-          const Duration(seconds: 2), () => DummyData.dummyTrips[0]);
+          const Duration(seconds: 1), () => DummyData.dummyTrips[0]);
     }
 
     if (!_tripPool.any((trip) => trip.id == id)) {
@@ -130,7 +130,7 @@ class Trips extends ChangeNotifier {
     if (testMode) {
       // FIXME
       return Future.delayed(
-          const Duration(seconds: 2), () => DummyData.dummyTrips);
+          const Duration(seconds: 1), () => DummyData.dummyTrips);
     }
 
     try {

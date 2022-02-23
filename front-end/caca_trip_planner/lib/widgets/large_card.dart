@@ -4,14 +4,30 @@ import 'package:provider/provider.dart';
 
 import '../providers/location.dart';
 
+/// The LargeCard does not have a constraint when it's called without a heroTag,
+/// as this indicates that it's being called from a select screen, which changes
+/// the cards' sizes to play animation. If called with a heroTag, it is persumed
+/// that it's called by tapping on an ActivityCard, in which case it should have
+/// a size so it does not fill the whole screen.
 class LargeCard extends StatefulWidget {
   // final Location loc;
   final double maxHeight;
+  final double w;
   late final double imageHeight;
   late final double separatorHeight;
   final double rw;
+  final String? _heroTag;
+  final Location? location;
 
-  LargeCard(this.maxHeight, this.rw, {Key? key}) : super(key: key) {
+  LargeCard(
+    this.maxHeight,
+    this.rw, {
+    Key? key,
+    required this.w,
+    String? heroTag,
+    this.location,
+  })  : _heroTag = heroTag,
+        super(key: key) {
     imageHeight = maxHeight * 0.4;
     separatorHeight = maxHeight * 0.005;
   }
@@ -23,9 +39,14 @@ class LargeCard extends StatefulWidget {
 class _LargeCardState extends State<LargeCard> {
   @override
   Widget build(BuildContext context) {
-    // Here is the receiver of the Location Provider.
-    final loc = Provider.of<Location>(context, listen: true);
-    return Container(
+    late final Location loc;
+    if (widget.location != null) {
+      loc = widget.location!;
+    } else {
+      // Here is the receiver of the Location Provider.
+      loc = Provider.of<Location>(context, listen: true);
+    }
+    final largeCard = Container(
       decoration: BoxDecoration(
         color: loc.palette == null ? Colors.black : loc.palette!.color,
         borderRadius: BorderRadius.circular(10),
@@ -52,14 +73,15 @@ class _LargeCardState extends State<LargeCard> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20 * widget.rw),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -99,103 +121,119 @@ class _LargeCardState extends State<LargeCard> {
                             SizedBox(height: widget.separatorHeight * 5),
                           ],
                         ),
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                              height: widget.imageHeight +
-                                  widget.separatorHeight * 4),
-                          IconButton(
-                            icon: Icon(
-                              loc.isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: Colors.white,
-                              size: 30,
+                        Column(
+                          children: [
+                            SizedBox(
+                                height: widget.imageHeight +
+                                    widget.separatorHeight * 4),
+                            IconButton(
+                              icon: Icon(
+                                loc.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                setState(() {
+                                  loc.toggleFavorite();
+                                });
+                              },
                             ),
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              setState(() {
-                                loc.toggleFavorite();
-                              });
-                            },
-                          ),
-                          Text(
-                            loc.isFavorite ? '已收藏' : '收藏',
-                            style: const TextStyle(
-                              color: Colors.white,
+                            Text(
+                              loc.isFavorite ? '已收藏' : '收藏',
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.thumb_up_alt_outlined,
+                          color: Colors.white,
+                          // size: 20,
+                        ),
+                        Text(
+                          " 推荐指数：${loc.heat}",
+                          style: Theme.of(context).textTheme.headline3,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: widget.separatorHeight),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.watch_later_outlined,
+                          color: Colors.white,
+                          // size: 20,
+                        ),
+                        Text(
+                          " 推荐耗时：${loc.timeCost.toStringAsFixed(0)}分钟",
+                          style: Theme.of(context).textTheme.headline3,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: widget.separatorHeight),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.attach_money_rounded,
+                          color: Colors.white,
+                          // size: 20,
+                        ),
+                        Text(
+                          " 人均花费：￥${loc.cost.toStringAsFixed(0)}元",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.thumb_up_alt_outlined,
-                        color: Colors.white,
-                        // size: 20,
-                      ),
-                      Text(
-                        " 推荐指数：${loc.heat}",
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: widget.separatorHeight),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.watch_later_outlined,
-                        color: Colors.white,
-                        // size: 20,
-                      ),
-                      Text(
-                        " 推荐耗时：${loc.timeCost.toStringAsFixed(0)}分钟",
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: widget.separatorHeight),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.attach_money_rounded,
-                        color: Colors.white,
-                        // size: 20,
-                      ),
-                      Text(
-                        " 人均花费：￥${loc.cost.toStringAsFixed(0)}元",
-                        style: const TextStyle(
-                          fontSize: 15,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: widget.separatorHeight),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.pin_drop_outlined,
                           color: Colors.white,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: widget.separatorHeight),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.pin_drop_outlined,
-                        color: Colors.white,
-                      ),
-                      Expanded(
-                        child: Text(
-                          " ${loc.address}",
-                          style: Theme.of(context).textTheme.headline3,
-                          overflow: TextOverflow.ellipsis,
+                        Expanded(
+                          child: Text(
+                            " ${loc.address}",
+                            style: Theme.of(context).textTheme.headline3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+    if (widget._heroTag != null) {
+      return Hero(
+        tag: widget._heroTag!,
+        child: Material(
+          child: SizedBox(
+            height: widget.maxHeight,
+            width: widget.w * 0.9,
+            child: largeCard,
+          ),
+          elevation: 2,
+          color: Colors.transparent,
+        ),
+      );
+    } else {
+      return largeCard;
+    }
   }
 }

@@ -103,7 +103,7 @@ class _SelectScreenState extends State<SelectScreen> {
                       cardBuilder: (context, index) =>
                           ChangeNotifierProvider.value(
                         value: locations[index],
-                        child: LargeCard(h * 0.75, rw, key: UniqueKey()),
+                        child: LargeCard(h * 0.75, rw, w: w, key: UniqueKey()),
                       ),
                       cardController: controller =
                           CardController(), // This triggers swipe without swiping.

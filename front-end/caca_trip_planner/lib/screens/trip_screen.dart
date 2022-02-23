@@ -3,8 +3,10 @@ import 'package:cacatripplanner/widgets/activity_card.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:flutter_palette/flutter_palette.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
+import '../widgets/large_card.dart';
 import '../widgets/trip_summary_card.dart';
 import '../widgets/trip_card.dart';
 import '../providers/location.dart';
@@ -89,102 +91,99 @@ class _TripScreenState extends State<TripScreen> {
           // 天数显示栏
           SliverPersistentHeader(
             delegate: PersistentHeaderDelegate(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(20.0),
-                  topLeft: Radius.circular(20.0),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  // BorderRadius.only(
+                  //     topLeft: Radius.circular(30),
+                  //     topRight: Radius.circular(30)),
+                  color: trip.getCoverLocation().palette!.color,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 5,
+                      spreadRadius: 2,
+                    ),
+                  ],
                 ),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: trip.getCoverLocation().palette!.color,
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        blurStyle: BlurStyle.outer,
-                      ),
-                    ],
-                  ),
-                  child: SizedBox(
-                    height: dayIndicatorHeight,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      controller: _dayIndicatorController,
-                      children: List.generate(
-                        trip.duration,
-                        (index) {
-                          if (index == _currentDay) {
-                            // final boxWidth = 60 * rw;
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _currentDay = index;
-                                });
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    FittedBox(
-                                      child: Text(
-                                        '第 ${index + 1} 天',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white70,
-                                          fontSize: 19 * rw,
-                                        ),
+                child: SizedBox(
+                  height: dayIndicatorHeight,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    controller: _dayIndicatorController,
+                    children: List.generate(
+                      trip.duration,
+                      (index) {
+                        if (index == _currentDay) {
+                          // final boxWidth = 60 * rw;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _currentDay = index;
+                              });
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FittedBox(
+                                    child: Text(
+                                      '第 ${index + 1} 天',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white70,
+                                        fontSize: 19 * rw,
                                       ),
                                     ),
-                                    DecoratedBox(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        // trip
-                                        //     .getCoverLocation()
-                                        //     .palette!
-                                        //     .color
-                                      ),
-                                      child: SizedBox(
-                                        height: 4 * rh,
-                                        width: 48 * rw,
-                                      ),
+                                  ),
+                                  DecoratedBox(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      // trip
+                                      //     .getCoverLocation()
+                                      //     .palette!
+                                      //     .color
                                     ),
-                                  ],
-                                ),
+                                    child: SizedBox(
+                                      height: 4 * rh,
+                                      width: 48 * rw,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
-                          } else {
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _currentDay = index;
-                                });
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Center(
-                                  child: Text(
-                                    '第 ${index + 1} 天',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Colors.white60,
-                                      fontSize: 18 * rw,
-                                      // fontWeight: FontWeight.bold,
-                                    ),
+                            ),
+                          );
+                        } else {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _currentDay = index;
+                              });
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Center(
+                                child: Text(
+                                  '第 ${index + 1} 天',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    color: Colors.white60,
+                                    fontSize: 18 * rw,
+                                    // fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-                            );
-                          }
-                        },
-                      )
-                        ..insert(0, const SizedBox(width: 10))
-                        ..add(const SizedBox(width: 10)),
-                    ),
+                            ),
+                          );
+                        }
+                      },
+                    ) // add padding
+                      ..insert(0, SizedBox(width: 10 * rw))
+                      ..add(SizedBox(width: 10 * rw)),
                   ),
                 ),
               ),
@@ -193,15 +192,40 @@ class _TripScreenState extends State<TripScreen> {
             ),
             pinned: true,
           ),
+          // 活动卡
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                // MUST wrap whatever widget inside an unconstrained box so that
-                // its parents can't dictate its constraints. This is needed
-                // because Slivers naturally ignores all children constraints
-                // to make the special effects.
-                return UnconstrainedBox(
-                  child: ActivityCard(activity: trip.activities[index]),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      HeroDialogRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider.value(
+                            value: trip.activities[index].location,
+                            child: Center(
+                              child: LargeCard(
+                                h * 0.75,
+                                rw,
+                                w: w,
+                                heroTag: 'activity-card-${trip.id}-$index',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  // MUST wrap whatever widget inside an unconstrained box so that
+                  // its parents can't dictate its constraints. This is needed
+                  // because Slivers naturally ignores all children constraints
+                  // to make the special effects.
+                  child: UnconstrainedBox(
+                    child: ActivityCard(
+                      heroTag: 'activity-card-${trip.id}-$index',
+                      activity: trip.activities[index],
+                    ),
+                  ),
                 );
               },
               childCount: trip.activities.length,
