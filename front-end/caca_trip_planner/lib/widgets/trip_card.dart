@@ -52,6 +52,7 @@ class _TripCardState extends State<TripCard> {
               child: Container(
                 height: 120 * rh,
                 width: 380 * rw,
+                // width: 380 * rw,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: _coverLocation.palette!.color,
@@ -76,20 +77,14 @@ class _TripCardState extends State<TripCard> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Hero(
-                              tag: trip.id + 'title',
-                              child: Text(
-                                trip.name,
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
+                            Text(
+                              trip.name,
+                              style: Theme.of(context).textTheme.headline2,
                             ),
                             SizedBox(height: 5 * rh),
-                            Hero(
-                              tag: trip.id + 'info',
-                              child: Text(
-                                '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
-                                style: Theme.of(context).textTheme.headline3,
-                              ),
+                            Text(
+                              '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
+                              style: Theme.of(context).textTheme.headline3,
                             ),
                           ],
                         ),

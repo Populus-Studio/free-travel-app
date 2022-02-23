@@ -30,6 +30,7 @@ dependencies:
   flutter_swipecards: ^0.2.1
   flutter_tindercard: ^0.1.7
   vibration: ^1.7.4-nullsafety.0
+  flutter_palette: ^1.1.0+1
 
 
   # The following adds the Cupertino Icons font to your application.

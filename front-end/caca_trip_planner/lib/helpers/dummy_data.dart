@@ -93,7 +93,7 @@ class DummyData {
   /// The location ids are real, but others are kinda dumb.
   static late final List<Activity> dummyActivities = [
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[1],
       locationId: '49',
       startTime: DateTime.parse('2022-02-11T08:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T10:30:00.000000'),
@@ -115,7 +115,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[3],
       locationId: '65',
       startTime: DateTime.parse('2022-02-11T11:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T11:30:00.000000'),
@@ -126,7 +126,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[0],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T11:30:00.000000'),
       endTime: DateTime.parse('2022-02-11T11:36:00.000000'),
@@ -137,7 +137,7 @@ class DummyData {
       duration: 6,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[1],
       locationId: '104',
       startTime: DateTime.parse('2022-02-11T11:40:00.000000'),
       endTime: DateTime.parse('2022-02-11T12:40:00.000000'),
@@ -159,7 +159,7 @@ class DummyData {
       duration: 11,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[3],
       locationId: '36',
       startTime: DateTime.parse('2022-02-11T13:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T15:00:00.000000'),
@@ -170,7 +170,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[0],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-11T15:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T16:00:00.000000'),
@@ -181,7 +181,7 @@ class DummyData {
       duration: 45,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[1],
       locationId: '6',
       startTime: DateTime.parse('2022-02-11T16:00:00.000000'),
       endTime: DateTime.parse('2022-02-11T19:00:00.000000'),
@@ -214,7 +214,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[3],
       locationId: '65',
       startTime: DateTime.parse('2022-02-12T11:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T11:30:00.000000'),
@@ -225,7 +225,7 @@ class DummyData {
       duration: 30,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[0],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T11:30:00.000000'),
       endTime: DateTime.parse('2022-02-12T11:36:00.000000'),
@@ -236,7 +236,7 @@ class DummyData {
       duration: 6,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[1],
       locationId: '104',
       startTime: DateTime.parse('2022-02-12T11:40:00.000000'),
       endTime: DateTime.parse('2022-02-12T12:40:00.000000'),
@@ -258,7 +258,7 @@ class DummyData {
       duration: 11,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[3],
       locationId: '36',
       startTime: DateTime.parse('2022-02-12T13:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T15:00:00.000000'),
@@ -269,7 +269,7 @@ class DummyData {
       duration: 120,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[0],
       locationId: '-1',
       startTime: DateTime.parse('2022-02-12T15:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T16:00:00.000000'),
@@ -280,7 +280,7 @@ class DummyData {
       duration: 45,
     ),
     Activity(
-      location: dummyLocations[2],
+      location: dummyLocations[1],
       locationId: '6',
       startTime: DateTime.parse('2022-02-12T16:00:00.000000'),
       endTime: DateTime.parse('2022-02-12T19:00:00.000000'),
@@ -301,7 +301,7 @@ class DummyData {
       numOfTourists: 6,
       startDate: DateTime.parse('2022-02-11T08:00:00.000000'),
       endDate: DateTime.parse('2022-02-13T00:00:00.000000'),
-      duration: 2,
+      duration: 16,
       activities: dummyActivities,
       totalCost: 500,
       remarks: '该行程适合秋季出游，走访北京景点旅游景点！该行程两天内容是一样的。',
