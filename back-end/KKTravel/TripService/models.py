@@ -2,6 +2,7 @@ from django.db import models
 from DestinationService.models import DestinationModel
 from UserAuth.models import UserModel
 
+
 # 行程数据模型
 
 class TripModel(models.Model):
@@ -23,3 +24,7 @@ class TripModel(models.Model):
     img_url = models.URLField(blank=True)
     # 使用json格式文本存储行程中包含的活动信息
     activities = models.TextField()
+    # 活动总数
+    numberOfActivities = models.IntegerField(default=0)
+    # 总计花费
+    totalCost = models.IntegerField(default=0)

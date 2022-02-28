@@ -22,5 +22,16 @@ class TripSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         dest_obj = DestinationModel.objects.filter(id=validated_data.pop('departureId')).first()
         user_obj = UserModel.objects.filter(username=validated_data.pop('username')).first()
-        trip = TripModel.objects.create(creator=user_obj, departure=dest_obj, **validated_data)
+
+        # TODO：计算活动总数和总花费
+        acts_json = validated_data.pop('activities')
+        num_of_acts = len(acts_json)  # 测试
+        total_cost = len(acts_json)  # 测试
+
+        trip = TripModel.objects.create(
+            creator=user_obj,
+            departure=dest_obj,
+            numberOfActivities=num_of_acts,
+            totalCost=total_cost,
+            **validated_data)
         return trip
