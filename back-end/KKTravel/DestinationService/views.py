@@ -12,10 +12,32 @@ from django.http import Http404
 
 # B1-2（暂未实现查询功能）
 class DestinationListManager(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
+        keywords = request.query_params.dict().search
+        sortBy = request.query_params.dict().sortBy
+        order = request.query_params.dict().order
+
+        print("keyword: %s" % keywords)
+        print(type(keywords))
+
+        # 筛选查询关键词
         destinations = DestinationModel.objects.all()
+        if keywords != "":
+            destinations = destinations.filter(name__contains=keywords)
+        if sortBy != "" and order != "":
+            if order == "ASC":
+                destinations = destinations.order_by(sortBy)
+            elif order == "DESC":
+                destinations = destinations.order_by(sortBy, reversed=True)
+            else:
+                res_data = {
+                    "code": 400,
+                    "msg": "order参数错误，请检查"
+                }
+                return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
+
         dests_serializer = DestinationSerializer(destinations, many=True)
-        return Response(dests_serializer.data)
+        return Response(dests_serializer.data, status=status.HTTP_200_OK)
 
 
 # B1-1
