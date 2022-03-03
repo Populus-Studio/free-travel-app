@@ -1,5 +1,6 @@
 from DestinationService.models import DestinationModel, LocationModel
 from TripService.models import TripModel
+import json
 from rest_framework import serializers
 
 from UserAuth.models import UserModel
@@ -15,7 +16,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TripModel
-        fields = ['id', 'name', 'username',
+        fields = ['id', 'name', 'username', 'isFavorite', 'isRecommend', 'status'
                   'departureId', 'description', 'startDate', 'endDate',
                   'duration', 'remarks', 'activities', 'img_url']
 
@@ -23,15 +24,13 @@ class TripSerializer(serializers.ModelSerializer):
         dest_obj = DestinationModel.objects.filter(id=validated_data.pop('departureId')).first()
         user_obj = UserModel.objects.filter(username=validated_data.pop('username')).first()
 
-        # TODO：计算活动总数和总花费
-        acts_json = validated_data.pop('activities')
-        num_of_acts = len(acts_json)  # 测试
-        total_cost = len(acts_json)  # 测试
+        # acts_json = validated_data.pop('activities')
+        #
+        # num_of_acts = len(acts_json)  # 测试
+        # total_cost = len(acts_json)  # 测试
 
         trip = TripModel.objects.create(
             creator=user_obj,
             departure=dest_obj,
-            numberOfActivities=num_of_acts,
-            totalCost=total_cost,
             **validated_data)
         return trip

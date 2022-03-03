@@ -11,8 +11,38 @@ from django.http import Http404
 # D1-1 & D1-5
 class TripGlobalManager(APIView):
     # 批量获取行程
-    def get(self, request, format=None):
-        trips = TripModel.objects.all()
+    def get(self, request):
+        # 所有的可查询参数
+        is_favor = request.query_params.dict().isFavorite
+        is_recommend = request.query_params.dict().recommended
+        is_future = request.query_params.dict().future
+        is_ongoing = request.query_params.dict().ongoing
+        is_finished = request.query_params.dict().finished
+        keywords = request.query_params.dict().keywords
+
+        print("favor:%s, recommend:%s, status: %s %s %s, keyword: %s" %
+              (is_favor, is_recommend, is_future, is_ongoing, is_finished, keywords))
+        print(type(is_favor), type(is_future), type(keywords))
+
+        query_status = [0, 1, 2]
+        if is_future:
+            query_status = [0]
+        elif is_ongoing:
+            query_status = [1]
+        elif is_finished:
+            query_status = [2]
+
+        trips_all = TripModel.objects.all()
+        if keywords != "":
+            trips = trips_all.filter(isFavorite=is_favor,
+                                     isRecommend=is_recommend,
+                                     status__in=query_status,
+                                     name__contains=keywords)
+        else:
+            trips = trips_all.filter(isFavorite=is_favor,
+                                     isRecommend=is_recommend,
+                                     status__in=query_status)
+        trips = trips.order_by("startDate", reversed=True)
         trips_serializer = TripSerializer(trips, many=True)
         return Response(trips_serializer.data)
 
@@ -41,13 +71,16 @@ class TripGlobalManager(APIView):
 
 # D1-2 to D1-4
 class TripSingleManager(APIView):
-    # 获取单一行程
-    def get(self, request, pk):
-        trip_obj = None
+
+    def get_trip_object(self, pk):
         try:
-            trip_obj = TripModel.objects.get(pk=pk)
+            return TripModel.objects.get(pk=pk)
         except TripModel.DoesNotExist:
             raise Http404
+
+    # 获取单一行程
+    def get(self, request, pk):
+        trip_obj = self.get_trip_object(pk)
         trip_serializer = TripSerializer(trip_obj)
         res_data = {
             "trip": trip_serializer.data
@@ -56,8 +89,16 @@ class TripSingleManager(APIView):
 
     # 修改单一行程
     def put(self, request, pk):
-        pass
+        trip_obj = self.get_trip_object(pk)
+        trip_serializer = TripSerializer(trip_obj, data=request.data)
+        if trip_serializer.is_valid():
+            trip_serializer.save()
+            return Response(trip_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(trip_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 删除单一行程
     def delete(self, request, pk):
-        pass
+        trip_obj = self.get_trip_object(pk)
+        trip_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
