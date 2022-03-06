@@ -301,7 +301,7 @@ class DummyData {
       numOfTourists: 6,
       startDate: DateTime.parse('2022-02-11T08:00:00.000000'),
       endDate: DateTime.parse('2022-02-13T00:00:00.000000'),
-      duration: 16,
+      duration: 3,
       activities: dummyActivities,
       totalCost: 500,
       remarks: '该行程适合秋季出游，走访北京景点旅游景点！该行程两天内容是一样的。',

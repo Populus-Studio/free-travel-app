@@ -37,9 +37,14 @@ class _TripScreenState extends State<TripScreen> {
   bool _showCalendarIcon = false;
   int _currentDay = 0;
   final double paddingSize = 10;
+  // For tracking the TripSummaryCard's size.
+  final _key = GlobalKey();
+
+  /// TripSummaryCard's height;
+  double? _tscHeight;
 
   /// This TripSummaryCard has no hero tag!
-  late final tripSummaryCard = TripSummaryCard(trip: trip);
+  late final tripSummaryCard = TripSummaryCard(trip: trip, key: _key);
 
   @override
   void initState() {
@@ -51,7 +56,17 @@ class _TripScreenState extends State<TripScreen> {
         // determine if title should show based on current scroll position
         final isNotExpanded = _scrollController.hasClients &&
             _scrollController.offset > kExpandedHeight - kToolbarHeight;
-        final summaryIsHidden = true; // TODO: Check if summary is hidden
+        // Find TripSummaryCard's position.
+        late final bool summaryIsHidden;
+        if (_key.currentContext != null) {
+          final box = _key.currentContext?.findRenderObject() as RenderBox;
+          final position =
+              box.localToGlobal(Offset.zero); // get global position
+          summaryIsHidden = position.dy + (_tscHeight ?? 100) / 2 < 75;
+        } else {
+          summaryIsHidden = false;
+        }
+
         if (isNotExpanded != _showAppBar) {
           setState(() {
             // update only the fields that need updating
@@ -61,10 +76,23 @@ class _TripScreenState extends State<TripScreen> {
         if (summaryIsHidden != _showCalendarIcon) {
           setState(() {
             _showCalendarIcon = summaryIsHidden;
+            print('hidden!!');
           });
         }
         // TODO: Update _currentDay
       });
+    // Normally, 1 second is enough for the trip card to be rendered. If not,
+    // the safety measure in TripSummaryCard will render an empty card of 300px
+    // by default.
+    Future.delayed(const Duration(seconds: 1), () {
+      if (_key.currentContext != null) {
+        if (_key.currentContext!.size != null) {
+          setState(() {
+            _tscHeight = _key.currentContext!.size!.height;
+          });
+        }
+      }
+    });
     super.initState();
   }
 
@@ -79,8 +107,8 @@ class _TripScreenState extends State<TripScreen> {
             showCalendarIcon: _showCalendarIcon,
             kExpandedHeight: kExpandedHeight,
             trip: trip,
-            tripSummaryCard: tripSummaryCard,
             heroTag: _heroTag,
+            tscHeight: _tscHeight,
           ),
           // 行程概览
           SliverToBoxAdapter(
@@ -93,10 +121,10 @@ class _TripScreenState extends State<TripScreen> {
             delegate: PersistentHeaderDelegate(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  // BorderRadius.only(
-                  //     topLeft: Radius.circular(30),
-                  //     topRight: Radius.circular(30)),
+                  // borderRadius: BorderRadius.circular(30),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30)),
                   color: trip.getCoverLocation().palette!.color,
                   boxShadow: const [
                     BoxShadow(
@@ -196,39 +224,54 @@ class _TripScreenState extends State<TripScreen> {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      HeroDialogRoute(
-                        builder: (context) {
-                          return ChangeNotifierProvider.value(
-                            value: trip.activities[index].location,
-                            child: Center(
-                              child: LargeCard(
-                                h * 0.75,
-                                rw,
-                                w: w,
-                                heroTag: 'activity-card-${trip.id}-$index',
+                if (index == 0) {
+                  // top padding
+                  return SizedBox(
+                    height: 20 * rh,
+                  );
+                } else if (index == trip.activities.length + 1) {
+                  // trailing text
+                  // TODO: Prettify this
+                  return SizedBox(
+                    height: 50 * rh,
+                    child: const Center(child: Text('行程结束')),
+                  );
+                } else {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        HeroDialogRoute(
+                          builder: (context) {
+                            return ChangeNotifierProvider.value(
+                              value: trip.activities[index - 1].location,
+                              child: Center(
+                                child: LargeCard(
+                                  h * 0.75,
+                                  rw,
+                                  w: w,
+                                  heroTag:
+                                      'activity-card-${trip.id}-${index - 1}',
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    // MUST wrap whatever widget inside an unconstrained box so that
+                    // its parents can't dictate its constraints. This is needed
+                    // because Slivers naturally ignores all children constraints
+                    // to make the special effects.
+                    child: UnconstrainedBox(
+                      child: ActivityCard(
+                        heroTag: 'activity-card-${trip.id}-${index - 1}',
+                        activity: trip.activities[index - 1],
                       ),
-                    );
-                  },
-                  // MUST wrap whatever widget inside an unconstrained box so that
-                  // its parents can't dictate its constraints. This is needed
-                  // because Slivers naturally ignores all children constraints
-                  // to make the special effects.
-                  child: UnconstrainedBox(
-                    child: ActivityCard(
-                      heroTag: 'activity-card-${trip.id}-$index',
-                      activity: trip.activities[index],
                     ),
-                  ),
-                );
+                  );
+                }
               },
-              childCount: trip.activities.length,
+              childCount: trip.activities.length + 2, // plus two paddings
             ),
           ),
         ],
@@ -354,8 +397,8 @@ class CrazyAppBar extends StatelessWidget {
     required bool showCalendarIcon,
     required this.kExpandedHeight,
     required this.trip,
-    required this.tripSummaryCard,
     required String heroTag,
+    this.tscHeight,
   })  : _showCalendarIcon = showCalendarIcon,
         _heroTag = heroTag,
         super(key: key);
@@ -363,8 +406,8 @@ class CrazyAppBar extends StatelessWidget {
   final bool _showCalendarIcon;
   final double kExpandedHeight;
   final Trip trip;
-  final TripSummaryCard tripSummaryCard;
   final String _heroTag;
+  final double? tscHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -384,10 +427,10 @@ class CrazyAppBar extends StatelessWidget {
                       return Center(
                         child: Material(
                           color: Colors.transparent,
-                          elevation: 2,
                           child: TripSummaryCard(
                             trip: trip,
                             heroTag: _heroTag,
+                            tscHeight: tscHeight,
                           ),
                         ),
                       );
