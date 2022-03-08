@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
+/// This widget adds shadow to Texts in a different way than TextStyle. Source:
+/// StackOverflow
 class ShadowText extends StatelessWidget {
   ShadowText(this.data, {this.style}) : assert(data != null);
 

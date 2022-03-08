@@ -8,7 +8,6 @@ import 'dart:math' as math;
 
 import '../widgets/large_card.dart';
 import '../widgets/trip_summary_card.dart';
-import '../widgets/trip_card.dart';
 import '../providers/location.dart';
 import '../providers/trip.dart';
 import '../utils.dart';
@@ -76,14 +75,12 @@ class _TripScreenState extends State<TripScreen> {
         if (summaryIsHidden != _showCalendarIcon) {
           setState(() {
             _showCalendarIcon = summaryIsHidden;
-            print('hidden!!');
           });
         }
         // TODO: Update _currentDay
       });
     // Normally, 1 second is enough for the trip card to be rendered. If not,
-    // the safety measure in TripSummaryCard will render an empty card of 300px
-    // by default.
+    // the TripSummaryCard will render an empty card of 300px heihgt by default.
     Future.delayed(const Duration(seconds: 1), () {
       if (_key.currentContext != null) {
         if (_key.currentContext!.size != null) {
@@ -421,7 +418,6 @@ class CrazyAppBar extends StatelessWidget {
               color: Colors.transparent,
               child: IconButton(
                 onPressed: () {
-                  // TODO: Show itinery here
                   Navigator.of(context).push(
                     HeroDialogRoute(builder: (context) {
                       return Center(
@@ -497,6 +493,10 @@ class CrazyAppBar extends StatelessWidget {
   }
 }
 
+/// This is a mixin class that makes a sliver behave like the persistent header
+/// on a web page. It is used by CrazyAppBar and DayIndicator, which are
+/// exclusive to this file. If other screens need it too, consider making this
+/// a helper widget and place it in /lib/headers instead.
 class PersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double minHeight;
   final double maxHeight;

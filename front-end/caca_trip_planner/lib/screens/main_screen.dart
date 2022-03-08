@@ -1,3 +1,4 @@
+import 'package:cacatripplanner/helpers/sticky_note.dart';
 import 'package:cacatripplanner/providers/trips.dart';
 import 'package:cacatripplanner/screens/login_screen.dart';
 import 'package:cacatripplanner/screens/singup_screen.dart';
@@ -53,6 +54,14 @@ class MainScreen extends StatelessWidget {
                 // });
                 Navigator.of(context).pushNamed(SelectScreen.routeName);
               },
+            ),
+            SizedBox(
+              height: 300,
+              width: 300,
+              child: StickyNote(
+                child: Container(),
+                color: Colors.amber,
+              ),
             ),
           ],
         ),

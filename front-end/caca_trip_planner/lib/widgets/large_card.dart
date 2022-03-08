@@ -81,45 +81,49 @@ class _LargeCardState extends State<LargeCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                height: widget.imageHeight +
-                                    widget.separatorHeight *
-                                        4), // empty space for image
-                            Text(
-                              loc.name,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
+                        // A row will impose no constraint on its children
+                        // unless they are wrapped in an Expanded widget.
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                  height: widget.imageHeight +
+                                      widget.separatorHeight *
+                                          4), // empty space for image
+                              Text(
+                                loc.name,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: widget.separatorHeight),
-                            Text(
-                              loc.type.toChineseString(),
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
+                              SizedBox(height: widget.separatorHeight),
+                              Text(
+                                loc.type.toChineseString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: widget.separatorHeight),
-                            Row(
-                              children: [
-                                for (int i = 1; i <= 5; i++)
-                                  Icon(
-                                    loc.rate < i
-                                        ? Icons.star_border
-                                        : Icons.star,
-                                    color: Colors.white,
-                                  ),
-                              ],
-                              mainAxisAlignment: MainAxisAlignment.start,
-                            ),
-                            SizedBox(height: widget.separatorHeight * 5),
-                          ],
+                              SizedBox(height: widget.separatorHeight),
+                              Row(
+                                children: [
+                                  for (int i = 1; i <= 5; i++)
+                                    Icon(
+                                      loc.rate < i
+                                          ? Icons.star_border
+                                          : Icons.star,
+                                      color: Colors.white,
+                                    ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.start,
+                              ),
+                              SizedBox(height: widget.separatorHeight * 5),
+                            ],
+                          ),
                         ),
                         Column(
                           children: [

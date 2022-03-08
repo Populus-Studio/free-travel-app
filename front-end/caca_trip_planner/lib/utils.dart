@@ -57,6 +57,15 @@ extension Validator on String {
   bool isValidPassword() {
     return length >= 8;
   }
+
+  Icon toTransportationIcon() {
+    // Following are reserved names for transportation. Each matches an icon.
+// 骑自行车、骑电动车、步行、打车、公交、地铁、驾车、轮渡、电车、索道
+    switch (this) {
+      default:
+        return const Icon(Icons.rocket);
+    }
+  }
 }
 
 extension DateFormatter on DateTime {
@@ -83,6 +92,67 @@ extension DateFormatter on DateTime {
     } else {
       return toString().substring(5, 10); // extract date and month
     }
+  }
+}
+
+/// A parameter to pass to the toChineseDurationString() method in IntExtension,
+/// telling the method which measurement the original integer is under. For now,
+/// only the minute measurement is used in this app, so this enum is here only
+/// for expandibility.
+enum TimeMeasure {
+  minute, // 分钟
+}
+
+extension IntExtension on int {
+  /// This will return an appropriate duration string based on the number of
+  /// minutes in a duration. For example,
+  /// ```dart
+  /// 90.toChineseString(measure: TimeMeasure.minute);
+  /// ```
+  /// will yield '1.5小时'.
+  String toChineseDurationString({TimeMeasure measure = TimeMeasure.minute}) {
+    switch (measure) {
+      case TimeMeasure.minute:
+        {
+          if (this < 30) {
+            return '$this 分钟';
+          } else {
+            // longer than 30 minutes
+            final double numOfHours = this / 60.0;
+            if (numOfHours % 1 == 0) {
+              // if there's not decimal digits
+              return '${numOfHours.round()} 个小时';
+            } else {
+              return '${numOfHours.toStringAsFixed(1)} 个小时';
+            }
+          }
+        }
+      default:
+        return '未知时长';
+    }
+  }
+}
+
+extension ColorExtension on Color {
+  /// Darken a color by a certain amount.
+  Color darken({double amount = .1}) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(this);
+    final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
+  }
+
+  /// Lighten a color by a certain amount.
+  Color lighten({double amount = .1}) {
+    assert(amount >= 0 && amount <= 1);
+
+    final hsl = HSLColor.fromColor(this);
+    final hslLight =
+        hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+    return hslLight.toColor();
   }
 }
 

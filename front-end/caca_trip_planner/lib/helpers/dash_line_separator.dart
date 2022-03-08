@@ -4,16 +4,20 @@ class DashLineSeparator extends StatelessWidget {
   final double height;
   final Color color;
 
-  const DashLineSeparator(
-      {Key? key, this.height = 1, this.color = Colors.black})
-      : super(key: key);
+  /// This is a simple dash-line separator with limited customizability. For more
+  /// customizations, see /helpers/dot_widget.dart. Source: StackOverflow
+  const DashLineSeparator({
+    Key? key,
+    this.height = 1,
+    this.color = Colors.black,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final boxWidth = constraints.constrainWidth();
-        final dashWidth = 10.0;
+        const dashWidth = 10.0;
         final dashHeight = height;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(

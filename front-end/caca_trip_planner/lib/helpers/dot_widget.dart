@@ -5,6 +5,7 @@ class DotWidget extends StatelessWidget {
 
   final Color dashColor;
 
+  /// This helper draws a customized dash line. Source: StackOverflow
   const DotWidget({
     this.totalWidth = 300,
     this.dashWidth = 10,

@@ -136,7 +136,7 @@ class TripSummaryCardContent extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: !empty
           ? SingleChildScrollView(
-              // In case duration is too long!
+              // In case itinerary is too long!
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -177,7 +177,9 @@ class TripSummaryCardContent extends StatelessWidget {
                         .toList();
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 4),
+                        vertical: 6,
+                        horizontal: 4,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +194,7 @@ class TripSummaryCardContent extends StatelessWidget {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            // USE Expaned TO LIMIT Wrap WIDGET!!!
+                            // USE Expanded TO LIMIT Wrap WIDGET!!!
                             child: Wrap(
                               direction: Axis.horizontal,
                               runSpacing: 5,
