@@ -83,7 +83,7 @@ extension LocationTypeExtension on LocationType {
       case LocationType.attraction:
         return "景点";
       case LocationType.landmark:
-        return "地标性建筑";
+        return "地标";
       case LocationType.resort:
         return "游乐园";
       case LocationType.entertainment:
@@ -91,7 +91,7 @@ extension LocationTypeExtension on LocationType {
       case LocationType.exhibition:
         return "展览";
       case LocationType.internetFamous:
-        return "网红打卡点";
+        return "网红地";
       case LocationType.restaurant:
         return "餐饮";
       case LocationType.others:
@@ -113,7 +113,7 @@ extension LocationTypeExtension on LocationType {
         return LocationType.accommodation;
       case "景点":
         return LocationType.attraction;
-      case "地标性建筑":
+      case "地标":
         return LocationType.landmark;
       case "游乐园:":
         return LocationType.resort;
@@ -121,7 +121,7 @@ extension LocationTypeExtension on LocationType {
         return LocationType.entertainment;
       case "展览":
         return LocationType.exhibition;
-      case "网红打卡点":
+      case "网红地":
         return LocationType.internetFamous;
       case "餐饮":
         return LocationType.resort;

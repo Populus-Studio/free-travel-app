@@ -164,8 +164,10 @@ class TripSummaryCardContent extends StatelessWidget {
                   ...List.generate(trip.duration, (index) {
                     final nextDay =
                         trip.startDate.add(Duration(days: index + 1));
-                    final previousDay =
+                    final previousDate =
                         nextDay.subtract(const Duration(days: 2));
+                    final previousDay = DateTime(previousDate.year,
+                        previousDate.month, previousDate.day, 23, 59, 59);
                     final activitiesOfTheDay = trip.activities
                         .where(
                           (a) =>
@@ -205,15 +207,14 @@ class TripSummaryCardContent extends StatelessWidget {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(5)),
+                                        borderRadius: BorderRadius.circular(5),
                                         border: Border.all(color: Colors.grey),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),
                                         child: Text(
                                           activitiesOfTheDay[index]
-                                              .location
+                                              // .location
                                               .name,
                                         ),
                                       ),

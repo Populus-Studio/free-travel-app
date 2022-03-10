@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../helpers/sticky_note.dart';
 import '../providers/location.dart';
+import '../utils.dart';
 
 /// The LargeCard does not have a constraint when it's called without a heroTag,
 /// as this indicates that it's being called from a select screen, which changes
@@ -18,6 +20,7 @@ class LargeCard extends StatefulWidget {
   final double rw;
   final String? _heroTag;
   final Location? location;
+  final String? remarks;
 
   LargeCard(
     this.maxHeight,
@@ -26,6 +29,7 @@ class LargeCard extends StatefulWidget {
     required this.w,
     String? heroTag,
     this.location,
+    this.remarks,
   })  : _heroTag = heroTag,
         super(key: key) {
     imageHeight = maxHeight * 0.4;
@@ -61,7 +65,6 @@ class _LargeCardState extends State<LargeCard> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Stack(
-          // TODO: Make this a Column maybe?
           children: [
             SizedBox(
               child: Image(
@@ -191,11 +194,12 @@ class _LargeCardState extends State<LargeCard> {
                           // size: 20,
                         ),
                         Text(
-                          " 人均花费：￥${loc.cost.toStringAsFixed(0)}元",
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
+                          " 人均花费：￥${loc.cost.toStringAsFixed(0)} 元",
+                          style: Theme.of(context).textTheme.headline3,
+                          // style: const TextStyle(
+                          //   fontSize: 15,
+                          //   color: Colors.white,
+                          // ),
                         ),
                       ],
                     ),
@@ -219,10 +223,39 @@ class _LargeCardState extends State<LargeCard> {
                 ),
               ),
             ),
+            if (widget.remarks != null)
+              Positioned(
+                top: 10,
+                right: 10,
+                child: SizedBox(
+                  height: 150 * widget.rw,
+                  width: 150 * widget.rw,
+                  child: StickyNote(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 13.0, right: 4.0),
+                      child: Text(
+                        widget.remarks!,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'AaManYuShouXieTi',
+                          fontSize: 15,
+                        ),
+                        maxLines: 5,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // color: loc.palette!.color.lighten(),
+                    // color: loc.palette!.color,
+                    color: Colors.yellow,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
+
     if (widget._heroTag != null) {
       return Hero(
         tag: widget._heroTag!,

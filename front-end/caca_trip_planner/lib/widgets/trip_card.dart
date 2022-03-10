@@ -45,7 +45,10 @@ class _TripCardState extends State<TripCard> {
           if (snapshot.hasData) {
             final trip = snapshot.data!; // this is definitely not null
             return GestureDetector(
-              onTap: () {
+              onTap: () async {
+                for (var act in trip.activities) {
+                  await act.location.loadImage();
+                }
                 Navigator.of(context)
                     .pushNamed(TripScreen.routeName, arguments: trip);
               },

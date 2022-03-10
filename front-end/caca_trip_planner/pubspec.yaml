@@ -76,6 +76,12 @@ flutter:
           weight: 300
         - asset: assets/fonts/RobotoCondensed-Italic.ttf
           style: italic
+    - family: AaManYuShouXieTi
+      fonts:
+        - asset: assets/fonts/AaManYuShouXieTi-2.ttf
+    - family: CableCarIcon
+      fonts:
+        - asset: assets/fonts/CableCarIcon.ttf
   # To add assets to your application, add an assets section, like this:
 #  assets:
 #    - assets/images/

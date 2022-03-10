@@ -84,7 +84,13 @@ class StickyNotePainter extends CustomPainter {
   }
 
   void _drawShadow(Size size, Canvas canvas) {
-    Rect rect = Rect.fromLTWH(12, 12, size.width - 24, size.height - 24);
+    Rect rect = Rect.fromLTWH(
+      size.height * 0.04,
+      size.width * 0.04,
+      size.width * 0.92,
+      size.height * 0.92,
+    );
+    // Rect rect = Rect.fromLTWH(12, 12, size.width - 24, size.height - 24);
     Path path = Path();
     path.addRect(rect);
     canvas.drawShadow(path, Colors.black.withOpacity(0.7), 12.0, true);

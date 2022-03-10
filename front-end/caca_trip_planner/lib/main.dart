@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.indigo,
             backgroundColor: const Color.fromRGBO(255, 254, 229, 1),
           ),
-          fontFamily: 'Raleway',
+          // fontFamily: 'Raleway',
           textTheme: ThemeData.light().textTheme.copyWith(
                 bodyText1: const TextStyle(
                   color: Colors.white,

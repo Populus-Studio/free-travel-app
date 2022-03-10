@@ -1,3 +1,4 @@
+import 'package:cacatripplanner/helpers/dash_line_separator.dart';
 import 'package:cacatripplanner/helpers/hero_dialog_route.dart';
 import 'package:cacatripplanner/widgets/activity_card.dart';
 import 'package:flutter/material.dart';
@@ -27,48 +28,161 @@ class _TripScreenState extends State<TripScreen> {
   late final w = MediaQuery.of(context).size.width;
   late final rh = h / Utils.h13pm;
   late final rw = w / Utils.w13pm;
-  late final dayIndicatorHeight = 50 * rh;
+  late final _appBarExpandedHeight = 240 * rh;
+  late final _dayIndicatorHeight = 50 * rh;
+  late final _appBarFoldedHeight = 75 * rh;
+  late final _safeAreaHeight = MediaQuery.of(context).padding.top;
   late final ScrollController _scrollController;
   late final ScrollController _dayIndicatorController;
-  late final kExpandedHeight = 240 * rh;
-  late final _heroTag = 'trip-summary-card-' + trip.id;
+  late final _tscHeroTag = 'trip-summary-card-' + trip.id;
   bool _showAppBar = false;
   bool _showCalendarIcon = false;
   int _currentDay = 0;
-  final double paddingSize = 10;
+
+  /// This field needs to be maintained manually!
+  late final _dayIndicatorChipWidth = (80 + 10 * 2) * rw;
+
+  /// This is a lock to prevent two auto scrolling happening at the same time.
+  bool _disableAutoScrolling = false;
+
   // For tracking the TripSummaryCard's size.
-  final _key = GlobalKey();
+  final _tscKey = GlobalKey();
+
+  /// This TripSummaryCard has no hero tag but a key!
+  late final tripSummaryCard = TripSummaryCard(trip: trip, key: _tscKey);
 
   /// TripSummaryCard's height;
   double? _tscHeight;
 
-  /// This TripSummaryCard has no hero tag!
-  late final tripSummaryCard = TripSummaryCard(trip: trip, key: _key);
+  /// For tracking the scroll position of the list of activities
+  late final List<GlobalKey> _dayLabelKeys =
+      List.generate(trip.duration, (index) => GlobalKey());
+
+  /// For making sure day chips in DayIndicator always shows
+  late final List<GlobalKey> _dayChipKeys =
+      List.generate(trip.duration, (index) => GlobalKey());
+
+  /// Recording the position of the day labels
+  late final List<double> _dayLabelPositions;
+
+  /// Scroll (with animation) to a given day in trip
+  void _scrollToDay(int day,
+      {required bool dayIndicator, required bool list}) async {
+    // to avoid conflict
+    Future<void>? _future1;
+    Future<void>? _future2;
+    _disableAutoScrolling = true;
+
+    // scroll DayIndicator
+    if (dayIndicator) {
+      // calculate scroll distance to avoid overflow
+      double scrollDistance = 0;
+
+      /// A screen can fit 4 chips - following calculation improves the scroll
+      /// by controlling overflowing, and also making sure the current day is in
+      /// the middle.
+      if (trip.duration - day > 3) {
+        scrollDistance = day * _dayIndicatorChipWidth;
+        if (day != 0) scrollDistance -= _dayIndicatorChipWidth;
+      } else if (trip.duration >= 4) {
+        scrollDistance = (trip.duration - 4) * _dayIndicatorChipWidth;
+      }
+
+      // scroll
+      _future1 = _dayIndicatorController.animateTo(
+        scrollDistance,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      /// The following method also works, but has less customizability.
+      // if (_dayChipKeys[day].currentContext != null &&
+      //     _dayChipKeys[day].currentContext!.findRenderObject() != null) {
+      //   _future1 = _dayIndicatorController.position.ensureVisible(
+      //     _dayChipKeys[day].currentContext!.findRenderObject()!,
+      //     alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+      //     duration: const Duration(milliseconds: 300),
+      //     curve: Curves.easeInOut,
+      //   );
+      // }
+    }
+
+    // scroll big list
+    if (list) {
+      _future2 = _scrollController.animateTo(
+        _dayLabelPositions[day],
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    // release lock
+    if (_future1 != null) await _future1;
+    if (_future2 != null) await _future2;
+    _disableAutoScrolling = false;
+  }
 
   @override
   void initState() {
-    _dayIndicatorController = ScrollController()
-      ..addListener(() {}); // TODO: implmt controller here
+    _dayIndicatorController = ScrollController()..addListener(() {});
     _scrollController = ScrollController()
       ..addListener(() {
-        // TDOO: update current day
+        if (!_disableAutoScrolling) {
+          // 1 - moving on to the next day
+          bool detected = false;
+          for (int i = 0; i < trip.duration; i++) {
+            if (_dayLabelKeys[i].currentContext != null) {
+              final topPos = _dayLabelKeys[i].globalPaintBounds!.top;
+              if ((topPos -
+                          _safeAreaHeight -
+                          _appBarFoldedHeight -
+                          _dayIndicatorHeight)
+                      .abs() <
+                  20) {
+                setState(() {
+                  _currentDay = i;
+                  _scrollToDay(i, dayIndicator: true, list: false);
+                });
+                detected = true;
+                break;
+              }
+            }
+          }
+          // 2 - moving back to the previous day
+          if (!detected) {
+            // i > 0 to exclude the first day
+            for (int i = trip.duration - 1; i > 0; i--) {
+              if (_dayLabelKeys[i].currentContext != null) {
+                final bottomPos = _dayLabelKeys[i].globalPaintBounds!.bottom;
+                if ((bottomPos - h * 0.8).abs() < 20) {
+                  setState(() {
+                    _currentDay = i - 1;
+                    _scrollToDay(_currentDay, dayIndicator: true, list: false);
+                  });
+                  break;
+                }
+              }
+            }
+          }
+        }
+
         // determine if title should show based on current scroll position
         final isNotExpanded = _scrollController.hasClients &&
-            _scrollController.offset > kExpandedHeight - kToolbarHeight;
+            _scrollController.offset > _appBarExpandedHeight - kToolbarHeight;
+
         // Find TripSummaryCard's position.
         late final bool summaryIsHidden;
-        if (_key.currentContext != null) {
-          final box = _key.currentContext?.findRenderObject() as RenderBox;
-          final position =
-              box.localToGlobal(Offset.zero); // get global position
-          summaryIsHidden = position.dy + (_tscHeight ?? 100) / 2 < 75;
+        if (_tscKey.currentContext != null) {
+          // tiny name clash with line 65 but whatever...
+          final bottomPos = _tscKey.globalPaintBounds!.bottom;
+          summaryIsHidden =
+              (bottomPos - _safeAreaHeight - _appBarFoldedHeight) < 0;
         } else {
           summaryIsHidden = false;
         }
 
         if (isNotExpanded != _showAppBar) {
           setState(() {
-            // update only the fields that need updating
             _showAppBar = isNotExpanded;
           });
         }
@@ -77,19 +191,70 @@ class _TripScreenState extends State<TripScreen> {
             _showCalendarIcon = summaryIsHidden;
           });
         }
-        // TODO: Update _currentDay
       });
-    // Normally, 1 second is enough for the trip card to be rendered. If not,
-    // the TripSummaryCard will render an empty card of 300px heihgt by default.
-    Future.delayed(const Duration(seconds: 1), () {
-      if (_key.currentContext != null) {
-        if (_key.currentContext!.size != null) {
+
+    // get some positions after build() is done
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      // get height of TripSummaryCard
+      if (_tscKey.currentContext != null) {
+        if (_tscKey.currentContext!.size != null) {
           setState(() {
-            _tscHeight = _key.currentContext!.size!.height;
+            _tscHeight = _tscKey.currentContext!.size!.height;
           });
         }
       }
+
+      // get the position of the day labels
+      final headerScrollDistance =
+          (_appBarExpandedHeight - _appBarFoldedHeight) + // CrazyAppBar
+              _tscHeight! + // TripSummaryCard
+              30 * 2 * rh; // TripSummaryCard's padding
+
+      _dayLabelPositions = [headerScrollDistance];
+
+      // accumulated sum
+      double scrollDistanceSum = headerScrollDistance;
+
+      // get height of each day's activities
+      for (int i = 0; i < trip.duration - 1; i++) {
+        // find activities
+        final nextDay = trip.startDate.add(Duration(days: i + 1));
+        final previousDate = nextDay.subtract(const Duration(days: 2));
+        final previousDay = DateTime(previousDate.year, previousDate.month,
+            previousDate.day, 23, 59, 59);
+        final activitiesOfTheDay = trip.activities
+            .where((a) =>
+                a.startTime.isBefore(nextDay) &&
+                a.startTime.isAfter(previousDay))
+            .toList();
+
+        // add basic activities
+        scrollDistanceSum += activitiesOfTheDay
+                .where((a) =>
+                    a.type != LocationType.accommodation &&
+                    a.type != LocationType.transportation)
+                .toList()
+                .length *
+            160 *
+            rh;
+
+        // add transportation
+        scrollDistanceSum += activitiesOfTheDay
+                .where((a) => a.type == LocationType.transportation)
+                .toList()
+                .length *
+            45 *
+            rh;
+
+        // add title and separator (content: padding before & after text,
+        // padding before the dash separator, text, and the dash separator)
+        scrollDistanceSum += (20 * 2 + 20) * rh + 31 + 1;
+
+        _dayLabelPositions.add(scrollDistanceSum);
+      }
+      print(_dayLabelPositions);
     });
+
     super.initState();
   }
 
@@ -101,10 +266,11 @@ class _TripScreenState extends State<TripScreen> {
         slivers: [
           // 标题栏
           CrazyAppBar(
+            height: _appBarFoldedHeight,
             showCalendarIcon: _showCalendarIcon,
-            kExpandedHeight: kExpandedHeight,
+            kExpandedHeight: _appBarExpandedHeight,
             trip: trip,
-            heroTag: _heroTag,
+            heroTag: _tscHeroTag,
             tscHeight: _tscHeight,
           ),
           // 行程概览
@@ -132,7 +298,7 @@ class _TripScreenState extends State<TripScreen> {
                   ],
                 ),
                 child: SizedBox(
-                  height: dayIndicatorHeight,
+                  height: _dayIndicatorHeight,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
@@ -141,64 +307,71 @@ class _TripScreenState extends State<TripScreen> {
                       trip.duration,
                       (index) {
                         if (index == _currentDay) {
-                          // final boxWidth = 60 * rw;
                           return GestureDetector(
+                            key: _dayChipKeys[index],
                             onTap: () {
                               setState(() {
                                 _currentDay = index;
                               });
+                              _scrollToDay(_currentDay,
+                                  dayIndicator: true, list: true);
                             },
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  FittedBox(
-                                    child: Text(
-                                      '第 ${index + 1} 天',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white70,
-                                        fontSize: 19 * rw,
+                                  EdgeInsets.symmetric(horizontal: 10 * rw),
+                              child: SizedBox(
+                                width: 80 * rw,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    FittedBox(
+                                      child: Text(
+                                        '第 ${index + 1} 天',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 19 * rw,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  DecoratedBox(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      // trip
-                                      //     .getCoverLocation()
-                                      //     .palette!
-                                      //     .color
+                                    DecoratedBox(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                      ),
+                                      child: SizedBox(
+                                        height: 4 * rh,
+                                        width: 48 * rw,
+                                      ),
                                     ),
-                                    child: SizedBox(
-                                      height: 4 * rh,
-                                      width: 48 * rw,
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
                         } else {
                           return GestureDetector(
+                            key: _dayChipKeys[index],
                             onTap: () {
                               setState(() {
                                 _currentDay = index;
                               });
+                              _scrollToDay(_currentDay,
+                                  dayIndicator: true, list: true);
                             },
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Center(
-                                child: Text(
-                                  '第 ${index + 1} 天',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    color: Colors.white60,
-                                    fontSize: 18 * rw,
-                                    // fontWeight: FontWeight.bold,
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: SizedBox(
+                                width: 80 * rw,
+                                child: Center(
+                                  child: Text(
+                                    '第 ${index + 1} 天',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 18 * rw,
+                                      // fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -206,14 +379,16 @@ class _TripScreenState extends State<TripScreen> {
                           );
                         }
                       },
-                    ) // add padding
+                    ) // add front and trailing padding
                       ..insert(0, SizedBox(width: 10 * rw))
-                      ..add(SizedBox(width: 10 * rw)),
+                      ..add(SizedBox(
+                          width: 18 *
+                              rw)), // extra 8px to counter weird scroll effect
                   ),
                 ),
               ),
-              minHeight: dayIndicatorHeight,
-              maxHeight: dayIndicatorHeight,
+              minHeight: _dayIndicatorHeight,
+              maxHeight: _dayIndicatorHeight,
             ),
             pinned: true,
           ),
@@ -223,37 +398,59 @@ class _TripScreenState extends State<TripScreen> {
               (context, index) {
                 if (index == 0) {
                   // top padding
-                  return SizedBox(
-                    height: 20 * rh,
-                  );
+                  return SizedBox(height: 20 * rh);
                 } else if (index == trip.activities.length + 1) {
                   // trailing text
-                  // TODO: Prettify this
-                  return SizedBox(
-                    height: 50 * rh,
-                    child: const Center(child: Text('行程结束')),
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20 * rh, bottom: 10 * rh),
+                        child: const DashLineSeparator(
+                          color: Colors.black54,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom,
+                        ),
+                        child: const Text(
+                          '行程结束',
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 } else {
-                  return GestureDetector(
+                  final act = trip.activities[index - 1];
+                  final activityCard = GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(
-                        HeroDialogRoute(
-                          builder: (context) {
-                            return ChangeNotifierProvider.value(
-                              value: trip.activities[index - 1].location,
-                              child: Center(
-                                child: LargeCard(
-                                  h * 0.75,
-                                  rw,
-                                  w: w,
-                                  heroTag:
-                                      'activity-card-${trip.id}-${index - 1}',
+                      if (act.type == LocationType.transportation) {
+                        // TODO: Open transportation info
+                        null;
+                      } else {
+                        Navigator.of(context).push(
+                          HeroDialogRoute(
+                            builder: (context) {
+                              return ChangeNotifierProvider.value(
+                                value: act.location,
+                                child: Center(
+                                  child: LargeCard(
+                                    h * 0.75,
+                                    rw,
+                                    w: w,
+                                    heroTag:
+                                        'activity-card-${trip.id}-${index - 1}',
+                                    remarks:
+                                        act.remarks == '' ? null : act.remarks,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
+                              );
+                            },
+                          ),
+                        );
+                      }
                     },
                     // MUST wrap whatever widget inside an unconstrained box so that
                     // its parents can't dictate its constraints. This is needed
@@ -266,123 +463,47 @@ class _TripScreenState extends State<TripScreen> {
                       ),
                     ),
                   );
+                  // check if it's the first activity of the day
+                  final previousDay = index >= 2
+                      ? trip.activities[index - 2].startTime.day
+                      : act.startTime.day - 1;
+                  if (act.startTime.day == previousDay + 1) {
+                    final dayInTrip =
+                        act.startTime.day - trip.activities[0].startTime.day;
+                    return Column(
+                      children: [
+                        if (dayInTrip != 0)
+                          Padding(
+                            padding: EdgeInsets.all(20.0 * rh),
+                            child: const DashLineSeparator(
+                              color: Colors.black54,
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20 * rh),
+                          child: Text(
+                            '第 ${dayInTrip + 1} 天',
+                            key: _dayLabelKeys[dayInTrip],
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 22 * rh,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        activityCard,
+                      ],
+                    );
+                  } else {
+                    return activityCard;
+                  }
                 }
               },
               childCount: trip.activities.length + 2, // plus two paddings
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// This is deprecatred because it's not scrollable and it does not interact.
-class DayIndicator extends StatelessWidget {
-  const DayIndicator({
-    Key? key,
-    required this.dayIndicatorHeight,
-    required int currentDay,
-    required this.trip,
-    required this.palette,
-    required this.rh,
-    required this.rw,
-  })  : _currentDay = currentDay,
-        super(key: key);
-
-  final double dayIndicatorHeight;
-  final int _currentDay;
-  final Trip trip;
-  final PaletteColor palette;
-  final double rh;
-  final double rw;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(25.0),
-        topLeft: Radius.circular(25.0),
-      ),
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 5,
-                spreadRadius: 2,
-                blurStyle: BlurStyle.outer,
-              ),
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                palette.color.withOpacity(0.5),
-                ColorPalette.splitComplimentary(palette.color)
-                    .last
-                    .withOpacity(0.5),
-              ],
-            ),
-          ),
-          child: SizedBox(
-            height: dayIndicatorHeight,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // crossAxisAlignment: CrossAxisAlignment.end,
-                children: List.generate(
-                  trip.duration,
-                  (index) {
-                    if (index == _currentDay) {
-                      final boxWidth = 60 * rw;
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: boxWidth,
-                              child: FittedBox(
-                                child: Text(
-                                  '第 $index 天',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            DecoratedBox(
-                              decoration: BoxDecoration(color: palette.color),
-                              child: SizedBox(
-                                height: 5 * rh,
-                                width: boxWidth * 0.8,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Text(
-                        '第 $index 天',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 18 * rw,
-                          // fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -395,6 +516,7 @@ class CrazyAppBar extends StatelessWidget {
     required this.kExpandedHeight,
     required this.trip,
     required String heroTag,
+    required this.height,
     this.tscHeight,
   })  : _showCalendarIcon = showCalendarIcon,
         _heroTag = heroTag,
@@ -404,6 +526,7 @@ class CrazyAppBar extends StatelessWidget {
   final double kExpandedHeight;
   final Trip trip;
   final String _heroTag;
+  final double height;
   final double? tscHeight;
 
   @override
@@ -445,7 +568,7 @@ class CrazyAppBar extends StatelessWidget {
         ),
       ],
       expandedHeight: kExpandedHeight,
-      toolbarHeight: 75,
+      toolbarHeight: height,
       pinned: true,
       stretch: true,
       onStretchTrigger: () async {

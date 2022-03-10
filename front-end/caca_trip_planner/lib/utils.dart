@@ -1,10 +1,10 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
+
+import '../helpers/cable_car_icon_icons.dart';
 
 class Utils {
   static const double h13pm = 926.0;
@@ -58,12 +58,31 @@ extension Validator on String {
     return length >= 8;
   }
 
-  Icon toTransportationIcon() {
+  IconData toTransportationIcon() {
     // Following are reserved names for transportation. Each matches an icon.
-// 骑自行车、骑电动车、步行、打车、公交、地铁、驾车、轮渡、电车、索道
+    // 骑自行车、骑电动车、步行、打车/驾车、公交、地铁、轮渡、电车、索道
     switch (this) {
+      case '骑自行车':
+        return Icons.directions_bike;
+      case '骑电动车':
+        return Icons.bike_scooter;
+      case '步行':
+        return Icons.directions_walk;
+      case '打车':
+      case '驾车':
+        return Icons.directions_car;
+      case '公交':
+        return Icons.directions_bus;
+      case '地铁':
+        return Icons.directions_subway;
+      case '轮渡':
+        return Icons.directions_ferry;
+      case '电车':
+        return Icons.tram;
+      case '索道':
+        return CableCarIcon.iconData;
       default:
-        return const Icon(Icons.rocket);
+        return Icons.rocket;
     }
   }
 }
@@ -114,7 +133,7 @@ extension IntExtension on int {
     switch (measure) {
       case TimeMeasure.minute:
         {
-          if (this < 30) {
+          if (this < 60) {
             return '$this 分钟';
           } else {
             // longer than 30 minutes
@@ -153,6 +172,20 @@ extension ColorExtension on Color {
         hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
 
     return hslLight.toColor();
+  }
+}
+
+/// For obtaining the absolute position of a widget on screen.
+extension GlobalKeyExtension on GlobalKey {
+  Rect? get globalPaintBounds {
+    final renderObject = currentContext?.findRenderObject();
+    final translation = renderObject?.getTransformTo(null).getTranslation();
+    if (translation != null && renderObject?.paintBounds != null) {
+      final offset = Offset(translation.x, translation.y);
+      return renderObject!.paintBounds.shift(offset);
+    } else {
+      return null;
+    }
   }
 }
 
