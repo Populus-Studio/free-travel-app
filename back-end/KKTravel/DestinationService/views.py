@@ -9,16 +9,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 
+# 使用自定义paging
+from Utils.paging import api_paging
 
-# B1-2（暂未实现查询功能）
+
+# B1-2
 class DestinationListManager(APIView):
     def get(self, request):
-        keywords = request.query_params.dict().search
-        sortBy = request.query_params.dict().sortBy
-        order = request.query_params.dict().order
-
-        print("keyword: %s" % keywords)
-        print(type(keywords))
+        print(request.query_params.dict())
+        keywords = request.query_params.dict()['search']
+        sortBy = request.query_params.dict()['sortBy']
+        order = request.query_params.dict()['order']
 
         # 筛选查询关键词
         destinations = DestinationModel.objects.all()
@@ -28,7 +29,7 @@ class DestinationListManager(APIView):
             if order == "ASC":
                 destinations = destinations.order_by(sortBy)
             elif order == "DESC":
-                destinations = destinations.order_by(sortBy, reversed=True)
+                destinations = destinations.order_by("-" + sortBy)
             else:
                 res_data = {
                     "code": 400,
@@ -36,8 +37,12 @@ class DestinationListManager(APIView):
                 }
                 return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
 
-        dests_serializer = DestinationSerializer(destinations, many=True)
-        return Response(dests_serializer.data, status=status.HTTP_200_OK)
+        # dests_serializer = DestinationSerializer(destinations, many=True)
+        # res_data = {
+        #     "_embedded": {
+        #         "destinationDtoList": dests_serializer.data}
+        # }
+        return api_paging(destinations, request, DestinationSerializer, "destination")
 
 
 # B1-1
@@ -50,6 +55,8 @@ class DestinationSingleManager(APIView):
             raise Http404
         dest_serializer = DestinationSerializer(dest_obj)
         res_data = {
+            "code": 200,
+            "msg": "获取目的地成功",
             "destination": dest_serializer.data
         }
         return Response(res_data, status=status.HTTP_200_OK)
@@ -73,7 +80,8 @@ class DestinationMutiAdd(APIView):
                 dest_post.save()
                 res_data = {
                     "code": 201,
-                    "msg": "新增目的地成功"
+                    "msg": "新增目的地成功",
+                    "data": dest_post.data
                 }
                 return Response(res_data, status=status.HTTP_201_CREATED)
             else:
@@ -82,17 +90,41 @@ class DestinationMutiAdd(APIView):
             print(e)
             res_data = {
                 "code": 409,
-                "msg": "新增目的地失败,错误码 " + str(e)
+                "msg": "新增目的地失败",
+                "detail": str(e)
             }
             return Response(res_data, status=status.HTTP_409_CONFLICT)
 
 
-# B2-2（暂未实现查询功能）
+# B2-2
 class LocationListManager(APIView):
     def get(self, request, format=None):
+        keywords = request.query_params.dict()['search']
+        sortBy = request.query_params.dict()['sortBy']
+        order = request.query_params.dict()['order']
+
+        # 筛选查询关键词
         locations = LocationModel.objects.all()
-        locas_serializer = LoactionSerializer(locations, many=True)
-        return Response(locas_serializer.data)
+        if keywords != "":
+            locations = locations.filter(name__contains=keywords)
+        if sortBy != "" and order != "":
+            if order == "ASC":
+                locations = locations.order_by(sortBy)
+            elif order == "DESC":
+                locations = locations.order_by("-" + sortBy)
+            else:
+                res_data = {
+                    "code": 400,
+                    "msg": "order参数错误，请检查"
+                }
+                return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
+
+        # locas_serializer = LoactionSerializer(locations, many=True)
+        # res_data = {
+        #     "_embedded": {
+        #         "siteDtoList": locas_serializer.data}
+        # }
+        return api_paging(locations, request, LoactionSerializer, "site")
 
 
 # B2-1
@@ -105,6 +137,8 @@ class LocationSingleManager(APIView):
             raise Http404
         loca_serializer = LoactionSerializer(loca_obj)
         res_data = {
+            "code": 200,
+            "msg": "获取地点成功",
             "site": loca_serializer.data
         }
         return Response(res_data, status=status.HTTP_200_OK)
@@ -128,7 +162,8 @@ class LocationMutiAdd(APIView):
                 loca_post.save()
                 res_data = {
                     "code": 201,
-                    "msg": "新增地点成功"
+                    "msg": "新增地点成功",
+                    "data": loca_post.data
                 }
                 return Response(res_data, status=status.HTTP_201_CREATED)
             else:
@@ -137,7 +172,8 @@ class LocationMutiAdd(APIView):
             print(e)
             res_data = {
                 "code": 409,
-                "msg": "新增地点失败,错误码 " + str(e)
+                "msg": "新增地点失败",
+                "detail": str(e)
             }
             return Response(res_data, status=status.HTTP_409_CONFLICT)
 
