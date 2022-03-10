@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
-    'UserAuth'
+    'UserAuth',
+    'DestinationService',
+    'TripService'
 ]
 
 MIDDLEWARE = [
@@ -148,7 +150,10 @@ REST_FRAMEWORK = {
     # 设置默认api授权信息，即所有api默认全部需要jwt授权后才可访问
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    # 设置分页方式
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 
 }
 

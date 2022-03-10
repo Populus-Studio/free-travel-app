@@ -1,0 +1,26 @@
+from django.db import models
+
+
+# 目的地数据模型
+class DestinationModel(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True)
+    parent = models.IntegerField(default=0)
+
+
+# 地点数据模型
+class LocationModel(models.Model):
+    name = models.CharField(max_length=200)
+    # 暂时使用字符串来存储多个标签
+    label = models.TextField(blank=True)
+    type = models.CharField(max_length=50)
+    destination = models.ForeignKey(DestinationModel, related_name="destination", on_delete=models.CASCADE)
+    address = models.TextField()
+    description = models.TextField(blank=True)
+    cost = models.IntegerField(default=0)
+    # 用整数表示时间，单位是”分钟“
+    timeCost = models.IntegerField(default=0)
+    rate = models.FloatField(default=0.0)
+    heat = models.IntegerField(default=0)
+    opentime = models.CharField(max_length=200,blank=True)
+    img_url = models.URLField(blank=True)
