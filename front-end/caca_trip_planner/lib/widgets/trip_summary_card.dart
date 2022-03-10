@@ -162,8 +162,10 @@ class TripSummaryCardContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   ...List.generate(trip.duration, (index) {
-                    final nextDay =
+                    final nextDate =
                         trip.startDate.add(Duration(days: index + 1));
+                    final nextDay = DateTime(
+                        nextDate.year, nextDate.month, nextDate.day, 0, 0, 0);
                     final previousDate =
                         nextDay.subtract(const Duration(days: 2));
                     final previousDay = DateTime(previousDate.year,

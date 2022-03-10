@@ -218,7 +218,9 @@ class _TripScreenState extends State<TripScreen> {
       // get height of each day's activities
       for (int i = 0; i < trip.duration - 1; i++) {
         // find activities
-        final nextDay = trip.startDate.add(Duration(days: i + 1));
+        final nextDate = trip.startDate.add(Duration(days: i + 1));
+        final nextDay =
+            DateTime(nextDate.year, nextDate.month, nextDate.day, 0, 0, 0);
         final previousDate = nextDay.subtract(const Duration(days: 2));
         final previousDay = DateTime(previousDate.year, previousDate.month,
             previousDate.day, 23, 59, 59);
