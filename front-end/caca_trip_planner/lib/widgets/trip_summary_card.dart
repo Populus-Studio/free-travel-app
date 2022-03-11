@@ -121,7 +121,7 @@ class TripSummaryCardContent extends StatelessWidget {
     // TODO: get height
     return Container(
       height: tscHeight,
-      width: _width13pm * rw,
+      width: (_width13pm + 10) * rw,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: trip.getCoverLocation().palette!.color,
@@ -182,7 +182,7 @@ class TripSummaryCardContent extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 6,
-                        horizontal: 4,
+                        horizontal: 1,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,

@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
                   color: Colors.white,
                 ),
                 headline3: const TextStyle(
-                  fontSize: 17,
+                  fontSize: 16,
                   color: Color.fromRGBO(255, 255, 255, 0.8),
                 ),
                 // TODO: Add textTheme for: heading1

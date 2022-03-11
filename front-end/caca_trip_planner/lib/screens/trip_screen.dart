@@ -426,45 +426,65 @@ class _TripScreenState extends State<TripScreen> {
                   );
                 } else {
                   final act = trip.activities[index - 1];
-                  final activityCard = GestureDetector(
-                    onTap: () {
-                      if (act.type == LocationType.transportation) {
-                        // TODO: Open transportation info
-                        null;
-                      } else {
-                        Navigator.of(context).push(
-                          HeroDialogRoute(
-                            builder: (context) {
-                              return ChangeNotifierProvider.value(
-                                value: act.location,
-                                child: Center(
-                                  child: LargeCard(
-                                    h * 0.75,
-                                    rw,
-                                    w: w,
-                                    heroTag:
-                                        'activity-card-${trip.id}-${index - 1}',
-                                    remarks:
-                                        act.remarks == '' ? null : act.remarks,
-                                  ),
-                                ),
-                              );
-                            },
+
+                  final activityCard = Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (act.type != LocationType.transportation)
+                        Row(
+                          children: [
+                            SizedBox(width: 54 * rw), // FIXME: Why 54?
+                            DecoratedBox(
+                              decoration:
+                                  const BoxDecoration(color: Colors.grey),
+                              child: SizedBox(
+                                height: 160 * rh,
+                                width: 5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      GestureDetector(
+                        onTap: () {
+                          if (act.type == LocationType.transportation) {
+                            // TODO: Open transportation info
+                            null;
+                          } else {
+                            Navigator.of(context).push(
+                              HeroDialogRoute(
+                                builder: (context) {
+                                  return ChangeNotifierProvider.value(
+                                    value: act.location,
+                                    child: Center(
+                                      child: LargeCard(
+                                        h * 0.75,
+                                        rw,
+                                        w: w,
+                                        heroTag:
+                                            'activity-card-${trip.id}-${index - 1}',
+                                        activity: act,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        },
+                        // MUST wrap whatever widget inside an unconstrained box so that
+                        // its parents can't dictate its constraints. This is needed
+                        // because Slivers naturally ignores all children constraints
+                        // to make the special effects.
+                        child: UnconstrainedBox(
+                          child: ActivityCard(
+                            heroTag: 'activity-card-${trip.id}-${index - 1}',
+                            activity: trip.activities[index - 1],
                           ),
-                        );
-                      }
-                    },
-                    // MUST wrap whatever widget inside an unconstrained box so that
-                    // its parents can't dictate its constraints. This is needed
-                    // because Slivers naturally ignores all children constraints
-                    // to make the special effects.
-                    child: UnconstrainedBox(
-                      child: ActivityCard(
-                        heroTag: 'activity-card-${trip.id}-${index - 1}',
-                        activity: trip.activities[index - 1],
+                        ),
                       ),
-                    ),
+                    ],
                   );
+
                   // check if it's the first activity of the day
                   final previousDay = index >= 2
                       ? trip.activities[index - 2].startTime.day
