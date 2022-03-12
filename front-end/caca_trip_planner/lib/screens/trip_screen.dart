@@ -127,6 +127,7 @@ class _TripScreenState extends State<TripScreen> {
     _dayIndicatorController = ScrollController()..addListener(() {});
     _scrollController = ScrollController()
       ..addListener(() {
+        // return;
         if (!_disableAutoScrolling) {
           // 1 - moving on to the next day
           bool detected = false;
@@ -173,7 +174,6 @@ class _TripScreenState extends State<TripScreen> {
         // Find TripSummaryCard's position.
         late final bool summaryIsHidden;
         if (_tscKey.currentContext != null) {
-          // tiny name clash with line 65 but whatever...
           final bottomPos = _tscKey.globalPaintBounds!.bottom;
           summaryIsHidden =
               (bottomPos - _safeAreaHeight - _appBarFoldedHeight) < 0;
@@ -476,9 +476,12 @@ class _TripScreenState extends State<TripScreen> {
                         // because Slivers naturally ignores all children constraints
                         // to make the special effects.
                         child: UnconstrainedBox(
-                          child: ActivityCard(
-                            heroTag: 'activity-card-${trip.id}-${index - 1}',
-                            activity: trip.activities[index - 1],
+                          child: ChangeNotifierProvider.value(
+                            value: trip.activities[index - 1].location,
+                            child: ActivityCard(
+                              heroTag: 'activity-card-${trip.id}-${index - 1}',
+                              activity: trip.activities[index - 1],
+                            ),
                           ),
                         ),
                       ),

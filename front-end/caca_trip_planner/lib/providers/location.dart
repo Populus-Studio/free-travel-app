@@ -70,6 +70,7 @@ class Location with ChangeNotifier {
   void toggleFavorite() {
     isFavorite = !isFavorite;
     // TODO: Update to server (toggle back if it's unsuccessful)
+    notifyListeners();
   }
 }
 

@@ -15,19 +15,20 @@
 			dependencies = (
 			);
 			name = Flutter;
+			productName = Flutter;
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		05A4F29CE9408782858FE576C9BA6B65 /* VibrationPluginSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F15FF01F49B30F4089CFAA8F8C72ADD /* VibrationPluginSwift.swift */; };
-		1A34DE2E04FC2615B5835BD79DEBD20C /* VibrationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D2B29D7AF9C2665F7C035AF3C6A1E2A8 /* VibrationPlugin.m */; };
+		34176D2A4B4E6AFCB150AE563C17C13A /* VibrationPluginSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B8F224C717A7B523979F03EE7975B3D /* VibrationPluginSwift.swift */; };
 		47FB78615A2F0A531D6C079CFA730230 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		538F5EDB58685128AD46561EB0CE3C0C /* Pods-Runner-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 96BF45FBE2BC9AD7B2D7E56D01B5EE46 /* Pods-Runner-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5E887880E76E7DBD6FE62E5FC873D694 /* vibration-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F645FB4FAB04078D43952DF1B6921C6 /* vibration-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5E887880E76E7DBD6FE62E5FC873D694 /* vibration-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F3FFB47551C13766839622915A3A6B4 /* vibration-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		65114FCCF99D936512CF8508D10C9D34 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		B09C3A811DFCC877BBC33B0F136EE303 /* Pods-Runner-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B3C932BD54DBB963102A89E0F9E3948 /* Pods-Runner-dummy.m */; };
-		C21F414D87B76A6DF454CB92C391C389 /* VibrationPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7019573A8D655AB641559B32A9A870 /* VibrationPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D7FDB19A5695C061D47ADEB466D299BA /* vibration-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 795782EF81BC6C1BFB32FDA6880BD85E /* vibration-dummy.m */; };
+		C81E2A307B63327162191ADDB7E71529 /* VibrationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 45037A88076FE1AAF83D27C004CA4612 /* VibrationPlugin.m */; };
+		D7FDB19A5695C061D47ADEB466D299BA /* vibration-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 36E1AD9536FFC7197CFD877A05B3F82D /* vibration-dummy.m */; };
+		D99C755BEADD37124C3CE1118FB52B62 /* VibrationPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 549775C15538AB9DB2A59398B6EE657E /* VibrationPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,35 +56,35 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B8F224C717A7B523979F03EE7975B3D /* VibrationPluginSwift.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VibrationPluginSwift.swift; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPluginSwift.swift"; sourceTree = "<group>"; };
 		0FB8641E5D03C12CD47AF986DFDAC364 /* Flutter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Flutter.debug.xcconfig; sourceTree = "<group>"; };
-		12068CBF498D8815F8367B8E7CED8FA4 /* vibration.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = vibration.release.xcconfig; sourceTree = "<group>"; };
 		18936E366D549FDBFE8BEBD11BE2CB7B /* Flutter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Flutter.release.xcconfig; sourceTree = "<group>"; };
-		1F15FF01F49B30F4089CFAA8F8C72ADD /* VibrationPluginSwift.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VibrationPluginSwift.swift; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPluginSwift.swift"; sourceTree = "<group>"; };
+		2526641F543406E78ACD4B1EEC8AFFAC /* vibration.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = vibration.modulemap; sourceTree = "<group>"; };
+		2BFAC7C2027792F3F47E44CB90FF8116 /* vibration-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "vibration-Info.plist"; sourceTree = "<group>"; };
+		315B428F75D33679144B7B7395103379 /* vibration.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = vibration.debug.xcconfig; sourceTree = "<group>"; };
 		317C26B9A7CEDD34ADE8F37FAAB7AC20 /* Pods-Runner-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Runner-frameworks.sh"; sourceTree = "<group>"; };
-		348D162C48090E5CE783879C2F74EA24 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/LICENSE"; sourceTree = "<group>"; };
-		35F411575426C106429962430C58EB00 /* vibration.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = vibration.debug.xcconfig; sourceTree = "<group>"; };
-		37CC0D86288BB79CA47CA10AE16CE452 /* Flutter.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = Flutter.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		4874822867D2D40E4A4D03137C9F5D69 /* vibration.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = vibration.podspec; path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/ios/vibration.podspec"; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		4F645FB4FAB04078D43952DF1B6921C6 /* vibration-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "vibration-umbrella.h"; sourceTree = "<group>"; };
+		352F7F7B1612F9E08C75BFA38FC83F7B /* vibration.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = vibration.release.xcconfig; sourceTree = "<group>"; };
+		36E1AD9536FFC7197CFD877A05B3F82D /* vibration-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "vibration-dummy.m"; sourceTree = "<group>"; };
+		37CC0D86288BB79CA47CA10AE16CE452 /* Flutter.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = Flutter.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		45037A88076FE1AAF83D27C004CA4612 /* VibrationPlugin.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VibrationPlugin.m; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPlugin.m"; sourceTree = "<group>"; };
 		51825CD8F0558EFA53D9510F0E5BFA16 /* Pods-Runner-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Runner-Info.plist"; sourceTree = "<group>"; };
-		57D2B5E198FD71B27D926A98A721D7F6 /* vibration-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "vibration-Info.plist"; sourceTree = "<group>"; };
-		669E8F25E1897672BDB80B7EB784DA24 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_Runner.framework; path = "Pods-Runner.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6F7019573A8D655AB641559B32A9A870 /* VibrationPlugin.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = VibrationPlugin.h; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPlugin.h"; sourceTree = "<group>"; };
+		549775C15538AB9DB2A59398B6EE657E /* VibrationPlugin.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = VibrationPlugin.h; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPlugin.h"; sourceTree = "<group>"; };
+		54C3CC413521E0B2D5A8FF7BE19006DE /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/LICENSE"; sourceTree = "<group>"; };
+		669E8F25E1897672BDB80B7EB784DA24 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		795782EF81BC6C1BFB32FDA6880BD85E /* vibration-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "vibration-dummy.m"; sourceTree = "<group>"; };
 		7B3C932BD54DBB963102A89E0F9E3948 /* Pods-Runner-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Runner-dummy.m"; sourceTree = "<group>"; };
 		96BF45FBE2BC9AD7B2D7E56D01B5EE46 /* Pods-Runner-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Runner-umbrella.h"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9F3FFB47551C13766839622915A3A6B4 /* vibration-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "vibration-umbrella.h"; sourceTree = "<group>"; };
 		9F79F8269DC34AC56BB3D1D9652C0D86 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
-		A4EFC80AA66E3F0BB9B3CF0FDD9E85A1 /* vibration.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = vibration.modulemap; sourceTree = "<group>"; };
-		B71322C903FD027C7797BD64415C26B1 /* vibration-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "vibration-prefix.pch"; sourceTree = "<group>"; };
+		B77A9A07AB85475C694A4FA1F0B2D85A /* vibration.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = vibration.podspec; path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/ios/vibration.podspec"; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C6EA98402A94995D022D330B64B5203D /* Pods-Runner-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Runner-acknowledgements.markdown"; sourceTree = "<group>"; };
 		CDAECCF4B5E08124ED410F09FD5A5DF9 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
-		D2B29D7AF9C2665F7C035AF3C6A1E2A8 /* VibrationPlugin.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = VibrationPlugin.m; path = "../../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/ios/Classes/VibrationPlugin.m"; sourceTree = "<group>"; };
 		D2FA70CA298C392CB8332ADEEDD1CE85 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		D9F2B4CB813B4BDC4D164C6E0868930A /* Pods-Runner-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Runner-acknowledgements.plist"; sourceTree = "<group>"; };
-		F22845DE2655CF256C870C2391064243 /* vibration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = vibration.framework; path = vibration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F22845DE2655CF256C870C2391064243 /* vibration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vibration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F49C32B3B8CF59AB437BFD7314674868 /* Pods-Runner.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Runner.modulemap"; sourceTree = "<group>"; };
+		F643BBD32D169AB57F056448C56D6C05 /* vibration-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "vibration-prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,105 +107,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00F45792A566478428578EC2E284AFB0 /* caca_trip_planner */ = {
-			isa = PBXGroup;
-			children = (
-				38235B23F88102CBB9252F2F439831FA /* ios */,
-			);
-			name = caca_trip_planner;
-			path = caca_trip_planner;
-			sourceTree = "<group>";
-		};
 		01ECCAACF315BAE8FA120551A23C9DA0 /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
 				49A030BFE54616A7340D6E4D392F5DD1 /* Flutter */,
-				953B1013C08C087A402E47B1E92B183F /* vibration */,
+				587F0F03102924CC7FE4152C44E56CEB /* vibration */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
-		0CF56FE01040AAF6FCB26E4154B55956 /* .. */ = {
+		10EB652581FF73963C4FD460D93A2268 /* caca_trip_planner */ = {
 			isa = PBXGroup;
 			children = (
-				247B50AE8D745C182EDD5C386FC1D24C /* .. */,
+				83B33E923FD0FB34D4876C44E9D44500 /* ios */,
 			);
-			name = ..;
-			path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.dartlang.org/vibration-1.7.4-nullsafety.0/ios";
+			path = caca_trip_planner;
 			sourceTree = "<group>";
 		};
-		0FCEA84E303D9167A65780C440F65AFE /* .. */ = {
+		1BEECFA71D84E7856B4DE34D5C66A032 /* .symlinks */ = {
 			isa = PBXGroup;
 			children = (
-				AFB1B0C99BE5683902E3969B10780F74 /* .. */,
+				49CC10DB8F736EF2398D2F9FBC4A7EB4 /* plugins */,
 			);
-			name = ..;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		1488B1BB686C95C86186C11B16CBE755 /* .symlinks */ = {
-			isa = PBXGroup;
-			children = (
-				B389B663EF263569C6C1E4BE486194B2 /* plugins */,
-			);
-			name = .symlinks;
 			path = .symlinks;
 			sourceTree = "<group>";
 		};
-		17A64C713FFA375EE5E8751D7CD013ED /* free-travel-app */ = {
+		258EE4044E629709F32FED1AA450ED4F /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				27BC4AA28F95C72602D56A648AA9FB31 /* front-end */,
+				2526641F543406E78ACD4B1EEC8AFFAC /* vibration.modulemap */,
+				36E1AD9536FFC7197CFD877A05B3F82D /* vibration-dummy.m */,
+				2BFAC7C2027792F3F47E44CB90FF8116 /* vibration-Info.plist */,
+				F643BBD32D169AB57F056448C56D6C05 /* vibration-prefix.pch */,
+				9F3FFB47551C13766839622915A3A6B4 /* vibration-umbrella.h */,
+				315B428F75D33679144B7B7395103379 /* vibration.debug.xcconfig */,
+				352F7F7B1612F9E08C75BFA38FC83F7B /* vibration.release.xcconfig */,
 			);
-			name = "free-travel-app";
-			path = "free-travel-app";
+			name = "Support Files";
+			path = "../../../../Pods/Target Support Files/vibration";
 			sourceTree = "<group>";
 		};
-		1C877DBF4BE504591BB3A5A81A859E15 /* Classes */ = {
+		2BE18BA5B631F58F0CFFA95E7D500203 /* Desktop */ = {
 			isa = PBXGroup;
 			children = (
-				6F7019573A8D655AB641559B32A9A870 /* VibrationPlugin.h */,
-				D2B29D7AF9C2665F7C035AF3C6A1E2A8 /* VibrationPlugin.m */,
-				1F15FF01F49B30F4089CFAA8F8C72ADD /* VibrationPluginSwift.swift */,
+				BC191277023056E4EC5260E97F74EA60 /* free-travel-app */,
 			);
-			name = Classes;
-			path = Classes;
+			path = Desktop;
 			sourceTree = "<group>";
 		};
-		247B50AE8D745C182EDD5C386FC1D24C /* .. */ = {
+		2FF948F7D1696805676E33228DE029BD /* .. */ = {
 			isa = PBXGroup;
 			children = (
-				88096F825DA95ACBDDFFAE26E2661AA2 /* .. */,
+				2BE18BA5B631F58F0CFFA95E7D500203 /* Desktop */,
 			);
-			name = ..;
 			path = ..;
 			sourceTree = "<group>";
 		};
-		27BC4AA28F95C72602D56A648AA9FB31 /* front-end */ = {
+		33AAD866105342B60A9499AC3AFB9749 /* .. */ = {
 			isa = PBXGroup;
 			children = (
-				00F45792A566478428578EC2E284AFB0 /* caca_trip_planner */,
+				F77241695F0023D70D5794374ABE2D5D /* .. */,
 			);
-			name = "front-end";
-			path = "front-end";
-			sourceTree = "<group>";
-		};
-		38235B23F88102CBB9252F2F439831FA /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				1488B1BB686C95C86186C11B16CBE755 /* .symlinks */,
-			);
-			name = ios;
-			path = ios;
-			sourceTree = "<group>";
-		};
-		3F07578148B0B1298CE0420F53DF5D45 /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				348D162C48090E5CE783879C2F74EA24 /* LICENSE */,
-				4874822867D2D40E4A4D03137C9F5D69 /* vibration.podspec */,
-			);
-			name = Pod;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		49A030BFE54616A7340D6E4D392F5DD1 /* Flutter */ = {
@@ -217,13 +181,12 @@
 			path = ../Flutter;
 			sourceTree = "<group>";
 		};
-		50CFB6E21FF1C7D5D8A3478583274783 /* .. */ = {
+		49CC10DB8F736EF2398D2F9FBC4A7EB4 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
-				7D28D46DEC0F79D419B3DF9CE6BE6A63 /* .. */,
+				FBA5718EE1FBDD2E8CEAD42E815BE8C4 /* vibration */,
 			);
-			name = ..;
-			path = ..;
+			path = plugins;
 			sourceTree = "<group>";
 		};
 		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
@@ -234,22 +197,24 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		60BE852549521139AABF17B773E854B4 /* .. */ = {
+		587F0F03102924CC7FE4152C44E56CEB /* vibration */ = {
 			isa = PBXGroup;
 			children = (
-				7B3FD7A33B0C8A1BCA3BF35AAC337984 /* Desktop */,
-			);
-			name = ..;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		6D33C60EE27F3D29A4B90D8743A25222 /* vibration */ = {
-			isa = PBXGroup;
-			children = (
-				C9E34059E714F075D040CAC0AA10AD3F /* ios */,
+				6DDF1DE18E688DA1A9D7F5F61633BB93 /* .. */,
+				D77BA2AA673A8543135E0B9734B4C6CF /* Pod */,
+				258EE4044E629709F32FED1AA450ED4F /* Support Files */,
 			);
 			name = vibration;
-			path = vibration;
+			path = ../.symlinks/plugins/vibration/ios;
+			sourceTree = "<group>";
+		};
+		6DDF1DE18E688DA1A9D7F5F61633BB93 /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				C7D101524077EDF1630B7BCBB275125D /* .. */,
+			);
+			name = ..;
+			path = "../../../../../../../../../Documents/flutter/.pub-cache/hosted/pub.flutter-io.cn/vibration-1.7.4-nullsafety.0/ios";
 			sourceTree = "<group>";
 		};
 		791C6E4B424AF06279F8918FA67B8ED6 /* Targets Support Files */ = {
@@ -287,84 +252,52 @@
 			path = "Target Support Files/Pods-Runner";
 			sourceTree = "<group>";
 		};
-		7B3FD7A33B0C8A1BCA3BF35AAC337984 /* Desktop */ = {
+		83B33E923FD0FB34D4876C44E9D44500 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				17A64C713FFA375EE5E8751D7CD013ED /* free-travel-app */,
+				1BEECFA71D84E7856B4DE34D5C66A032 /* .symlinks */,
 			);
-			name = Desktop;
-			path = Desktop;
-			sourceTree = "<group>";
-		};
-		7D28D46DEC0F79D419B3DF9CE6BE6A63 /* .. */ = {
-			isa = PBXGroup;
-			children = (
-				60BE852549521139AABF17B773E854B4 /* .. */,
-			);
-			name = ..;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		88096F825DA95ACBDDFFAE26E2661AA2 /* .. */ = {
-			isa = PBXGroup;
-			children = (
-				0FCEA84E303D9167A65780C440F65AFE /* .. */,
-			);
-			name = ..;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		953B1013C08C087A402E47B1E92B183F /* vibration */ = {
-			isa = PBXGroup;
-			children = (
-				0CF56FE01040AAF6FCB26E4154B55956 /* .. */,
-				3F07578148B0B1298CE0420F53DF5D45 /* Pod */,
-				B088B11D63196983B81C6CB5339B19DF /* Support Files */,
-			);
-			name = vibration;
-			path = ../.symlinks/plugins/vibration/ios;
-			sourceTree = "<group>";
-		};
-		AFB1B0C99BE5683902E3969B10780F74 /* .. */ = {
-			isa = PBXGroup;
-			children = (
-				50CFB6E21FF1C7D5D8A3478583274783 /* .. */,
-			);
-			name = ..;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		B088B11D63196983B81C6CB5339B19DF /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				A4EFC80AA66E3F0BB9B3CF0FDD9E85A1 /* vibration.modulemap */,
-				795782EF81BC6C1BFB32FDA6880BD85E /* vibration-dummy.m */,
-				57D2B5E198FD71B27D926A98A721D7F6 /* vibration-Info.plist */,
-				B71322C903FD027C7797BD64415C26B1 /* vibration-prefix.pch */,
-				4F645FB4FAB04078D43952DF1B6921C6 /* vibration-umbrella.h */,
-				35F411575426C106429962430C58EB00 /* vibration.debug.xcconfig */,
-				12068CBF498D8815F8367B8E7CED8FA4 /* vibration.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../../../../Pods/Target Support Files/vibration";
-			sourceTree = "<group>";
-		};
-		B389B663EF263569C6C1E4BE486194B2 /* plugins */ = {
-			isa = PBXGroup;
-			children = (
-				6D33C60EE27F3D29A4B90D8743A25222 /* vibration */,
-			);
-			name = plugins;
-			path = plugins;
-			sourceTree = "<group>";
-		};
-		C9E34059E714F075D040CAC0AA10AD3F /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				1C877DBF4BE504591BB3A5A81A859E15 /* Classes */,
-			);
-			name = ios;
 			path = ios;
+			sourceTree = "<group>";
+		};
+		89D1BEB6E808227443CA5D72959F6F05 /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				D51E48F200C49661BD5A829E7589B629 /* .. */,
+			);
+			path = ..;
+			sourceTree = "<group>";
+		};
+		913A3B819DE0B2ADDF480F33668CB770 /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				2FF948F7D1696805676E33228DE029BD /* .. */,
+			);
+			path = ..;
+			sourceTree = "<group>";
+		};
+		B6BCDC384C761E8494C3192E3EC151D0 /* front-end */ = {
+			isa = PBXGroup;
+			children = (
+				10EB652581FF73963C4FD460D93A2268 /* caca_trip_planner */,
+			);
+			path = "front-end";
+			sourceTree = "<group>";
+		};
+		BC191277023056E4EC5260E97F74EA60 /* free-travel-app */ = {
+			isa = PBXGroup;
+			children = (
+				B6BCDC384C761E8494C3192E3EC151D0 /* front-end */,
+			);
+			path = "free-travel-app";
+			sourceTree = "<group>";
+		};
+		C7D101524077EDF1630B7BCBB275125D /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				89D1BEB6E808227443CA5D72959F6F05 /* .. */,
+			);
+			path = ..;
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -386,12 +319,47 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D51E48F200C49661BD5A829E7589B629 /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				33AAD866105342B60A9499AC3AFB9749 /* .. */,
+			);
+			path = ..;
+			sourceTree = "<group>";
+		};
 		D5EAC3807A5AE052BA4732634CF0C608 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
 				37CC0D86288BB79CA47CA10AE16CE452 /* Flutter.podspec */,
 			);
 			name = Pod;
+			sourceTree = "<group>";
+		};
+		D77BA2AA673A8543135E0B9734B4C6CF /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				54C3CC413521E0B2D5A8FF7BE19006DE /* LICENSE */,
+				B77A9A07AB85475C694A4FA1F0B2D85A /* vibration.podspec */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		DA2DF5D57DF30F450EADC3D57F9B7C6E /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				549775C15538AB9DB2A59398B6EE657E /* VibrationPlugin.h */,
+				45037A88076FE1AAF83D27C004CA4612 /* VibrationPlugin.m */,
+				0B8F224C717A7B523979F03EE7975B3D /* VibrationPluginSwift.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		DAC176B76785D3805147DA0BF777325D /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				DA2DF5D57DF30F450EADC3D57F9B7C6E /* Classes */,
+			);
+			path = ios;
 			sourceTree = "<group>";
 		};
 		EFC73220555BB7C885268ABE08E16718 /* Support Files */ = {
@@ -404,6 +372,22 @@
 			path = "../Pods/Target Support Files/Flutter";
 			sourceTree = "<group>";
 		};
+		F77241695F0023D70D5794374ABE2D5D /* .. */ = {
+			isa = PBXGroup;
+			children = (
+				913A3B819DE0B2ADDF480F33668CB770 /* .. */,
+			);
+			path = ..;
+			sourceTree = "<group>";
+		};
+		FBA5718EE1FBDD2E8CEAD42E815BE8C4 /* vibration */ = {
+			isa = PBXGroup;
+			children = (
+				DAC176B76785D3805147DA0BF777325D /* ios */,
+			);
+			path = vibration;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -412,7 +396,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E887880E76E7DBD6FE62E5FC873D694 /* vibration-umbrella.h in Headers */,
-				C21F414D87B76A6DF454CB92C391C389 /* VibrationPlugin.h in Headers */,
+				D99C755BEADD37124C3CE1118FB52B62 /* VibrationPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,7 +457,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1240;
+				LastUpgradeCheck = 1320;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -518,8 +502,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7FDB19A5695C061D47ADEB466D299BA /* vibration-dummy.m in Sources */,
-				1A34DE2E04FC2615B5835BD79DEBD20C /* VibrationPlugin.m in Sources */,
-				05A4F29CE9408782858FE576C9BA6B65 /* VibrationPluginSwift.swift in Sources */,
+				C81E2A307B63327162191ADDB7E71529 /* VibrationPlugin.m in Sources */,
+				34176D2A4B4E6AFCB150AE563C17C13A /* VibrationPluginSwift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,7 +545,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -578,7 +562,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -767,7 +751,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -780,7 +764,7 @@
 		};
 		5A2989325E128F84C9BBA76841493C2F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 12068CBF498D8815F8367B8E7CED8FA4 /* vibration.release.xcconfig */;
+			baseConfigurationReference = 352F7F7B1612F9E08C75BFA38FC83F7B /* vibration.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -953,7 +937,7 @@
 		};
 		AB585FA21C43DB996530D5BD9C2FB23F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 35F411575426C106429962430C58EB00 /* vibration.debug.xcconfig */;
+			baseConfigurationReference = 315B428F75D33679144B7B7395103379 /* vibration.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1002,7 +986,7 @@
 		};
 		B506EC967E4166ACF4B4DAD2E63984D9 /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 12068CBF498D8815F8367B8E7CED8FA4 /* vibration.release.xcconfig */;
+			baseConfigurationReference = 352F7F7B1612F9E08C75BFA38FC83F7B /* vibration.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";

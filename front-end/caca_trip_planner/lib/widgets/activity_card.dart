@@ -1,6 +1,3 @@
-import 'package:cacatripplanner/helpers/hero_dialog_route.dart';
-import 'package:cacatripplanner/helpers/sticky_note.dart';
-import 'package:cacatripplanner/widgets/large_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,25 +6,27 @@ import '../providers/activity.dart';
 import '../utils.dart';
 
 class ActivityCard extends StatelessWidget {
-  ActivityCard({
+  const ActivityCard({
     required this.activity,
     String? heroTag,
     Key? key,
   })  : _heroTag = heroTag,
-        // height = activity.duration * 1.5,
         super(key: key);
 
   final Activity activity;
-  late final double height;
   final String? _heroTag;
 
   @override
   Widget build(BuildContext context) {
+    // Hook up provider!!! So that in rare cases it updates as location updates
+    Provider.of<Location>(context);
+
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
     final rh = h / Utils.h13pm;
     final rw = w / Utils.w13pm;
-    height = 160 * rh;
+    final height = 160 * rh;
+
     if (activity.type == LocationType.transportation) {
       if (_heroTag != null) {
         return Hero(
@@ -40,7 +39,7 @@ class ActivityCard extends StatelessWidget {
               activity: activity,
             ),
           ),
-        ); // TODO: Draw a dashed line here
+        );
       } else {
         return TransportationCardContent(
           rh: rh,

@@ -118,27 +118,31 @@ class _SelectScreenState extends State<SelectScreen> {
                       },
                       swipeCompleteCallback:
                           (CardSwipeOrientation orientation, int index) {
-                        if (index == (locations.length - 1)) {
-                          // TODO: This is the last card! Probably need to call setState() here.
-                          // If not, make this screen a stateless widget.
-                          Utils.showMaterialAlertDialog(
-                                  context, '选完啦！', const Text('你已经完成选择，轻触OK返回'))
-                              .then((_) {
-                            Navigator.of(context).pop();
-                          });
-                        } else {
-                          HapticFeedback.selectionClick();
-                          if (orientation == CardSwipeOrientation.left) {
-                            // TODO: Swiped to the left
-                            setState(() {
-                              _discardedLocationIds.add(locations[index].id);
+                        if (orientation == CardSwipeOrientation.left ||
+                            orientation == CardSwipeOrientation.right) {
+                          print('swipe completed!');
+                          if (index == (locations.length - 1)) {
+                            // TODO: This is the last card! Probably need to call setState() here.
+                            // If not, make this screen a stateless widget.
+                            Utils.showMaterialAlertDialog(context, '选完啦！',
+                                    const Text('你已经完成选择，轻触OK返回'))
+                                .then((_) {
+                              Navigator.of(context).pop();
                             });
-                          } else if (orientation ==
-                              CardSwipeOrientation.right) {
-                            setState(() {
-                              _selectedLocationIds.add(locations[index].id);
-                            });
-                            // TODO: Swiped to the right
+                          } else {
+                            HapticFeedback.selectionClick();
+                            if (orientation == CardSwipeOrientation.left) {
+                              // TODO: Swiped to the left
+                              setState(() {
+                                _discardedLocationIds.add(locations[index].id);
+                              });
+                            } else if (orientation ==
+                                CardSwipeOrientation.right) {
+                              setState(() {
+                                _selectedLocationIds.add(locations[index].id);
+                              });
+                              // TODO: Swiped to the right
+                            }
                           }
                         }
                       },
