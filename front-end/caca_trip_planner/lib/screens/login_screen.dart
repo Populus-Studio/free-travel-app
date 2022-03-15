@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:vibration/vibration.dart';
 // import 'package:wechat_kit/wechat_kit.dart';
 
 import '../screens/main_screen.dart';
@@ -143,6 +142,7 @@ class _State extends State<LoginViaUsernameScreen> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('密码登录'),
         ),
         body: Padding(

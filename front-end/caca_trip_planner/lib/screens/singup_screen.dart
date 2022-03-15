@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:vibration/vibration.dart';
 
 import '../utils.dart';
 
@@ -131,6 +130,7 @@ class _SignupScreenState extends State<SignupScreen> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('注册'),
         ),
         body: Padding(

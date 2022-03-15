@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swipecards/flutter_swipecards.dart';
 // import 'package:flutter_tindercard/flutter_tindercard.dart'; // This does not support Null Safety
 import 'package:provider/provider.dart';
-import 'package:vibration/vibration.dart';
 import 'package:flutter/services.dart';
 
 import '../widgets/large_card.dart';
@@ -51,6 +50,7 @@ class _SelectScreenState extends State<SelectScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         elevation: 0,
         title: FutureBuilder<List<Location>>(
           future: _future,
@@ -200,7 +200,6 @@ class _SelectScreenState extends State<SelectScreen> {
         //           });
         //         } else {
         //           HapticFeedback.selectionClick();
-        //           // Vibration.vibrate();
         //           if (orientation == CardSwipeOrientation.left) {
         //             // TODO: Swiped to the left
         //           } else if (orientation == CardSwipeOrientation.right) {

@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:vibration/vibration.dart';
 
 import '../helpers/cable_car_icon_icons.dart';
 

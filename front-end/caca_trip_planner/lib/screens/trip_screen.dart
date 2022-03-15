@@ -600,6 +600,7 @@ class CrazyAppBar extends StatelessWidget {
         // TODO: Refresh Data
       },
       flexibleSpace: FlexibleSpaceBar(
+        centerTitle: true,
         stretchModes: const [
           StretchMode.blurBackground,
           StretchMode.zoomBackground,

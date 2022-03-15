@@ -25,7 +25,7 @@ class ActivityCard extends StatelessWidget {
     final w = MediaQuery.of(context).size.width;
     final rh = h / Utils.h13pm;
     final rw = w / Utils.w13pm;
-    final height = 160 * rh;
+    final rheight = 160 * rh;
 
     if (activity.type == LocationType.transportation) {
       if (_heroTag != null) {
@@ -55,7 +55,7 @@ class ActivityCard extends StatelessWidget {
             color: Colors.transparent,
             child: LocationCardContent(
               rw: rw,
-              height: height,
+              rheight: rheight,
               rh: rh,
               activity: activity,
             ),
@@ -64,7 +64,7 @@ class ActivityCard extends StatelessWidget {
       } else {
         return LocationCardContent(
           rw: rw,
-          height: height,
+          rheight: rheight,
           rh: rh,
           activity: activity,
         );
@@ -128,13 +128,13 @@ class LocationCardContent extends StatelessWidget {
   const LocationCardContent({
     Key? key,
     required this.rw,
-    required this.height,
+    required this.rheight,
     required this.rh,
     required this.activity,
   }) : super(key: key);
 
   final double rw;
-  final double height;
+  final double rheight;
   final double rh;
   final Activity activity;
 
@@ -142,7 +142,7 @@ class LocationCardContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 380 * rw,
-      height: height * rh,
+      height: rheight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         boxShadow: const [
@@ -181,7 +181,7 @@ class LocationCardContent extends StatelessWidget {
                       image: activity.location.img.image,
                       fit: BoxFit.cover,
                     ),
-                    height: height * rh,
+                    height: rheight,
                     width: 380 * rw * 0.31,
                   ),
                 ),

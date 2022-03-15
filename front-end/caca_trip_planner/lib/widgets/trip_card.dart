@@ -114,7 +114,7 @@ class _TripCardState extends State<TripCard> {
               width: 380 * rw,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.grey,
+                color: Colors.black54,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
@@ -125,7 +125,9 @@ class _TripCardState extends State<TripCard> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: const CircularProgressIndicator.adaptive(),
+                child: const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
               ),
             );
           }

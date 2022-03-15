@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_flip_builder/page_flip_builder.dart';
 import 'package:provider/provider.dart';
-import 'package:vibration/vibration.dart';
 
 import '../helpers/hero_dialog_route.dart';
 import '../helpers/sticky_note.dart';
