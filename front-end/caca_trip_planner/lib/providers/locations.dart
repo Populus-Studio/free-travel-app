@@ -26,7 +26,7 @@ class Locations with ChangeNotifier {
       // fetch location info from server
       final response = await http.get(
         Uri.http(Utils.authority, '/site/' + id),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+        headers: Utils.authHeader,
       );
       // Don't user timeout if you're not ready to handle the error!!!
       // ).timeout(const Duration(seconds: 1));
@@ -53,7 +53,6 @@ class Locations with ChangeNotifier {
         _locationPool.add(location);
         return location;
       } else {
-        print(response.body);
         throw 'Error in fetching location $id. Response was: ${response.body}';
       }
     } else {
@@ -144,5 +143,12 @@ class Locations with ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  void clearAllCache() {
+    _favoriteLocationIds.clear();
+    _locationPool.clear();
+    _recommendedLocationIds.clear();
+    _recommendedLocationList.clear();
   }
 }

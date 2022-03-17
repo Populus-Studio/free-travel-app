@@ -374,7 +374,7 @@ class ActivityInfoContent extends StatefulWidget {
 }
 
 class _ActivityInfoContentState extends State<ActivityInfoContent> {
-  late final loc = widget.act.location;
+  late final loc = widget.act.location!;
 
   @override
   Widget build(BuildContext context) {

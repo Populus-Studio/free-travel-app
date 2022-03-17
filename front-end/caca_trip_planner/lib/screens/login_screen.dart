@@ -20,8 +20,8 @@ class LoginViaUsernameScreen extends StatefulWidget {
 }
 
 class _State extends State<LoginViaUsernameScreen> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   // TextEditingController portController = TextEditingController();
   bool _isLoading = false;
   bool _isValidInfo = false;
@@ -47,8 +47,8 @@ class _State extends State<LoginViaUsernameScreen> {
   void initState() {
     super.initState();
 
-    nameController.addListener(_checkInfo);
-    passwordController.addListener(_checkInfo);
+    _nameController.addListener(_checkInfo);
+    _passwordController.addListener(_checkInfo);
     // portController.addListener(_checkInfo);
   }
 
@@ -69,7 +69,8 @@ class _State extends State<LoginViaUsernameScreen> {
     setState(() {
       _isValidInfo =
           // portController.text.isNotEmpty &&
-          nameController.text.isNotEmpty && passwordController.text.isNotEmpty;
+          _nameController.text.isNotEmpty &&
+              _passwordController.text.isNotEmpty;
     });
   }
 
@@ -82,52 +83,49 @@ class _State extends State<LoginViaUsernameScreen> {
         .post(
           Uri.http(Utils.authority, '/auth/login/registered'),
           body: json.encode({
-            'username': nameController.text,
-            'password': passwordController.text,
+            'username': _nameController.text,
+            'password': _passwordController.text,
           }),
-          headers: {
-            "Accept": "application/json",
-            "content-type": "application/json"
-          },
+          headers: Utils.jsonHeader,
         )
         .timeout(const Duration(seconds: 3))
         .catchError((error) {
+      Utils.showMaterialAlertDialog(
+          ctx, '登录失败', Text(error.toString() + '\n\n请检查端口号!'));
+      setState(() {
+        _isLoading = false;
+      });
+    }).then(
+      (response) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (response.statusCode == 200) {
+          final body = json.decode(response.body);
+          Utils.token = body['token'];
+          Utils.username = _nameController.text; // FIXME: Might need fix
+          print(Utils.token);
           Utils.showMaterialAlertDialog(
-              ctx, '登录失败', Text(error.toString() + '\n\n请检查端口号!'));
-          setState(() {
-            _isLoading = false;
-          });
-        })
-        .then(
-          (response) {
-            setState(() {
-              _isLoading = false;
-            });
-            if (response.statusCode == 200) {
-              final body = json.decode(response.body);
-              Utils.token = body['token'];
-              print(Utils.token);
-              Utils.showMaterialAlertDialog(
-                  ctx,
-                  '登录成功',
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('token: ' + body['token'] + '\n'),
-                      Text('username: ' + body['username'])
-                    ],
-                  )).then((_) => Navigator.of(context).pop());
-            } else {
-              Utils.showMaterialAlertDialog(
-                  ctx,
-                  '登录失败',
-                  response.body.isEmpty
-                      ? Text('未知错误：${response.statusCode}')
-                      : const Text('用户名或密码有误！'));
-            }
-          },
-        );
+              ctx,
+              '登录成功',
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('token: ' + body['token'] + '\n'),
+                  Text('username: ' + body['username'])
+                ],
+              )).then((_) => Navigator.of(context).pop());
+        } else {
+          Utils.showMaterialAlertDialog(
+              ctx,
+              '登录失败',
+              response.body.isEmpty
+                  ? Text('未知错误：${response.statusCode}')
+                  : const Text('用户名或密码有误！'));
+        }
+      },
+    );
     HapticFeedback.mediumImpact();
   }
 
@@ -180,7 +178,7 @@ class _State extends State<LoginViaUsernameScreen> {
                 padding: EdgeInsets.symmetric(
                     horizontal: 10 * rw, vertical: 10 * rh),
                 child: TextField(
-                  controller: nameController,
+                  controller: _nameController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10 * rh),
@@ -193,7 +191,7 @@ class _State extends State<LoginViaUsernameScreen> {
                 padding: EdgeInsets.fromLTRB(10 * rw, 10 * rh, 10 * rw, 0),
                 child: TextField(
                   obscureText: true,
-                  controller: passwordController,
+                  controller: _passwordController,
                   onEditingComplete: () {
                     _checkInfo();
                     if (_isValidInfo) {

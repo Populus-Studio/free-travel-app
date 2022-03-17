@@ -254,7 +254,6 @@ class _TripScreenState extends State<TripScreen> {
 
         _dayLabelPositions.add(scrollDistanceSum);
       }
-      print(_dayLabelPositions);
     });
 
     super.initState();
@@ -426,8 +425,12 @@ class _TripScreenState extends State<TripScreen> {
                   );
                 } else {
                   final act = trip.activities[index - 1];
+                  final activityCard = ActivityCard(
+                    heroTag: 'activity-card-${trip.id}-${index - 1}',
+                    activity: act,
+                  );
 
-                  final activityCard = Stack(
+                  final fullCardWithDash = Stack(
                     alignment: Alignment.center,
                     children: [
                       if (act.type != LocationType.transportation)
@@ -476,13 +479,12 @@ class _TripScreenState extends State<TripScreen> {
                         // because Slivers naturally ignores all children constraints
                         // to make the special effects.
                         child: UnconstrainedBox(
-                          child: ChangeNotifierProvider.value(
-                            value: trip.activities[index - 1].location,
-                            child: ActivityCard(
-                              heroTag: 'activity-card-${trip.id}-${index - 1}',
-                              activity: trip.activities[index - 1],
-                            ),
-                          ),
+                          child: act.type != LocationType.transportation
+                              ? ChangeNotifierProvider.value(
+                                  value: act.location,
+                                  child: activityCard,
+                                )
+                              : activityCard,
                         ),
                       ),
                     ],
@@ -517,11 +519,11 @@ class _TripScreenState extends State<TripScreen> {
                             ),
                           ),
                         ),
-                        activityCard,
+                        fullCardWithDash,
                       ],
                     );
                   } else {
-                    return activityCard;
+                    return fullCardWithDash;
                   }
                 }
               },

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:async';
 
@@ -9,9 +10,20 @@ class Utils {
   static const double h13pm = 926.0;
   static const double w13pm = 428.0;
   static const authority = '152.136.233.65:80'; // authority is domain + port
-  // TODO: Delete this debug token
+  /// Add following header for authentication.
+  static Map<String, String> get authHeader =>
+      {HttpHeaders.authorizationHeader: 'Bearer $token'};
+
+  /// This is needed when sending requests with a body of a json string.
+  static get jsonHeader => {
+        HttpHeaders.acceptHeader: "application/json",
+        HttpHeaders.contentTypeHeader: "application/json"
+      };
+
+  // TODO: Delete this debug token and username
   static String token =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo5LCJ1c2VybmFtZSI6Imh1eWFuZyIsImV4cCI6MTY0NDY4MTMwOCwiZW1haWwiOiIifQ.rjFaCWNFW9n0BLpKBSIGQEI-wsbAYRMA1Gi-0gPhJWA';
+  static String username = 'huyang';
   static final Random rng = Random();
 
   static Future<Object?> showMaterialAlertDialog(

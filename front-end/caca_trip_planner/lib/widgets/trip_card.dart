@@ -25,7 +25,12 @@ class _TripCardState extends State<TripCard> {
 
   Future<Trip> loadData() async {
     final trip = await Provider.of<Trips>(context, listen: false)
-        .fetchTripById(widget.id);
+        .fetchTripById(widget.id, test: false)
+        .catchError((err) {
+      Utils.showMaterialAlertDialog(
+          context, '获取行程失败', Text('行程 ID：${widget.id}\n错误信息：$err'));
+      throw err;
+    });
     await trip.getCoverLocation().loadImage();
     _coverLocation = trip.getCoverLocation();
     return trip;
@@ -47,7 +52,7 @@ class _TripCardState extends State<TripCard> {
             return GestureDetector(
               onTap: () async {
                 for (var act in trip.activities) {
-                  await act.location.loadImage();
+                  await act.location?.loadImage();
                 }
                 Navigator.of(context)
                     .pushNamed(TripScreen.routeName, arguments: trip);
@@ -108,13 +113,13 @@ class _TripCardState extends State<TripCard> {
                 ),
               ),
             );
-          } else {
+          } else if (!snapshot.hasError) {
             return Container(
               height: 120 * rh,
               width: 380 * rw,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.black54,
+                color: Colors.black38,
                 boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
@@ -130,6 +135,8 @@ class _TripCardState extends State<TripCard> {
                 ),
               ),
             );
+          } else {
+            return Container();
           }
         });
   }

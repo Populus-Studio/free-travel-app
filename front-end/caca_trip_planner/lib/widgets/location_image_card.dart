@@ -99,6 +99,7 @@ class ImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (activity.type == LocationType.transportation) return const Text('交通');
     return Container(
       width: 380 * rw,
       height: height * rh,
@@ -132,7 +133,7 @@ class ImageCard extends StatelessWidget {
               ),
               position: DecorationPosition.foreground,
               child: Image(
-                image: activity.location.img.image,
+                image: activity.location!.img.image,
                 fit: BoxFit.cover,
               ),
             ),

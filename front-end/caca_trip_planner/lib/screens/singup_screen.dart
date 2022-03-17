@@ -5,11 +5,6 @@ import 'package:http/http.dart' as http;
 
 import '../utils.dart';
 
-const jsonHeaders = {
-  "Accept": "application/json",
-  "content-type": "application/json"
-};
-
 class SignupScreen extends StatefulWidget {
   static const routeName = '/auth/signup';
 
@@ -63,7 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
         if (_values['phone']!.isNotEmpty) 'phoneNumber': _values['phone'],
         'password': _values['password'],
       }),
-      headers: jsonHeaders,
+      headers: Utils.jsonHeader,
     )
         // .timeout(const Duration(seconds: 3),
         // onTimeout: () => Utils.showMaterialAlertDialog(
@@ -200,6 +195,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         )
                       },
                     );
+                    return null;
                   },
                   onSaved: (value) => _values['username'] = value!,
                 ),

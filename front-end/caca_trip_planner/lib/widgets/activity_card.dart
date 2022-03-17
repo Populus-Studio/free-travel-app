@@ -19,7 +19,9 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Hook up provider!!! So that in rare cases it updates as location updates
-    Provider.of<Location>(context);
+    if (activity.type != LocationType.transportation) {
+      Provider.of<Location>(context);
+    }
 
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
@@ -152,7 +154,7 @@ class LocationCardContent extends StatelessWidget {
             spreadRadius: 2,
           ),
         ],
-        color: activity.location.palette!.color,
+        color: activity.location!.palette!.color,
       ),
       child: Stack(
         children: [
@@ -178,7 +180,7 @@ class LocationCardContent extends StatelessWidget {
                   ),
                   child: SizedBox(
                     child: Image(
-                      image: activity.location.img.image,
+                      image: activity.location!.img.image,
                       fit: BoxFit.cover,
                     ),
                     height: rheight,
@@ -222,12 +224,12 @@ class LocationCardContent extends StatelessWidget {
                         ],
                       ),
                       // 介绍
-                      if (activity.location.description != '')
+                      if (activity.location!.description != '')
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              activity.location.description,
+                              activity.location!.description,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.white70),
                             ),
@@ -364,7 +366,7 @@ class LocationCardContent extends StatelessWidget {
                 color: Colors.white70,
               ),
             ),
-          if (activity.location.isFavorite)
+          if (activity.location!.isFavorite)
             const Positioned(
               right: 10,
               top: 10,

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cacatripplanner/helpers/dummy_data.dart';
 import 'package:cacatripplanner/providers/trips.dart';
 import 'package:cacatripplanner/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(jsonEncode(DummyData.dummyTrips[0].toJson()));
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Locations()),
