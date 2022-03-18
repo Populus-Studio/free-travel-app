@@ -56,11 +56,9 @@ class _SelectScreenState extends State<SelectScreen> {
           future: _future,
           builder: (context, snapshot) => snapshot.hasData
               ? Text(
-                  '选择你想去的地点（${_selectedLocationIds.length + _discardedLocationIds.length}/${(snapshot.data as List).length}）')
+                  '选择你想去的地点（${_selectedLocationIds.length + _discardedLocationIds.length + 1}/${(snapshot.data as List).length}）')
               : const Text('选择你想去的地点'),
         ),
-
-        // backgroundColor: Colors.white,
       ),
       backgroundColor: Colors.white,
       body: Column(

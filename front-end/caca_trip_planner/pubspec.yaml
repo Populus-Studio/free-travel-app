@@ -31,6 +31,7 @@ dependencies:
   flutter_tindercard: ^0.2.0
   flutter_palette: ^1.1.0+1
   page_flip_builder: ^0.1.3
+  shared_preferences:
 
 
   # The following adds the Cupertino Icons font to your application.

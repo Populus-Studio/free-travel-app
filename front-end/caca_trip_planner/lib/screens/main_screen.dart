@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
               child: const Text("选择地点"),
               onPressed: () {
                 // if user did not sign in
-                if (Utils.token == '') {
+                if (Utils.isAuth) {
                   Utils.showMaterialAlertDialog(
                       context, '请登录', const Text('您需要先登录才能访问此项功能'));
                   return;

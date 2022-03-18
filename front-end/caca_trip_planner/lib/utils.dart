@@ -1,18 +1,27 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/cable_car_icon_icons.dart';
 
 class Utils {
+  /// Height of iPhone 13 Pro Max. Serves as reference.
   static const double h13pm = 926.0;
+
+  /// Width of iPhone 13 Pro Max. Servers as reference.
   static const double w13pm = 428.0;
-  static const authority = '152.136.233.65:80'; // authority is domain + port
+
+  /// Authority (domain + port) address of server.
+  static const authority = '152.136.233.65:80';
+
   /// Add following header for authentication.
   static Map<String, String> get authHeader =>
-      {HttpHeaders.authorizationHeader: 'Bearer $token'};
+      {HttpHeaders.authorizationHeader: 'Bearer $_token'};
 
   /// This is needed when sending requests with a body of a json string.
   static get jsonHeader => {
@@ -21,11 +30,29 @@ class Utils {
       };
 
   // TODO: Delete this debug token and username
-  static String token =
+  static String _token =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo5LCJ1c2VybmFtZSI6Imh1eWFuZyIsImV4cCI6MTY0NDY4MTMwOCwiZW1haWwiOiIifQ.rjFaCWNFW9n0BLpKBSIGQEI-wsbAYRMA1Gi-0gPhJWA';
-  static String username = 'huyang';
+  static String _username = 'huyang';
+
+  /// Time for a token to expire.
+  static const expiryDuration = Duration(days: 1);
+
+  /// Timer for auto logout.
+  static Timer? _authTimer;
+
+  /// Check login status
+  static bool get isAuth => _token.isNotEmpty;
+
+  /// Token getter. Because it shouldn't be changed from outside!
+  static String get token => _token;
+
+  /// Username getter.
+  static String get username => _username;
+
+  /// Random number generator.
   static final Random rng = Random();
 
+  /// Displays a classic material style dialog.
   static Future<Object?> showMaterialAlertDialog(
       BuildContext ctx, String caption, Widget content) {
     return showDialog(
@@ -47,6 +74,198 @@ class Utils {
         );
       },
     );
+  }
+
+  /// Following methods are for authentication purposes.
+
+  /// This method sends a login request. Currently it only supports loggin in
+  /// via username and password.
+  static Future<bool> sendLoginRequest(
+      {String? username, String? password, autoRenew = true}) async {
+    if (username == null || password == null) return false;
+    // login
+    final response = await http.post(
+      Uri.http(Utils.authority, '/auth/login/registered'),
+      body: json.encode({
+        'username': username,
+        'password': password,
+      }),
+      headers: jsonHeader,
+    );
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      _token = body['token'];
+      username = username; // FIXME: Might need fix
+      print(_token);
+      final userData = {
+        'token': _token,
+        'username': username,
+        'password': password,
+        'expiraryDate':
+            DateTime.now().add(Utils.expiryDuration).toIso8601String(),
+      };
+      // update login info
+      updateUserData(data: userData, autoRenew: autoRenew);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// An interactive login service (that can only be called from a widget tree).
+  /// Code duplication with sendLoginRequest() exists for interactive purposes.
+  /// Currently it only supports logging in via username and password.
+  static Future<bool> login(
+      {required BuildContext context,
+      String? username,
+      String? password,
+      autoRenew = true}) async {
+    if (username == null || password == null) return false;
+    final response = await http
+        .post(
+          Uri.http(Utils.authority, '/auth/login/registered'),
+          body: json.encode({
+            'username': username,
+            'password': password,
+          }),
+          headers: jsonHeader,
+        )
+        .timeout(const Duration(seconds: 3))
+        .catchError((error) {
+      showMaterialAlertDialog(
+          context, '登录失败', Text(error.toString() + '\n\n请检查端口号!'));
+    });
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      _token = body['token'];
+      username = username; // FIXME: Might need fix
+      print(_token);
+      final userData = {
+        'token': _token,
+        'username': username,
+        'password': password,
+        'expiraryDate':
+            DateTime.now().add(Utils.expiryDuration).toIso8601String(),
+      };
+      updateUserData(data: userData, autoRenew: autoRenew);
+      showMaterialAlertDialog(
+        context,
+        '登录成功',
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('token: ' + body['token'] + '\n'),
+            Text('username: ' + body['username'])
+          ],
+        ),
+      ).then((_) => Navigator.of(context).pop());
+      return true;
+    } else {
+      showMaterialAlertDialog(
+          context,
+          '登录失败',
+          response.body.isEmpty
+              ? Text('未知错误：${response.statusCode}')
+              : const Text('用户名或密码有误！'));
+      return false;
+    }
+  }
+
+  /// A renew token service.
+  static Future<bool> _renewToken() async {
+    // get login info
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey('userData')) return false;
+
+    final userData =
+        json.decode(prefs.getString('userData')!) as Map<String, String>;
+    final password = userData['password']!;
+
+    // login
+    return sendLoginRequest(
+      username: _username,
+      password: password,
+      autoRenew: true,
+    );
+  }
+
+  /// Register user auth data and set up auto-renew service.
+  static Future<void> updateUserData(
+      {required Map<String, String> data, autoRenew = true}) async {
+    // update global variable
+    _token = data['token']!;
+    _username = data['username']!;
+
+    // write to disk
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userData', json.encode(data));
+
+    // Set up auto renew. See _autoLogout() for a different way of setting up
+    // a timer.
+    if (autoRenew) {
+      Future.delayed(expiryDuration, _renewToken);
+    }
+
+    _autoLogout();
+  }
+
+  /// This method should be called every time after logging in. It is called in
+  /// updateUserData() now which is called after every login.
+  static Future<bool> _autoLogout() async {
+    // cancel existing timer
+    if (_authTimer != null) {
+      _authTimer!.cancel();
+    }
+
+    // set up new timer
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) return false;
+    final userData =
+        json.decode(prefs.getString('userData')!) as Map<String, String>;
+    final expiryDate = DateTime.parse(userData['expiryDate']!);
+    // expire 2 seconds before renewing
+    final timeToExpiry = expiryDate
+        .difference(DateTime.now().subtract(const Duration(seconds: 2)))
+        .inSeconds;
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+    return true;
+  }
+
+  /// Log out method. When explicitly called by user, set deleteCache: true for
+  /// better security. Otherwise, deleteCache is by default false so as to
+  /// enable auto login and auto token renewing.
+  static Future<void> logout({deleteCache = false}) async {
+    _token = '';
+    _username = '';
+    if (_authTimer != null) {
+      _authTimer!.cancel();
+      _authTimer = null;
+    }
+
+    if (deleteCache) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.remove('userData');
+    }
+  }
+
+  /// Try auto-login (e.g. at app start up).
+  static Future<bool> tryAutoLogin() async {
+    // get user data
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) return false;
+    final userData =
+        json.decode(prefs.getString('userData')!) as Map<String, String>;
+    if (DateTime.parse(userData['expiryDate']!).isBefore(DateTime.now())) {
+      return false;
+    }
+
+    // try auto login
+    final _username = userData['username'];
+    final _password = userData['password'];
+    return sendLoginRequest(username: _username, password: _password);
   }
 }
 

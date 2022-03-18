@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(jsonEncode(DummyData.dummyTrips[0].toJson()));
+    // TODO: auto login at start up and then go to different screens accordingly
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Locations()),

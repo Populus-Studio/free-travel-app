@@ -74,59 +74,20 @@ class _State extends State<LoginViaUsernameScreen> {
     });
   }
 
-  void _login(BuildContext ctx) {
+  void _login(BuildContext ctx) async {
     setState(() {
       _isLoading = true;
     });
 
-    http
-        .post(
-          Uri.http(Utils.authority, '/auth/login/registered'),
-          body: json.encode({
-            'username': _nameController.text,
-            'password': _passwordController.text,
-          }),
-          headers: Utils.jsonHeader,
-        )
-        .timeout(const Duration(seconds: 3))
-        .catchError((error) {
-      Utils.showMaterialAlertDialog(
-          ctx, '登录失败', Text(error.toString() + '\n\n请检查端口号!'));
-      setState(() {
-        _isLoading = false;
-      });
-    }).then(
-      (response) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (response.statusCode == 200) {
-          final body = json.decode(response.body);
-          Utils.token = body['token'];
-          Utils.username = _nameController.text; // FIXME: Might need fix
-          print(Utils.token);
-          Utils.showMaterialAlertDialog(
-              ctx,
-              '登录成功',
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('token: ' + body['token'] + '\n'),
-                  Text('username: ' + body['username'])
-                ],
-              )).then((_) => Navigator.of(context).pop());
-        } else {
-          Utils.showMaterialAlertDialog(
-              ctx,
-              '登录失败',
-              response.body.isEmpty
-                  ? Text('未知错误：${response.statusCode}')
-                  : const Text('用户名或密码有误！'));
-        }
-      },
+    await Utils.login(
+      context: ctx,
+      username: _nameController.text,
+      password: _passwordController.text,
     );
-    HapticFeedback.mediumImpact();
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _goToSingupScreen(BuildContext ctx) {
