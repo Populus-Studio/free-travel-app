@@ -23,7 +23,7 @@ class LoactionSerializer(serializers.ModelSerializer):
         model = LocationModel
         fields = ['id', 'name', 'label', 'type', 'destination_id',
                   'address', 'description', 'cost', 'timeCost',
-                  'rate', 'heat','opentime','img_url']
+                  'rate', 'heat', 'opentime', 'img_url']
 
     def create(self, validated_data):
         dest_obj = DestinationModel.objects.filter(id=validated_data.pop('destination_id')).first()

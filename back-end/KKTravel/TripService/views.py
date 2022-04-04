@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from TripService.models import TripModel
-from TripService.serializers import TripSerializer
+from TripService.serializers import TripSerializer, TripSmartSerializer
 from UserAuth.models import UserModel
 # 使用APIView
 from rest_framework.views import APIView
@@ -71,6 +71,31 @@ class TripGlobalManager(APIView):
                 "code": 201,
                 "msg": "创建行程成功",
                 "data": trip_post.data
+            }
+            return Response(res_data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(trip_post.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TripSmartGenerate(APIView):
+    def post(self, request):
+        data = request.data
+        trip_post = TripSmartSerializer(data=data)
+        if trip_post.is_valid():
+            user_obj = UserModel.objects.filter(username=trip_post.validated_data['username']).first()
+            if request.user != user_obj:
+                res_data = {
+                    "code": 403,
+                    "msg": "当前用户无权限生成行程"
+                }
+                return Response(res_data, status=status.HTTP_403_FORBIDDEN)
+
+            trip_post.save()
+            trip_post_obj = get_trip_object(pk=trip_post.data['id'])
+            res_data = {
+                "code": 201,
+                "msg": "生成行程成功",
+                "data": TripSerializer(trip_post_obj).data
             }
             return Response(res_data, status=status.HTTP_201_CREATED)
         else:

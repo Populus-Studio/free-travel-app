@@ -35,7 +35,7 @@ class TripModel(models.Model):
     # 头图url
     img_url = models.URLField(blank=True)
     # 使用json格式字符串文本存储行程中包含的活动信息
-    activities = models.TextField()
+    activities = models.TextField(default="")
     # 活动总数
     # numberOfActivities = models.IntegerField(default=0)
     # 总计花费
