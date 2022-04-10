@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/cable_car_icon_icons.dart';
 
+/// This is a class that largely handles authentication services, and also
+/// stores some global variables.
 class Utils {
   /// Height of iPhone 13 Pro Max. Serves as reference.
   static const double h13pm = 926.0;
@@ -30,8 +32,7 @@ class Utils {
       };
 
   // TODO: Delete this debug token and username
-  static String _token =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo5LCJ1c2VybmFtZSI6Imh1eWFuZyIsImV4cCI6MTY0NDY4MTMwOCwiZW1haWwiOiIifQ.rjFaCWNFW9n0BLpKBSIGQEI-wsbAYRMA1Gi-0gPhJWA';
+  static String _token = '';
   static String _username = 'huyang';
 
   /// Time for a token to expire.
@@ -119,7 +120,8 @@ class Utils {
       {required BuildContext context,
       String? username,
       String? password,
-      autoRenew = true}) async {
+      autoRenew = true,
+      FutureOr<dynamic> Function(Object?)? nextStep}) async {
     if (username == null || password == null) return false;
     final response = await http
         .post(
@@ -145,7 +147,7 @@ class Utils {
         'token': _token,
         'username': username,
         'password': password,
-        'expiraryDate':
+        'expiryDate':
             DateTime.now().add(Utils.expiryDuration).toIso8601String(),
       };
       updateUserData(data: userData, autoRenew: autoRenew);
@@ -160,7 +162,7 @@ class Utils {
             Text('username: ' + body['username'])
           ],
         ),
-      ).then((_) => Navigator.of(context).pop());
+      ).then(nextStep ?? (_) => Navigator.of(context).pop());
       return true;
     } else {
       showMaterialAlertDialog(
@@ -224,7 +226,7 @@ class Utils {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) return false;
     final userData =
-        json.decode(prefs.getString('userData')!) as Map<String, String>;
+        json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
     final expiryDate = DateTime.parse(userData['expiryDate']!);
     // expire 2 seconds before renewing
     final timeToExpiry = expiryDate
@@ -358,7 +360,7 @@ extension IntExtension on int {
   /// ```dart
   /// 90.toChineseString(measure: TimeMeasure.minute);
   /// ```
-  /// will yield '1.5小时'.
+  /// will yield '1.5 个小时'.
   String toChineseDurationString({TimeMeasure measure = TimeMeasure.minute}) {
     switch (measure) {
       case TimeMeasure.minute:
@@ -366,10 +368,10 @@ extension IntExtension on int {
           if (this < 60) {
             return '$this 分钟';
           } else {
-            // longer than 30 minutes
+            // longer than 60 minutes
             final double numOfHours = this / 60.0;
             if (numOfHours % 1 == 0) {
-              // if there's not decimal digits
+              // if there's no decimal digits
               return '${numOfHours.round()} 个小时';
             } else {
               return '${numOfHours.toStringAsFixed(1)} 个小时';

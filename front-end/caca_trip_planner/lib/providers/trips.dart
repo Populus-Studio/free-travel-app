@@ -123,7 +123,7 @@ class Trips extends ChangeNotifier {
     if (testMode && test) {
       // FIXME
       return Future.delayed(
-          const Duration(seconds: 1), () => DummyData.dummyTrips[0]);
+          const Duration(seconds: 3), () => DummyData.dummyTrips[0]);
     }
 
     if (!_tripPool.any((trip) => trip.id == id)) {

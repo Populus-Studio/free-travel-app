@@ -136,13 +136,17 @@ class _SignupScreenState extends State<SignupScreen> {
               physics: const NeverScrollableScrollPhysics(),
               children: <Widget>[
                 Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.fromLTRB(0, 40 * rh, 0, 20 * rh),
-                    child: const Text(
-                      '卡卡随心游LOGO',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
-                    )),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.fromLTRB(0, 40 * rh, 0, 20 * rh),
+                  child: const Text(
+                    '卡卡随心游LOGO',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
                 // TextFormField(
                 //   keyboardType: const TextInputType.numberWithOptions(
                 //       signed: false, decimal: false),

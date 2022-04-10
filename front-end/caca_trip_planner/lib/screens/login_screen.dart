@@ -113,12 +113,17 @@ class _State extends State<LoginViaUsernameScreen> {
               //   height: 40,
               // ),
               Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(0, 40 * rh, 0, 20 * rh),
-                  child: const Text(
-                    '卡卡随心游LOGO',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 30),
-                  )),
+                alignment: Alignment.center,
+                padding: EdgeInsets.fromLTRB(0, 40 * rh, 0, 20 * rh),
+                child: const Text(
+                  '卡卡随心游LOGO',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 30,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
               // const SizedBox(height: 40,)
               // Container(
               //   padding: EdgeInsets.symmetric(

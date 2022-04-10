@@ -460,7 +460,7 @@ class _TripScreenState extends State<TripScreen> {
                                     value: act.location,
                                     child: Center(
                                       child: LargeCard(
-                                        h * 0.75,
+                                        h * 0.81,
                                         rw,
                                         w: w,
                                         heroTag:

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cacatripplanner/helpers/dummy_data.dart';
 import 'package:cacatripplanner/providers/trips.dart';
+import 'package:cacatripplanner/screens/tabs_screen.dart';
 import 'package:cacatripplanner/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,7 @@ class MyApp extends StatelessWidget {
                 // TODO: Add textTheme for: heading1
               ),
         ),
-        home: const MainScreen(),
+        home: const TabsScreen(),
         routes: {
           SignupScreen.routeName: (context) => const SignupScreen(),
           MainScreen.routeName: (context) => const MainScreen(),
@@ -98,3 +99,7 @@ class MyApp extends StatelessWidget {
 }
 
 // 发布安卓APK： flutter build apk --split-per-abi
+// Find SHA1: in /android, execute ./gradlew signingReport
+// Find package ID: android/app/src/main/AndroidManifest.xml
+// 高德地图iOS key：4e476f4114795793a2f757f8c4b8823e
+// 高德地图Android key：5004019091f8700a3c091433c50e6fb9

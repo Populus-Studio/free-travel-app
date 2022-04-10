@@ -27,8 +27,10 @@ class _TripCardState extends State<TripCard> {
     final trip = await Provider.of<Trips>(context, listen: false)
         .fetchTripById(widget.id, test: false)
         .catchError((err) {
+      String msg = '';
+      if ((err as String).contains('Signature')) msg = '请重新登录';
       Utils.showMaterialAlertDialog(
-          context, '获取行程失败', Text('行程 ID：${widget.id}\n错误信息：$err'));
+          context, '获取行程失败', Text('行程 ID：${widget.id}\n错误信息：$err\n$msg'));
       throw err;
     });
     await trip.getCoverLocation().loadImage();
@@ -130,8 +132,51 @@ class _TripCardState extends State<TripCard> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: const Center(
-                  child: CircularProgressIndicator.adaptive(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 190 * rw,
+                      padding: EdgeInsets.symmetric(horizontal: 15 * rw),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: DecoratedBox(
+                              decoration:
+                                  const BoxDecoration(color: Colors.white10),
+                              child: SizedBox(
+                                height: 18 * rh,
+                                width: 150 * rw,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 15 * rh),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: DecoratedBox(
+                              decoration:
+                                  const BoxDecoration(color: Colors.white10),
+                              child: SizedBox(
+                                height: 15 * rh,
+                                width: 200 * rw,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    DecoratedBox(
+                      decoration: const BoxDecoration(color: Colors.white10),
+                      child: SizedBox(
+                        height: 120 * rh,
+                        width: 190 * rw,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

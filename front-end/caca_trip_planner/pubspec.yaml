@@ -32,6 +32,7 @@ dependencies:
   flutter_palette: ^1.1.0+1
   page_flip_builder: ^0.1.3
   shared_preferences:
+  reorderables: ^0.4.3
 
 
   # The following adds the Cupertino Icons font to your application.
