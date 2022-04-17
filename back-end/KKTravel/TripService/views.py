@@ -2,6 +2,7 @@ from django.shortcuts import render
 from TripService.models import TripModel
 from TripService.serializers import TripSerializer, TripSmartSerializer
 from UserAuth.models import UserModel
+from datetime import date
 # 使用APIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -65,7 +66,7 @@ class TripGlobalManager(APIView):
                     "msg": "当前用户无权限修改行程"
                 }
                 return Response(res_data, status=status.HTTP_403_FORBIDDEN)
-
+            # if trip_post.validated_data['id']
             trip_post.save()
             res_data = {
                 "code": 201,
@@ -120,14 +121,7 @@ class TripForUserManager(APIView):
         # 查询列表，数据库只返回 符合”对应属性在查询列表中“ 的条目
         query_favor = [0, 1]
         query_recommend = [0, 1]
-        query_status = [0, 1, 2]
-
-        if is_future == "1":
-            query_status = [0]
-        elif is_ongoing == "1":
-            query_status = [1]
-        elif is_finished == "1":
-            query_status = [2]
+        # query_status = [0, 1, 2]
 
         if is_favor == "1":
             query_favor = [1]
@@ -136,16 +130,23 @@ class TripForUserManager(APIView):
             query_recommend = [1]
 
         trips_all = TripModel.objects.filter(creator=request.user)
+        today_date = date.today()
 
         if keywords != "":
             trips = trips_all.filter(isFavorite__in=query_favor,
                                      isRecommend__in=query_recommend,
-                                     status__in=query_status,
                                      name__contains=keywords)
         else:
             trips = trips_all.filter(isFavorite__in=query_favor,
-                                     isRecommend__in=query_recommend,
-                                     status__in=query_status)
+                                     isRecommend__in=query_recommend)
+        if is_future == "1":
+            trips = trips.filter(startDate__gt=today_date)
+        elif is_ongoing == "1":
+            trips = trips.filter(startDate__lte=today_date,
+                                 endDate__gte=today_date)
+        elif is_finished == "1":
+            trips = trips.filter(endDate__lt=today_date)
+
         # 按照出发时间倒序排列
         trips = trips.order_by("-startDate")
 
@@ -167,7 +168,7 @@ class TripSingleManager(APIView):
         trip_obj = get_trip_object(pk)
         trip_serializer = TripSerializer(trip_obj)
         res_data = {
-            "code": 403,
+            "code": 200,
             "msg": "获取行程成功",
             "trip": trip_serializer.data
         }

@@ -1,3 +1,5 @@
+import random
+
 from rest_framework.permissions import AllowAny
 
 from DestinationService.models import DestinationModel, LocationModel, LocationFavorModel
@@ -103,9 +105,13 @@ class LocationListManager(APIView):
         keywords = request.query_params.dict()['search']
         sortBy = request.query_params.dict()['sortBy']
         order = request.query_params.dict()['order']
+        destinationId = request.query_params.dict()['destinationId']
 
         # 筛选查询关键词
         locations = LocationModel.objects.all()
+        if destinationId != "":
+            dest_id = int(destinationId)
+            locations = locations.filter(destination__id=dest_id)
         if keywords != "":
             locations = locations.filter(name__contains=keywords)
         if sortBy != "" and order != "":
@@ -120,11 +126,6 @@ class LocationListManager(APIView):
                 }
                 return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
 
-        # locas_serializer = LoactionSerializer(locations, many=True)
-        # res_data = {
-        #     "_embedded": {
-        #         "siteDtoList": locas_serializer.data}
-        # }
         return api_paging(locations, request, LocationSerializer, "site")
 
 
@@ -212,10 +213,10 @@ class LocationFavorManager(APIView):
             record = LocationFavorModel.objects.filter(user=user_obj, site=site_obj).first()
             if record != None:
                 res_data = {
-                        "code": 409,
-                        "msg": "收藏失败，该地点已被收藏",
-                        "detail": site_favor_post.data
-                    }
+                    "code": 409,
+                    "msg": "收藏失败，该地点已被收藏",
+                    "detail": site_favor_post.data
+                }
                 return Response(res_data, status=status.HTTP_409_CONFLICT)
             else:
                 site_favor_post.save()
@@ -227,7 +228,6 @@ class LocationFavorManager(APIView):
                 return Response(res_data, status=status.HTTP_201_CREATED)
         else:
             return Response(site_favor_post.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     def delete(self, request):
         data = request.data
@@ -255,3 +255,29 @@ class LocationFavorManager(APIView):
                 "detail": str(e)
             }
             return Response(res_data, status=status.HTTP_409_CONFLICT)
+
+
+# B2-4
+class LoactionRecommendManager(APIView):
+
+    def get(self, request):
+        amount = request.query_params.dict()['amount']
+        destinationId = request.query_params.dict()['destinationId']
+
+        # 筛选查询关键词
+        locations = LocationModel.objects.all()
+        if destinationId != "":
+            dest_id = int(destinationId)
+            locations = locations.filter(destination__id=dest_id)
+        res_amount = int(amount)
+
+        # TODO:应用推荐算法
+        res_sites = random.choices(locations, k=res_amount)
+
+        res_serializer = LocationSerializer(res_sites, many=True)
+        res_data = {
+            "code": 200,
+            "msg": "获得推荐地点成功",
+            "data": res_serializer.data
+        }
+        return Response(res_data, status=status.HTTP_200_OK)

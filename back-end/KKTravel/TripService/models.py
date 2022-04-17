@@ -15,10 +15,10 @@ class TripModel(models.Model):
 
     # 行程状态（0：未出发，1：进行中，2：已完成）
     # PS: choice 必须选择二元组组成的列表（元组），第一位表示数据库中的存储值，第二位表示在渲染网页表单时的展示值
-    status = models.IntegerField(choices=((0, 'in_future'),
-                                          (1, 'on_going'),
-                                          (2, 'finished'),),
-                                 default=0)
+    # status = models.IntegerField(choices=((0, 'in_future'),
+    #                                       (1, 'on_going'),
+    #                                       (2, 'finished'),),
+    #                              default=0)
     # 出发地：目的地模型的引用
     departure = models.ForeignKey(DestinationModel, related_name="trip_departure", on_delete=models.CASCADE)
     # 行程描述

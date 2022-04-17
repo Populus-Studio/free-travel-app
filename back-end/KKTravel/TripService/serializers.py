@@ -1,11 +1,14 @@
 from DestinationService.models import DestinationModel, LocationModel
 from TripService.models import TripModel
 import json
+import random
 from datetime import date, time, datetime, timedelta
 from rest_framework import serializers
 
 from UserAuth.models import UserModel
-from Utils import enums
+from Utils import enums, geocode
+
+
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -16,7 +19,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TripModel
-        fields = ['id', 'name', 'username', 'isFavorite', 'isRecommend', 'status',
+        fields = ['id', 'name', 'username', 'isFavorite', 'isRecommend',
                   'departureId', 'description', 'startDate', 'endDate',
                   'duration', 'remarks', 'activities', 'img_url']
 
@@ -47,50 +50,92 @@ class TripSmartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TripModel
-        fields = ['id', 'name', 'username', 'status', 'departureId', 'description', 'startDate', 'endDate',
+        fields = ['id', 'name', 'username','departureId', 'description', 'startDate',
                   'duration', 'remarks', 'numOfTourists', "locationIds"]
 
     def create(self, validated_data):
         dest_obj = DestinationModel.objects.filter(id=validated_data.pop('departureId')).first()
         user_obj = UserModel.objects.filter(username=validated_data.pop('username')).first()
 
-        # TODO: 智能生成活动字段
         activities = []
-
         init_startTime = datetime.combine(validated_data['startDate'], time(9, 0, 0))
+        trip_days = 0
         print(init_startTime)
 
         curr_startTime = init_startTime
         # 理应为int类型数组
-        for siteId in validated_data.pop("locationIds"):
-            location_obj = LocationModel.objects.filter(id=siteId).first()
+        locations = validated_data.pop("locationIds")
+        for i in range(len(locations)):
+            curr_id = locations[i]
+            location_obj = LocationModel.objects.filter(id=curr_id).first()
+            next_location_obj = None
+            if i + 1 < len(locations):
+                next_location_obj = LocationModel.objects.filter(id=locations[i + 1]).first()
 
-            act_dict = {'locationId': siteId,
-                        'startTime': curr_startTime.strftime("%Y-%m-%d %H:%M:%S"),
-                        'endTime': (curr_startTime +
-                                    timedelta(minutes=location_obj.timeCost + 60)).strftime("%Y-%m-%d %H:%M:%S"),
+            # TEMP: rand duration
+            rand_duration = random.randrange(60, 240, 30)
+            end_time = curr_startTime + timedelta(minutes=rand_duration)
+            print("start:" + curr_startTime.isoformat())
+            print("end" + end_time.isoformat())
+
+            # 增加当前场景的活动
+            act_dict = {'locationId': curr_id,
+                        'geoCode': geocode.get_geocode(location_obj.address),
+                        'startTime': curr_startTime.isoformat(),
+                        'endTime': end_time.isoformat(),
                         "name": location_obj.name,
-
-                        # TODO: type改为由enums.TripActivityType构成的枚举
-                        "type": location_obj.type,
-                        "duration": location_obj.timeCost + 60,
-                        "cost": location_obj.cost,
-                        "remarks": "【remarks】"
+                        # type改为由enums.TripActivityType构成的枚举
+                        "type": enums.get_trip_activity_type(location_obj.type),
+                        "duration": rand_duration,
+                        "cost": random.randrange(0, 200, 10),
+                        # 活动中的remarks留空
+                        "remarks": ""
                         }
             # print(act_dict)
             activities.append(json.dumps(act_dict, ensure_ascii=False))
 
-            curr_startTime = curr_startTime + timedelta(minutes=location_obj.timeCost + 60)
+            rand_trans_duration = random.randrange(10, 60, 5)
+            rand_trans_cost = random.randint(0, 25)
+            if end_time.hour > 19:
+                # 时间过晚，后续活动添加到下一天
+                trip_days += 1
+                if next_location_obj is not None:
+                    curr_startTime = init_startTime + timedelta(days=trip_days)
+                continue
+            else:
+                # 添加交通活动
+                trans_endTime = end_time + timedelta(minutes=rand_trans_duration)
+
+            # 如果是最后一个地点，不用再添加交通活动
+            if next_location_obj is None:
+                continue
+            # 增加两个场景间交通的活动
+            trans_act_dict = {'locationId': locations[i + 1], # 记录下一个地点的id和位置
+                              'geoCode': geocode.get_geocode(next_location_obj.address),
+                              'startTime': end_time.isoformat(),
+                              'endTime': trans_endTime.isoformat(),
+                              # 交通活动的name代表其交通方式
+                              "name": enums.get_transportation_type(),
+                              "type": enums.TripActivityType.transportation,
+                              "duration": rand_trans_duration,
+                              "cost": rand_trans_cost,
+                              # 交通活动的remarks标记其起止位置
+                              "remarks": location_obj.name + "-" + next_location_obj.name
+                              }
+            activities.append(json.dumps(trans_act_dict, ensure_ascii=False))
+
+            curr_startTime = trans_endTime + timedelta(minutes=10)
 
         # print(activities)
         activities_str = activities.__str__()
         # 由于Response返回时会自动进行 json 序列化，所以这里无需再进行序列化
         # activities_str = json.dumps(activities, ensure_ascii=False)
-
+        end_date = curr_startTime.date()
         # print(activities_str)
         trip = TripModel.objects.create(
             creator=user_obj,
             departure=dest_obj,
             activities=activities_str,
+            endDate=end_date,
             **validated_data)
         return trip
