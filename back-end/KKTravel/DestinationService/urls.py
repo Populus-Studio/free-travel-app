@@ -9,4 +9,5 @@ urlpatterns = [
     path('site/search', views.LocationListManager.as_view()),
     path('destination/additions', views.DestinationMutiAdd.as_view()),
     path('site/additions', views.LocationMutiAdd.as_view()),
+    path('site/favor', views.LocationFavorManager.as_view())
 ]

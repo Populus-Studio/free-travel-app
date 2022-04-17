@@ -21,7 +21,7 @@ class UserBehaviorGlobalManager(APIView):
             behavior_post.save()
             res_data = {
                 "code": 201,
-                "msg": "上传行为数据",
+                "msg": "上传行为数据成功",
                 "data": behavior_post.data
             }
             return Response(res_data, status=status.HTTP_201_CREATED)
