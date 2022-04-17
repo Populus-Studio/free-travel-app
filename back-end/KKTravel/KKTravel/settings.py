@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'UserAuth',
     'DestinationService',
-    'TripService'
+    'TripService',
+    'UserBehavior'
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,9 @@
 from django.db import models
 
-
 # 目的地数据模型
+from UserAuth.models import UserModel
+
+
 class DestinationModel(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -22,5 +24,11 @@ class LocationModel(models.Model):
     timeCost = models.IntegerField(default=0)
     rate = models.FloatField(default=0.0)
     heat = models.IntegerField(default=0)
-    opentime = models.CharField(max_length=200,blank=True)
+    opentime = models.CharField(max_length=200, blank=True)
     img_url = models.URLField(blank=True)
+
+
+# 记录用户和收藏的地点
+class LocationFavorModel(models.Model):
+    user = models.ForeignKey(UserModel, related_name="locationFavor_user", on_delete=models.CASCADE)
+    site = models.ForeignKey(LocationModel, related_name="locationFavor_location", on_delete=models.CASCADE)
