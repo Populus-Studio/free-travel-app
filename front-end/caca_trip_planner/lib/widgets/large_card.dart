@@ -355,6 +355,7 @@ class _LocationInfoContentState extends State<LocationInfoContent> {
   }
 }
 
+/// This is the front side of the large card.
 class ActivityInfoContent extends StatefulWidget {
   const ActivityInfoContent(
     this.act, {

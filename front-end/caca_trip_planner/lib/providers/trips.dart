@@ -123,7 +123,7 @@ class Trips extends ChangeNotifier {
     if (testMode && test) {
       // FIXME
       return Future.delayed(
-          const Duration(seconds: 3), () => DummyData.dummyTrips[0]);
+          const Duration(seconds: 30), () => DummyData.dummyTrips[0]);
     }
 
     if (!_tripPool.any((trip) => trip.id == id)) {
@@ -159,9 +159,12 @@ class Trips extends ChangeNotifier {
     bool ongoing = false,
     bool future = false,
     bool recommended = false,
+    bool recent = false,
+    int num = 10,
   }) async {
     if (testMode) {
       // FIXME
+      return [_tripPool[0], _tripPool[0], _tripPool[0]];
       return Future.delayed(
           const Duration(seconds: 1), () => DummyData.dummyTrips);
     }
@@ -328,7 +331,6 @@ class Trips extends ChangeNotifier {
           ? Utils.username
           : '', // FIXME: also back-end bug
     );
-    print('parse trip success!');
     return trip;
   }
 

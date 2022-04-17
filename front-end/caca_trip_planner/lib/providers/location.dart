@@ -125,7 +125,7 @@ extension LocationTypeExtension on LocationType {
       case "网红地":
         return LocationType.internetFamous;
       case "餐饮":
-        return LocationType.resort;
+        return LocationType.restaurant;
       case "其它":
         return LocationType.others;
       case "交通":

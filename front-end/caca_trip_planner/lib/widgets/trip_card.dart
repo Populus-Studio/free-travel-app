@@ -8,7 +8,7 @@ import '../providers/location.dart';
 import '../utils.dart';
 
 class TripCard extends StatefulWidget {
-  final id;
+  final String id;
   const TripCard({required this.id, Key? key}) : super(key: key);
 
   @override
@@ -18,10 +18,11 @@ class TripCard extends StatefulWidget {
 class _TripCardState extends State<TripCard> {
   late final h = MediaQuery.of(context).size.height;
   late final w = MediaQuery.of(context).size.width;
-  late final rh = h / Utils.h13pm;
+  late final rh = h / Utils.h13pm; // This widget is not subject to rh!!
   late final rw = w / Utils.w13pm;
   late final Future<Trip> _future;
   late final Location _coverLocation;
+  late final String _imageHeroTag = widget.id + 'image-normal';
 
   Future<Trip> loadData() async {
     final trip = await Provider.of<Trips>(context, listen: false)
@@ -40,12 +41,17 @@ class _TripCardState extends State<TripCard> {
 
   @override
   void initState() {
-    _future = loadData();
+    if (widget.id.isNotEmpty) {
+      _future = loadData();
+    }
+    ;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.id.isEmpty) return WaitingCard(rw: rw);
+
     return FutureBuilder<Trip>(
         future: _future,
         builder: (context, snapshot) {
@@ -57,7 +63,10 @@ class _TripCardState extends State<TripCard> {
                   await act.location?.loadImage();
                 }
                 Navigator.of(context)
-                    .pushNamed(TripScreen.routeName, arguments: trip);
+                    .pushNamed(TripScreen.routeName, arguments: {
+                  'trip': trip,
+                  'imageHeroTag': _imageHeroTag,
+                });
               },
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -65,7 +74,7 @@ class _TripCardState extends State<TripCard> {
                 ),
                 elevation: 8.0,
                 child: Container(
-                  height: 120 * rh,
+                  height: 120 * rh, // Sometimes we don't need to use rh.
                   width: 380 * rw,
                   // width: 380 * rw,
                   decoration: BoxDecoration(
@@ -89,7 +98,7 @@ class _TripCardState extends State<TripCard> {
                                 trip.name,
                                 style: Theme.of(context).textTheme.headline2,
                               ),
-                              SizedBox(height: 5 * rh),
+                              const SizedBox(height: 5),
                               Text(
                                 '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
                                 style: Theme.of(context).textTheme.headline3,
@@ -98,10 +107,10 @@ class _TripCardState extends State<TripCard> {
                           ),
                         ),
                         SizedBox(
-                          height: 120 * rh,
+                          height: 120,
                           width: 190 * rw,
                           child: Hero(
-                            tag: trip.id + 'image',
+                            tag: _imageHeroTag,
                             child: Image(
                               image: trip.getCoverImage().image,
                               fit: BoxFit.cover,
@@ -115,73 +124,84 @@ class _TripCardState extends State<TripCard> {
               ),
             );
           } else if (!snapshot.hasError) {
-            return Container(
-              height: 120 * rh,
-              width: 380 * rw,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.black38,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 5,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+            return WaitingCard(rw: rw);
+          } else {
+            return const Center();
+          }
+        });
+  }
+}
+
+class WaitingCard extends StatelessWidget {
+  const WaitingCard({
+    Key? key,
+    required this.rw,
+  }) : super(key: key);
+
+  final double rw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 8.0,
+      child: Container(
+        height: 120,
+        width: 380 * rw,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black38,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 190 * rw,
+                padding: EdgeInsets.symmetric(horizontal: 15 * rw),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 190 * rw,
-                      padding: EdgeInsets.symmetric(horizontal: 15 * rw),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: DecoratedBox(
-                              decoration:
-                                  const BoxDecoration(color: Colors.white10),
-                              child: SizedBox(
-                                height: 18 * rh,
-                                width: 150 * rw,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 15 * rh),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: DecoratedBox(
-                              decoration:
-                                  const BoxDecoration(color: Colors.white10),
-                              child: SizedBox(
-                                height: 15 * rh,
-                                width: 200 * rw,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(color: Colors.white10),
+                        child: SizedBox(
+                          height: 18,
+                          width: 150 * rw,
+                        ),
                       ),
                     ),
-                    DecoratedBox(
-                      decoration: const BoxDecoration(color: Colors.white10),
-                      child: SizedBox(
-                        height: 120 * rh,
-                        width: 190 * rw,
+                    const SizedBox(height: 15),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(color: Colors.white10),
+                        child: SizedBox(
+                          height: 15,
+                          width: 200 * rw,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            );
-          } else {
-            return Container();
-          }
-        });
+              DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.white10),
+                child: SizedBox(
+                  height: 120,
+                  width: 190 * rw,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

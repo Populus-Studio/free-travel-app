@@ -187,6 +187,7 @@ class Utils {
           ],
         ),
       ).then(nextStep ?? (_) => Navigator.of(context).pop());
+      // nextStep ?? Navigator.of(context).pop();
       return true;
     } else {
       showMaterialAlertDialog(

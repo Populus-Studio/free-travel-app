@@ -25,9 +25,9 @@ class ActivityCard extends StatelessWidget {
 
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
-    final rh = h / Utils.h13pm;
+    final rh = h / Utils.h13pm; // This card is not subject to device height!!
     final rw = w / Utils.w13pm;
-    final rheight = 160 * rh;
+    final rheight = 160.0 * rh; // Not rh
 
     late final Widget _content;
     if (activity.type == LocationType.transportation) {
@@ -204,7 +204,7 @@ class LocationCardContent extends StatelessWidget {
                           ),
                           SizedBox(width: 4 * rw),
                           Container(
-                            height: 17,
+                            height: 17 * rh,
                             width:
                                 13.0 * activity.type.toChineseString().length,
                             padding: const EdgeInsets.all(1),

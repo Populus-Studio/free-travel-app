@@ -370,7 +370,7 @@ class DummyData {
 
   static late final List<Trip> dummyTrips = [
     Trip(
-      id: '19',
+      id: '7',
       name: '北京周末之行',
       description: '大学生休闲游',
       departureId: 2,

@@ -24,7 +24,10 @@ class TripScreen extends StatefulWidget {
 }
 
 class _TripScreenState extends State<TripScreen> {
-  late final trip = ModalRoute.of(context)?.settings.arguments as Trip;
+  late final arguments =
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+  late final trip = arguments['trip'] as Trip;
+  late final _imageHeroTag = arguments['imageHeroTag'] as String;
   late final h = MediaQuery.of(context).size.height;
   late final w = MediaQuery.of(context).size.width;
   late final rh = h / Utils.h13pm;
@@ -251,7 +254,8 @@ class _TripScreenState extends State<TripScreen> {
 
         // add title and separator (content: padding before & after text,
         // padding before the dash separator, text, and the dash separator)
-        scrollDistanceSum += (20 * 2 + 20) * rh + 31 + 1;
+        // Note that font size is subjective to rh as well!!
+        scrollDistanceSum += (20 * 2 + 20 + 31) * rh + 1;
 
         _dayLabelPositions.add(scrollDistanceSum);
       }
@@ -282,6 +286,7 @@ class _TripScreenState extends State<TripScreen> {
             trip: trip,
             heroTag: _tscHeroTag,
             tscHeight: _tscHeight,
+            imageHeroTag: _imageHeroTag,
           ),
           // 行程概览
           SliverToBoxAdapter(
@@ -694,6 +699,7 @@ class CrazyAppBar extends StatelessWidget {
     required this.trip,
     required String heroTag,
     required this.height,
+    required this.imageHeroTag,
     this.tscHeight,
   })  : _showCalendarIcon = showCalendarIcon,
         _heroTag = heroTag,
@@ -705,6 +711,7 @@ class CrazyAppBar extends StatelessWidget {
   final String _heroTag;
   final double height;
   final double? tscHeight;
+  final String imageHeroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -782,7 +789,7 @@ class CrazyAppBar extends StatelessWidget {
             ),
           ),
           child: Hero(
-            tag: trip.id + 'image',
+            tag: imageHeroTag,
             child: Image(
               image: trip.getCoverImage().image,
               fit: BoxFit.cover,
