@@ -136,15 +136,23 @@ class _SelectScreenState extends State<SelectScreen> {
                             HapticFeedback.selectionClick();
                             if (orientation == CardSwipeOrientation.left) {
                               // TODO: Swiped to the left
+                              Utils.postUserBehavior(
+                                siteId: locations[index].id,
+                                selected: true,
+                              );
                               setState(() {
                                 _discardedLocationIds.add(locations[index].id);
                               });
                             } else if (orientation ==
                                 CardSwipeOrientation.right) {
+                              // TODO: Swiped to the right
+                              Utils.postUserBehavior(
+                                siteId: locations[index].id,
+                                selected: false,
+                              );
                               setState(() {
                                 _selectedLocationIds.add(locations[index].id);
                               });
-                              // TODO: Swiped to the right
                             }
                           }
                         }

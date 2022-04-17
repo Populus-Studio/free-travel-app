@@ -119,128 +119,137 @@ class TripSummaryCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: get height
-    return Container(
-      height: tscHeight,
-      width: (_width13pm + 10) * rw,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: trip.getCoverLocation().palette!.color,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 5,
-            spreadRadius: 2,
-          ),
-        ],
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: !empty
-          ? SingleChildScrollView(
-              // In case itinerary is too long!
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('行程概览', style: TextStyle(fontSize: 25)),
-                      GestureDetector(
-                        onTap: () {
-                          // TODO: Open map
-                        },
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.map_outlined,
-                              color: Colors.white70,
-                            ),
-                            Text('  路线地图 >'),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  ...List.generate(trip.duration, (index) {
-                    final nextDate =
-                        trip.startDate.add(Duration(days: index + 1));
-                    final nextDay = DateTime(
-                        nextDate.year, nextDate.month, nextDate.day, 0, 0, 0);
-                    final previousDate =
-                        nextDay.subtract(const Duration(days: 2));
-                    final previousDay = DateTime(previousDate.year,
-                        previousDate.month, previousDate.day, 23, 59, 59);
-                    final activitiesOfTheDay = trip.activities
-                        .where(
-                          (a) =>
-                              a.type != LocationType.transportation &&
-                              a.type != LocationType.accommodation &&
-                              a.startTime.isBefore(nextDay) &&
-                              a.startTime.isAfter(previousDay),
-                        )
-                        .toList();
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 6,
-                        horizontal: 1,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'D${index + 1}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+      elevation: 8.0,
+      child: Container(
+        height: tscHeight,
+        width: (_width13pm + 10) * rw,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: trip.getCoverLocation().palette!.color,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: !empty
+            ? SingleChildScrollView(
+                // In case itinerary is too long!
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('行程概览', style: TextStyle(fontSize: 25)),
+                        GestureDetector(
+                          onTap: () {
+                            // TODO: Open map
+                          },
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.map_outlined,
+                                color: Colors.white70,
+                              ),
+                              Text('  路线地图 >'),
+                            ],
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            // USE Expanded TO LIMIT Wrap WIDGET!!!
-                            child: Wrap(
-                              direction: Axis.horizontal,
-                              runSpacing: 5,
-                              children: List.generate(activitiesOfTheDay.length,
-                                  (index) {
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(
-                                          activitiesOfTheDay[index]
-                                              // .location
-                                              .name,
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    ...List.generate(trip.duration, (index) {
+                      final nextDate =
+                          trip.startDate.add(Duration(days: index + 1));
+                      final nextDay = DateTime(
+                          nextDate.year, nextDate.month, nextDate.day, 0, 0, 0);
+                      final previousDate =
+                          nextDay.subtract(const Duration(days: 2));
+                      final previousDay = DateTime(previousDate.year,
+                          previousDate.month, previousDate.day, 23, 59, 59);
+                      final activitiesOfTheDay = trip.activities
+                          .where(
+                            (a) =>
+                                a.type != LocationType.transportation &&
+                                a.type != LocationType.accommodation &&
+                                a.startTime.isBefore(nextDay) &&
+                                a.startTime.isAfter(previousDay),
+                          )
+                          .toList();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 6,
+                          horizontal: 1,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'D${index + 1}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              // USE Expanded TO LIMIT Wrap WIDGET!!!
+                              child: Wrap(
+                                direction: Axis.horizontal,
+                                runSpacing: 5,
+                                children: List.generate(
+                                    activitiesOfTheDay.length, (index) {
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border:
+                                              Border.all(color: Colors.grey),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5.0),
+                                          child: Text(
+                                            activitiesOfTheDay[index]
+                                                // .location
+                                                .name,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    if (index != activitiesOfTheDay.length - 1)
-                                      const DotWidget(
-                                        dashColor: Colors.grey,
-                                        dashHeight: 2,
-                                        emptyWidth: 0,
-                                        totalWidth: 20,
-                                      )
-                                  ],
-                                );
-                              }),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            )
-          : Container(),
+                                      if (index !=
+                                          activitiesOfTheDay.length - 1)
+                                        const DotWidget(
+                                          dashColor: Colors.grey,
+                                          dashHeight: 2,
+                                          emptyWidth: 0,
+                                          totalWidth: 20,
+                                        )
+                                    ],
+                                  );
+                                }),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              )
+            : Container(),
+      ),
     );
   }
 }

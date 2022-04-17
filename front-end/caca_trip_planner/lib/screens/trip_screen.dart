@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:flutter_palette/flutter_palette.dart';
 import 'package:provider/provider.dart';
+import 'package:reorderables/reorderables.dart';
 import 'dart:math' as math;
 
 import '../widgets/large_card.dart';
@@ -257,6 +258,14 @@ class _TripScreenState extends State<TripScreen> {
     });
 
     super.initState();
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      // TODO: Update with server
+      final old = trip.activities.removeAt(oldIndex);
+      trip.activities.insert(newIndex, old);
+    });
   }
 
   @override
@@ -530,6 +539,147 @@ class _TripScreenState extends State<TripScreen> {
               childCount: trip.activities.length + 2, // plus two paddings
             ),
           ),
+
+          // 可重排活动卡
+          if (false)
+            ReorderableSliverList(
+              delegate: ReorderableSliverChildBuilderDelegate(
+                (context, index) {
+                  if (index == 0) {
+                    // top padding
+                    return SizedBox(height: 20 * rh);
+                  } else if (index == trip.activities.length + 1) {
+                    // trailing text
+                    return Column(
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(top: 20 * rh, bottom: 10 * rh),
+                          child: const DashLineSeparator(
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).padding.bottom,
+                          ),
+                          child: const Text(
+                            '行程结束',
+                            style: TextStyle(
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    final act = trip.activities[index - 1];
+                    final activityCard = ActivityCard(
+                      heroTag: 'activity-card-${trip.id}-${index - 1}',
+                      activity: act,
+                    );
+
+                    final fullCardWithDash = Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (act.type != LocationType.transportation)
+                          Row(
+                            children: [
+                              SizedBox(width: 54 * rw), // FIXME: Why 54?
+                              DecoratedBox(
+                                decoration:
+                                    const BoxDecoration(color: Colors.grey),
+                                child: SizedBox(
+                                  height: 160 * rh,
+                                  width: 5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        GestureDetector(
+                          onTap: () {
+                            if (act.type == LocationType.transportation) {
+                              // TODO: Open transportation info
+                              null;
+                            } else {
+                              Navigator.of(context).push(
+                                HeroDialogRoute(
+                                  builder: (context) {
+                                    return ChangeNotifierProvider.value(
+                                      value: act.location,
+                                      child: Center(
+                                        child: LargeCard(
+                                          h * 0.81,
+                                          rw,
+                                          w: w,
+                                          heroTag:
+                                              'activity-card-${trip.id}-${index - 1}',
+                                          activity: act,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+                          },
+                          // MUST wrap whatever widget inside an unconstrained box so that
+                          // its parents can't dictate its constraints. This is needed
+                          // because Slivers naturally ignores all children constraints
+                          // to make the special effects.
+                          child: UnconstrainedBox(
+                            child: act.type != LocationType.transportation
+                                ? ChangeNotifierProvider.value(
+                                    value: act.location,
+                                    child: activityCard,
+                                  )
+                                : activityCard,
+                          ),
+                        ),
+                      ],
+                    );
+
+                    // check if it's the first activity of the day
+                    final previousDay = index >= 2
+                        ? trip.activities[index - 2].startTime.day
+                        : act.startTime.day - 1;
+                    if (act.startTime.day == previousDay + 1) {
+                      final dayInTrip =
+                          act.startTime.day - trip.activities[0].startTime.day;
+                      return Column(
+                        children: [
+                          if (dayInTrip != 0)
+                            Padding(
+                              padding: EdgeInsets.all(20.0 * rh),
+                              child: const DashLineSeparator(
+                                color: Colors.black54,
+                              ),
+                            ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20 * rh),
+                            child: Text(
+                              '第 ${dayInTrip + 1} 天',
+                              key: _dayLabelKeys[dayInTrip],
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 22 * rh,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          fullCardWithDash,
+                        ],
+                      );
+                    } else {
+                      return fullCardWithDash;
+                    }
+                  }
+                },
+                childCount: trip.activities.length + 2, // plus two paddings
+              ),
+              onReorder: _onReorder,
+            ),
         ],
       ),
     );

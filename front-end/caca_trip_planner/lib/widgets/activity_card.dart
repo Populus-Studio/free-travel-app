@@ -29,47 +29,41 @@ class ActivityCard extends StatelessWidget {
     final rw = w / Utils.w13pm;
     final rheight = 160 * rh;
 
+    late final Widget _content;
     if (activity.type == LocationType.transportation) {
+      _content = TransportationCardContent(
+        rh: rh,
+        rw: rw,
+        activity: activity,
+      );
       if (_heroTag != null) {
         return Hero(
           tag: _heroTag!,
           child: Material(
             color: Colors.transparent,
-            child: TransportationCardContent(
-              rh: rh,
-              rw: rw,
-              activity: activity,
-            ),
+            child: _content,
           ),
         );
       } else {
-        return TransportationCardContent(
-          rh: rh,
-          rw: rw,
-          activity: activity,
-        );
+        return _content;
       }
     } else {
+      _content = LocationCardContent(
+        rw: rw,
+        rheight: rheight,
+        rh: rh,
+        activity: activity,
+      );
       if (_heroTag != null) {
         return Hero(
           tag: _heroTag!,
           child: Material(
             color: Colors.transparent,
-            child: LocationCardContent(
-              rw: rw,
-              rheight: rheight,
-              rh: rh,
-              activity: activity,
-            ),
+            child: _content,
           ),
         );
       } else {
-        return LocationCardContent(
-          rw: rw,
-          rheight: rheight,
-          rh: rh,
-          activity: activity,
-        );
+        return _content;
       }
     }
   }

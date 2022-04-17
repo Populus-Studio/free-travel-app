@@ -12,7 +12,7 @@ import '/screens/select_screen.dart';
 import '/providers/locations.dart';
 
 class TestScreen extends StatefulWidget {
-  static const routeName = '/main-screen';
+  static const routeName = '/test-screen';
 
   const TestScreen({Key? key}) : super(key: key);
 

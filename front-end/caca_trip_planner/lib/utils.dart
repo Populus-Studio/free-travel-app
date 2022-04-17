@@ -77,6 +77,30 @@ class Utils {
     );
   }
 
+  /// Post user behavior such as selected a site, etc. This method does not
+  /// throw error because it is not imperative.
+  static void postUserBehavior({
+    required siteId,
+    required selected,
+    behaviorType = 0, // 0 for selecting behavior
+    behaviorWeight = 0,
+    contextLocation = '',
+  }) async {
+    await http.post(
+      Uri.http(Utils.authority, '/user/behavior/'),
+      headers: Utils.authHeader..addAll(Utils.jsonHeader),
+      body: json.encode({
+        'username': Utils.username,
+        'siteId': siteId,
+        'behaviorType': behaviorType,
+        'contextTime': DateTime.now().toIso8601String(),
+        'contextLocation': contextLocation,
+        'behaviorBool': selected ? 0 : 1,
+        'behaviorWeight': behaviorWeight,
+      }),
+    );
+  }
+
   /// Following methods are for authentication purposes.
 
   /// This method sends a login request. Currently it only supports loggin in

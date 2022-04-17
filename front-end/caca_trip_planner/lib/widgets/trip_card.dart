@@ -59,58 +59,57 @@ class _TripCardState extends State<TripCard> {
                 Navigator.of(context)
                     .pushNamed(TripScreen.routeName, arguments: trip);
               },
-              child: Container(
-                height: 120 * rh,
-                width: 380 * rw,
-                // width: 380 * rw,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: _coverLocation.palette!.color,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                    ),
-                  ],
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 190 * rw,
-                        padding: EdgeInsets.symmetric(horizontal: 15 * rw),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              trip.name,
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                            SizedBox(height: 5 * rh),
-                            Text(
-                              '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
-                              style: Theme.of(context).textTheme.headline3,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 120 * rh,
-                        width: 190 * rw,
-                        child: Hero(
-                          tag: trip.id + 'image',
-                          child: Image(
-                            image: trip.getCoverImage().image,
-                            fit: BoxFit.cover,
+                elevation: 8.0,
+                child: Container(
+                  height: 120 * rh,
+                  width: 380 * rw,
+                  // width: 380 * rw,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: _coverLocation.palette!.color,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 190 * rw,
+                          padding: EdgeInsets.symmetric(horizontal: 15 * rw),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                trip.name,
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
+                              SizedBox(height: 5 * rh),
+                              Text(
+                                '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: 120 * rh,
+                          width: 190 * rw,
+                          child: Hero(
+                            tag: trip.id + 'image',
+                            child: Image(
+                              image: trip.getCoverImage().image,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

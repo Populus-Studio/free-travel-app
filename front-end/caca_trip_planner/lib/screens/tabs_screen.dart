@@ -1,13 +1,16 @@
-import 'package:cacatripplanner/screens/test_screen.dart';
+import 'package:flutter/material.dart';
 
+import 'test_screen.dart';
+import 'login_screen.dart';
 import 'main_screen.dart';
 import 'select_screen.dart';
 import 'plan_screen.dart';
 import 'my_screen.dart';
-import 'package:flutter/material.dart';
+import '../utils.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({Key? key}) : super(key: key);
+  static const routeName = '/tab_screen';
 
   @override
   State<TabsScreen> createState() => _TabsScreenState();
@@ -37,6 +40,10 @@ class _TabsScreenState extends State<TabsScreen> {
         'page': const MyScreen(),
       }
     ];
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => Utils.isAuth
+        ? null
+        : Navigator.of(context)
+            .pushReplacementNamed(LoginViaUsernameScreen.routeName));
     super.initState();
   }
 

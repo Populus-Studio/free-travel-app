@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyScreen extends StatelessWidget {
   const MyScreen({Key? key}) : super(key: key);
+  static const routeName = '/my-screen';
 
   @override
   Widget build(BuildContext context) {
