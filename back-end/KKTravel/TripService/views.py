@@ -7,7 +7,7 @@ from datetime import date
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404
+from django.http import Http404,HttpResponseBadRequest
 
 # 使用自定义paging
 from Utils.paging import api_paging
@@ -17,41 +17,80 @@ from Utils.paging import api_paging
 class TripGlobalManager(APIView):
     # 批量获取所有行程
     def get(self, request):
-        # 所有的可查询参数
-        is_future = request.query_params.dict()['future']
-        is_ongoing = request.query_params.dict()['ongoing']
-        is_finished = request.query_params.dict()['finished']
-        keywords = request.query_params.dict()['keywords']
-        sortBy = request.query_params.dict()['sortBy']
-        order = request.query_params.dict()['order']
+        query_dict = request.query_params.dict()
+        if 'isFavorite' in query_dict:
+            is_favor = request.query_params.dict()['isFavorite']
+        else:
+            is_favor = "0"
+
+        if 'recommended' in query_dict:
+            is_recommend = request.query_params.dict()['recommended']
+        else:
+            is_recommend = "0"
+
+        if 'future' in query_dict:
+            is_future = request.query_params.dict()['future']
+        else:
+            is_future = "0"
+
+        if 'ongoing' in query_dict:
+            is_ongoing = request.query_params.dict()['ongoing']
+        else:
+            is_ongoing = "0"
+
+        if 'finished' in query_dict:
+            is_finished = request.query_params.dict()['finished']
+        else:
+            is_finished = "0"
+
+        if 'keywords' in query_dict:
+            keywords = request.query_params.dict()['keywords']
+        else:
+            keywords = ""
+
+        if 'page' not in query_dict or 'size' not in query_dict:
+            return HttpResponseBadRequest
 
         # 查询列表，数据库只返回 符合”对应属性在查询列表中“ 的条目
-        query_status = [0, 1, 2]
+        query_favor = [0, 1]
+        query_recommend = [0, 1]
 
-        if is_future == "1":
-            query_status = [0]
-        elif is_ongoing == "1":
-            query_status = [1]
-        elif is_finished == "1":
-            query_status = [2]
+        if is_favor == "1":
+            query_favor = [1]
+
+        if is_recommend == "1":
+            query_recommend = [1]
 
         trips_all = TripModel.objects.all()
+        today_date = date.today()
+
         if keywords != "":
-            trips = trips_all.filter(status__in=query_status,
+            trips = trips_all.filter(isFavorite__in=query_favor,
+                                     isRecommend__in=query_recommend,
                                      name__contains=keywords)
         else:
-            trips = trips_all.filter(status__in=query_status)
-        # 按照指定属性排列
-        if order == "ASC":
-            trips = trips.order_by(sortBy)
-        elif order == "DESC":
-            trips = trips.order_by("-" + sortBy)
-        else:
-            res_data = {
-                "code": 400,
-                "msg": "order参数错误，请检查"
-            }
-            return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
+            trips = trips_all.filter(isFavorite__in=query_favor,
+                                     isRecommend__in=query_recommend)
+        if is_future == "1":
+            trips = trips.filter(startDate__gt=today_date)
+        elif is_ongoing == "1":
+            trips = trips.filter(startDate__lte=today_date,
+                                 endDate__gte=today_date)
+        elif is_finished == "1":
+            trips = trips.filter(endDate__lt=today_date)
+
+        # # 按照指定属性排列
+        # if order == "ASC":
+        #     trips = trips.order_by(sortBy)
+        # elif order == "DESC":
+        #     trips = trips.order_by("-" + sortBy)
+        # else:
+        #     res_data = {
+        #         "code": 400,
+        #         "msg": "order参数错误，请检查"
+        #     }
+        #     return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
+
         return api_paging(trips, request, TripSerializer, "trip")
 
     # 自动生成行程
@@ -108,20 +147,45 @@ class TripForUserManager(APIView):
     # 批量获取 当前登录用户 的所有行程
     def get(self, request):
         # 所有的可查询参数
-        is_favor = request.query_params.dict()['isFavorite']
-        is_recommend = request.query_params.dict()['recommended']
-        is_future = request.query_params.dict()['future']
-        is_ongoing = request.query_params.dict()['ongoing']
-        is_finished = request.query_params.dict()['finished']
-        keywords = request.query_params.dict()['keywords']
+        query_dict = request.query_params.dict()
+        if 'isFavorite' in query_dict:
+            is_favor = request.query_params.dict()['isFavorite']
+        else:
+            is_favor = "0"
 
-        print("favor:%s, recommend:%s, status: %s %s %s, keyword: %s" %
-              (is_favor, is_recommend, is_future, is_ongoing, is_finished, keywords))
-        print(type(is_favor), type(is_future), type(keywords))
+        if 'recommended' in query_dict:
+            is_recommend = request.query_params.dict()['recommended']
+        else:
+            is_recommend = "0"
+
+        if 'future' in query_dict:
+            is_future = request.query_params.dict()['future']
+        else:
+            is_future = "0"
+
+        if 'ongoing' in query_dict:
+            is_ongoing = request.query_params.dict()['ongoing']
+        else:
+            is_ongoing = "0"
+
+        if 'finished' in query_dict:
+            is_finished = request.query_params.dict()['finished']
+        else:
+            is_finished = "0"
+
+        if 'keywords' in query_dict:
+            keywords = request.query_params.dict()['keywords']
+        else:
+            keywords = ""
+        if 'page' not in query_dict or 'size' not in query_dict:
+            return HttpResponseBadRequest
+
+        # print("favor:%s, recommend:%s, status: %s %s %s, keyword: %s" %
+        #       (is_favor, is_recommend, is_future, is_ongoing, is_finished, keywords))
+        # print(type(is_favor), type(is_future), type(keywords))
         # 查询列表，数据库只返回 符合”对应属性在查询列表中“ 的条目
         query_favor = [0, 1]
         query_recommend = [0, 1]
-        # query_status = [0, 1, 2]
 
         if is_favor == "1":
             query_favor = [1]
@@ -146,6 +210,8 @@ class TripForUserManager(APIView):
                                  endDate__gte=today_date)
         elif is_finished == "1":
             trips = trips.filter(endDate__lt=today_date)
+
+
 
         # 按照出发时间倒序排列
         trips = trips.order_by("-startDate")
