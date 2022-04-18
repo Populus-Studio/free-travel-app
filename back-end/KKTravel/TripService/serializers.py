@@ -79,7 +79,7 @@ class TripSmartSerializer(serializers.ModelSerializer):
             print("end" + end_time.isoformat())
 
             # 增加当前场景的活动
-            act_dict = {'locationId': curr_id,
+            act_dict = {'locationId': str(curr_id),
                         'geoCode': geocode.get_geocode(location_obj.address),
                         'startTime': curr_startTime.isoformat(),
                         'endTime': end_time.isoformat(),
@@ -92,7 +92,7 @@ class TripSmartSerializer(serializers.ModelSerializer):
                         "remarks": ""
                         }
             # print(act_dict)
-            activities.append(json.dumps(act_dict, ensure_ascii=False))
+            activities.append(act_dict)
 
             rand_trans_duration = random.randrange(10, 60, 5)
             rand_trans_cost = random.randint(0, 25)
@@ -110,8 +110,8 @@ class TripSmartSerializer(serializers.ModelSerializer):
             if next_location_obj is None:
                 continue
             # 增加两个场景间交通的活动
-            trans_act_dict = {'locationId': locations[i + 1], # 记录下一个地点的id和位置
-                              'geoCode': geocode.get_geocode(next_location_obj.address),
+            trans_act_dict = {'locationId': "-1",
+                              'geoCode': "-1",
                               'startTime': end_time.isoformat(),
                               'endTime': trans_endTime.isoformat(),
                               # 交通活动的name代表其交通方式
@@ -122,14 +122,13 @@ class TripSmartSerializer(serializers.ModelSerializer):
                               # 交通活动的remarks标记其起止位置
                               "remarks": location_obj.name + "-" + next_location_obj.name
                               }
-            activities.append(json.dumps(trans_act_dict, ensure_ascii=False))
+            activities.append(trans_act_dict)
 
             curr_startTime = trans_endTime + timedelta(minutes=10)
 
-        # print(activities)
+        # json序列化
         activities_str = activities.__str__()
-        # 由于Response返回时会自动进行 json 序列化，所以这里无需再进行序列化
-        # activities_str = json.dumps(activities, ensure_ascii=False)
+        activities_str = json.dumps(activities, ensure_ascii=False)
         end_date = curr_startTime.date()
         # print(activities_str)
         trip = TripModel.objects.create(
