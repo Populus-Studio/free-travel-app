@@ -78,8 +78,11 @@ class Trip extends ChangeNotifier {
   }
 
   Location getCoverLocation() {
+    // FIXME: To attend to a back-end bug
     return activities
-        .firstWhere((a) => a.locationId == coverLocationId)
+        .firstWhere((a) =>
+            a.locationId == coverLocationId &&
+            a.type != LocationType.transportation)
         .location!;
   }
 

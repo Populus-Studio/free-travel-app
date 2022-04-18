@@ -36,6 +36,8 @@ class Location with ChangeNotifier {
   bool isFavorite;
 
   /// Lazy-load image & palette. Always call this before accessing palettes!
+  /// A good habit is to explicitly call this every time a new location is
+  /// initialized.
   Future<void> loadImage() async {
     if (palette == null) {
       // This implicitly waits for the image to be downloaded.

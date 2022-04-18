@@ -69,6 +69,9 @@ class _TripScreenState extends State<TripScreen> {
   /// Recording the position of the day labels
   late final List<double> _dayLabelPositions;
 
+  /// Max scrollable distance to prevent over-scrolling.
+  late final double _maxScrollableDistance;
+
   /// Scroll (with animation) to a given day in trip
   void _scrollToDay(int day,
       {required bool dayIndicator, required bool list}) async {
@@ -114,7 +117,9 @@ class _TripScreenState extends State<TripScreen> {
     // scroll big list
     if (list) {
       _future2 = _scrollController.animateTo(
-        _dayLabelPositions[day],
+        _dayLabelPositions[day] > _maxScrollableDistance
+            ? _maxScrollableDistance
+            : _dayLabelPositions[day],
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -131,7 +136,6 @@ class _TripScreenState extends State<TripScreen> {
     _dayIndicatorController = ScrollController()..addListener(() {});
     _scrollController = ScrollController()
       ..addListener(() {
-        // return;
         if (!_disableAutoScrolling) {
           // 1 - moving on to the next day
           bool detected = false;
@@ -220,7 +224,7 @@ class _TripScreenState extends State<TripScreen> {
       double scrollDistanceSum = headerScrollDistance;
 
       // get height of each day's activities
-      for (int i = 0; i < trip.duration - 1; i++) {
+      for (int i = 0; i < trip.duration; i++) {
         // find activities
         final nextDate = trip.startDate.add(Duration(days: i + 1));
         final nextDay =
@@ -257,7 +261,33 @@ class _TripScreenState extends State<TripScreen> {
         // Note that font size is subjective to rh as well!!
         scrollDistanceSum += (20 * 2 + 20 + 31) * rh + 1;
 
+        // The last value is only used to get _maxScrollable Distance
         _dayLabelPositions.add(scrollDistanceSum);
+      }
+
+      // FIXME: get _maxScrollableDistance
+      final availableSpaceForList =
+          h - (_appBarFoldedHeight + _dayIndicatorHeight);
+      var ptr = _dayLabelPositions.length - 1;
+      var accumulatedDistanceBackwards =
+          _dayLabelPositions[ptr] - _dayLabelPositions[ptr - 1];
+      if (ptr > 1) {
+        while (ptr > 1) {
+          ptr--;
+          if (accumulatedDistanceBackwards +
+                  (_dayLabelPositions[ptr] - _dayLabelPositions[ptr - 1]) <
+              availableSpaceForList) {
+            accumulatedDistanceBackwards +=
+                _dayLabelPositions[ptr + 1] - _dayLabelPositions[ptr - 1];
+          } else {
+            break;
+          }
+        }
+        _maxScrollableDistance = _dayLabelPositions[ptr + 1] -
+            (h - accumulatedDistanceBackwards + 34 * rh);
+      } else {
+        _maxScrollableDistance = _dayLabelPositions[ptr] -
+            (h - accumulatedDistanceBackwards + 34 * rh);
       }
     });
 

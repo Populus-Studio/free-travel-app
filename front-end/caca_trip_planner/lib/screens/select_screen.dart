@@ -1,15 +1,19 @@
 import 'package:cacatripplanner/helpers/futuristic.dart';
 import 'package:cacatripplanner/screens/login_screen.dart';
+import 'package:cacatripplanner/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipecards/flutter_swipecards.dart';
 // import 'package:flutter_tindercard/flutter_tindercard.dart'; // This does not support Null Safety
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../widgets/large_card.dart';
 import '../utils.dart';
 import '../providers/locations.dart';
 import '../providers/location.dart';
+import '../providers/trips.dart';
 
 class SelectScreen extends StatefulWidget {
   static const routeName = '/select-screen';
@@ -127,11 +131,9 @@ class _SelectScreenState extends State<SelectScreen> {
                           if (index == (locations.length - 1)) {
                             // TODO: This is the last card! Probably need to call setState() here.
                             // If not, make this screen a stateless widget.
-                            Utils.showMaterialAlertDialog(context, '选完啦！',
-                                    const Text('你已经完成选择，轻触OK返回'))
-                                .then((_) {
-                              Navigator.of(context).pop();
-                            });
+                            Utils.showMaterialAlertDialog(
+                                context, '选完啦！', const Text('你已经完成选择，轻触OK返回'));
+                            _makeTrip();
                           } else {
                             HapticFeedback.selectionClick();
                             if (orientation == CardSwipeOrientation.left) {
@@ -170,6 +172,28 @@ class _SelectScreenState extends State<SelectScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _makeTrip() async {
+    final trip = await Provider.of<Trips>(context, listen: false).createTrip(
+      departureId: '1',
+      description: 'Created at ${DateTime.now().toIso8601String()}',
+      duration: 3,
+      startDate: DateTime.now(),
+      endDate: DateTime.now().add(const Duration(days: 3)),
+      locationIds: _selectedLocationIds,
+      name: DateTime.now().toChineseString() + '行程',
+      numOfTourists: 1,
+      remarks: 'Created at ${DateTime.now().toIso8601String()}',
+    );
+
+    await trip.getCoverLocation().loadImage();
+
+    Navigator.of(context)
+        .pushReplacementNamed(TripScreen.routeName, arguments: {
+      'trip': trip,
+      'imageHeroTag': 'no-tag-${GlobalKey()}', // TODO: FIX THIS
+    });
   }
 }
 

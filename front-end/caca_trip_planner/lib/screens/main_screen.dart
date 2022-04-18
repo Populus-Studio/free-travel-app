@@ -38,9 +38,9 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // submit two tasks
     _recentTrips = Provider.of<Trips>(context, listen: false)
-        .fetchTripByType(recent: true);
+        .fetchTripByType(recent: true, num: 3);
     _recommendedTrips = Provider.of<Trips>(context, listen: false)
-        .fetchTripByType(recommended: true);
+        .fetchTripByType(recommended: true, num: 3);
     super.initState();
   }
 
@@ -115,37 +115,35 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
           ),
-          FutureBuilder<List<Trip>>(
-            future: _recommendedTrips,
-            builder: ((context, snapshot) {
-              if (snapshot.hasData) {
-                final trips = snapshot.data;
-                return Container(
-                  padding: EdgeInsets.only(top: 5 * rh),
-                  height: 340 * rh,
-                  child: Swiper(
-                    itemCount: 3,
+          Container(
+            padding: EdgeInsets.only(top: 5 * rh),
+            height: 345 * rh,
+            child: FutureBuilder<List<Trip>>(
+              future: _recommendedTrips,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final trips = snapshot.data!;
+                  return Swiper(
+                    itemCount: trips.length,
                     viewportFraction: 0.8,
                     scale: 0.9,
                     itemBuilder: (context, index) {
                       return RecommendationCard(
-                          id: trips![0].id, key: GlobalKey());
+                          trip: trips[index], key: GlobalKey());
                     },
-                  ),
-                );
-                // return RecommendationCard(
-                //   id: trips![0].id,
-                //   key: GlobalKey(),
-                // );
-              } else if (!snapshot.hasError) {
-                return Padding(
-                  padding: EdgeInsets.only(top: 5.0 * rh),
-                  child: const RecommendationCard(id: ''),
-                );
-              } else {
-                return const Center();
-              }
-            }),
+                  );
+                } else {
+                  return Swiper(
+                    itemCount: 3,
+                    viewportFraction: 0.8,
+                    scale: 0.9,
+                    itemBuilder: (context, index) {
+                      return const RecommendationCard(trip: null);
+                    },
+                  );
+                }
+              },
+            ),
           ),
         ],
       ),

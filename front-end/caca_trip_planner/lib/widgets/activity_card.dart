@@ -192,30 +192,36 @@ class LocationCardContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 名字
-                      Row(
-                        // crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            activity.name,
-                            style: TextStyle(
-                              fontSize: 20 * rw,
-                              fontWeight: FontWeight.bold,
+                      FittedBox(
+                        // Wrap row in FittedBox to prevent text overflow.
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              activity.name,
+                              style: TextStyle(
+                                fontSize: 20 * rw,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 4 * rw),
-                          Container(
-                            height: 17 * rh,
-                            width:
-                                13.0 * activity.type.toChineseString().length,
-                            padding: const EdgeInsets.all(1),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              color: Colors.grey.withOpacity(0.4),
+                            SizedBox(width: 4 * rw),
+                            // Chip
+                            Container(
+                              height: 17 * rh,
+                              width:
+                                  13.0 * activity.type.toChineseString().length,
+                              padding: const EdgeInsets.all(1),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(2),
+                                color: Colors.grey.withOpacity(0.4),
+                              ),
+                              child: FittedBox(
+                                  child: Text(activity.type.toChineseString())),
                             ),
-                            child: FittedBox(
-                                child: Text(activity.type.toChineseString())),
-                          )
-                        ],
+                            // padding for heart icon
+                            SizedBox(width: 30 * rw),
+                          ],
+                        ),
                       ),
                       // 介绍
                       if (activity.location!.description != '')

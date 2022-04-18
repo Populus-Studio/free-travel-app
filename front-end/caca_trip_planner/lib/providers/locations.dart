@@ -28,7 +28,7 @@ class Locations with ChangeNotifier {
         Uri.http(Utils.authority, '/site/' + id),
         headers: Utils.authHeader,
       );
-      // Don't user timeout if you're not ready to handle the error!!!
+      // Don't use timeout if you're not ready to handle the error!!!
       // ).timeout(const Duration(seconds: 1));
 
       if (response.statusCode == 200) {
@@ -73,7 +73,7 @@ class Locations with ChangeNotifier {
     if (true) {
       _recommendedLocationIds.clear();
       _recommendedLocationIds.add('6');
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 16; i++) {
         _recommendedLocationIds.add(Utils.rng.nextInt(7000).toString());
       }
       hasRanded = true;

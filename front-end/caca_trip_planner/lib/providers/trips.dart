@@ -80,17 +80,12 @@ class Trips extends ChangeNotifier {
     required DateTime endDate,
     required int duration,
     required List<String> locationIds,
-    required int totalCost,
     required String remarks,
   }) async {
-    if (testMode) {
-      // FIXME
-      return DummyData.dummyTrips[0];
-    }
     // FIXME: A different API should be used here
     final response = await http.post(
       Uri.http(Utils.authority, '/trip/new/'),
-      headers: Utils.authHeader,
+      headers: Utils.authHeader..addAll(Utils.jsonHeader),
       body: json.encode(
         {
           'name': name,
@@ -98,18 +93,18 @@ class Trips extends ChangeNotifier {
           'description': description,
           'departureId': departureId,
           'numOfTourists': numOfTourists,
-          'startDate': startDate.toIso8601String(),
-          'endDate': endDate.toIso8601String(),
+          'startDate': startDate.toIso8601String().substring(0, 10),
+          'endDate': endDate.toIso8601String().substring(0, 10),
           'duration': duration,
           'remarks': remarks,
-          'locations': locationIds, // automatically encodes list of strings
+          'locationIds': locationIds, // automatically encodes list of strings
         },
       ),
     );
     if (response.statusCode == 201) {
       final body =
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-      final trip = await fromJsonBody(body['trip']);
+      final trip = await fromJsonBody(body['data']);
       _tripPool.add(trip);
       return trip;
     } else {
@@ -162,55 +157,60 @@ class Trips extends ChangeNotifier {
     bool recent = false,
     int num = 10,
   }) async {
-    if (testMode) {
-      // FIXME
-      return [_tripPool[0], _tripPool[0], _tripPool[0]];
-      return Future.delayed(
-          const Duration(seconds: 1), () => DummyData.dummyTrips);
-    }
+    // if (testMode) {
+    //   // FIXME
+    //   return [_tripPool[0], _tripPool[0], _tripPool[0]];
+    //   return Future.delayed(
+    //       const Duration(seconds: 1), () => DummyData.dummyTrips);
+    // }
 
     try {
       if (isFavorite) {
         if (_favoriteTrips.isEmpty) {
-          await updateList(isFavorite: true);
+          await updateList(num: num, isFavorite: true);
         } else {
-          updateList(isFavorite: true);
+          updateList(num: num, isFavorite: true);
         }
         return _favoriteTrips;
       }
       if (finished) {
         if (_finishedTrips.isEmpty) {
-          await updateList(finished: true);
+          await updateList(num: num, finished: true);
         } else {
-          updateList(finished: true);
+          updateList(num: num, finished: true);
         }
         return _finishedTrips;
       }
       if (ongoing) {
         if (_ongoingTrips.isEmpty) {
-          await updateList(ongoing: true);
+          await updateList(num: num, ongoing: true);
         } else {
-          updateList(ongoing: true);
+          updateList(num: num, ongoing: true);
         }
         return _ongoingTrips;
       }
       if (future) {
         if (_futureTrips.isEmpty) {
-          await updateList(future: true);
+          await updateList(num: num, future: true);
         } else {
-          updateList(future: true);
+          updateList(num: num, future: true);
         }
         return _futureTrips;
       }
-      if (recommended) {
-        if (_recommendedTrips.isEmpty) {
-          await updateList(recommended: true);
-        } else {
-          updateList(recommended: true);
-        }
-        return _recommendedTrips;
-      }
-    } catch (_) {
+      // return all trips by default
+      await updateList(num: num);
+      return _tripPool;
+      // if (recommended) {
+      //   if (_recommendedTrips.isEmpty) {
+      //     await updateList(num: num, recommended: true);
+      //   } else {
+      //     updateList(num: num, recommended: true);
+      //   }
+      //   return _recommendedTrips;
+      // }
+    } catch (_, stacktrace) {
+      print(_);
+      print(stacktrace);
       rethrow;
     }
     throw 'error in fetchTripByType(). Reason unknown.';
@@ -222,16 +222,27 @@ class Trips extends ChangeNotifier {
     bool ongoing = false,
     bool future = false,
     bool recommended = false,
+    String keywords = '',
+    int num = 10,
   }) async {
     bool updated = false;
+    // TODO: Use paging
     final response = await http.get(
-      Uri.http(Utils.authority, '/trip', {
-        if (isFavorite) 'isFavorite': 1,
-        if (finished) 'finished': 1,
-        if (ongoing) 'ongoing': 1,
-        if (future) 'future': 1,
-        if (recommended) 'recommended': 1,
-      }),
+      Uri.http(
+          Utils.authority,
+          '/trip/me/',
+          {
+            'isFavorite': isFavorite ? 1 : 0,
+            'finished': finished ? 1 : 0,
+            'ongoing': ongoing ? 1 : 0,
+            'future': future ? 1 : 0,
+            'recommended': recommended ? 1 : 0,
+            'keywords': keywords,
+            'page': 0,
+            'size': num,
+          }.map(
+            (key, value) => MapEntry(key, value.toString()),
+          )),
       headers: Utils.authHeader,
     );
     if (response.statusCode == 200) {
@@ -246,11 +257,14 @@ class Trips extends ChangeNotifier {
         resultList = _futureTrips;
       } else if (recommended) {
         resultList = _recommendedTrips;
+      } else {
+        resultList = _tripPool;
       }
       final body =
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+      final tripList = body['_embedded']['tripDtoList'];
       // add new trips to result list if they aren't there
-      for (var jsonTrip in body) {
+      for (var jsonTrip in tripList) {
         late final Trip trip;
         if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
           // add to pool first
@@ -266,36 +280,53 @@ class Trips extends ChangeNotifier {
           }
         }
       }
-      // remove deprecated trips in result list
-      for (Trip trip in resultList) {
-        bool isDeprecated = true;
-        for (var jsonTrip in body) {
-          if (jsonTrip['id'] == trip.id) {
-            isDeprecated = false;
-          }
-        }
-        if (isDeprecated) {
-          resultList.remove(trip);
-          updated = true;
-        }
-      }
+      // FIXME: remove deprecated trips in result list
+      // ERROR: Concurrent iteration and modification is not okay!!
+      // SOLUTION: store new trips in a temp list, and then remove deprecated
+      // from old list before adding all trips from temp list to old list, which
+      // is resultList.
+      // for (Trip trip in resultList) {
+      //   bool isDeprecated = true;
+      //   for (var jsonTrip in tripList) {
+      //     if (jsonTrip['id'] == trip.id) {
+      //       isDeprecated = false;
+      //     }
+      //   }
+      //   if (isDeprecated) {
+      //     resultList.remove(trip);
+      //     updated = true;
+      //   }
+      // }
       if (updated) notifyListeners();
     } else {
+      print(response.body);
       throw 'error in updateList(). Response was: ${response.body}';
     }
+  }
+
+  /// This is a temp solution to a back-end bug.
+  String _fix(dynamic qqc) {
+    if (qqc is String && qqc.length > 1 && qqc[1] == "'") {
+      qqc = qqc.replaceAll(RegExp(r"'"), '');
+    } else if (qqc is num) {
+      qqc = '$qqc';
+    }
+    return qqc;
   }
 
   Future<Trip> fromJsonBody(dynamic body) async {
     final List<Activity> activities = [];
     int totalCost = 0;
     // See toJson() in Trip class for explanation for this anomaly.
-    for (var act in (json.decode(body['activities']) as List<dynamic>)) {
-      totalCost += (act['cost'] as double).toInt();
+    // TODO: Remove _fix
+    for (var act in (json.decode(_fix(body['activities'])) as List<dynamic>)) {
+      totalCost += (act['cost'] as num).toInt();
       final location = act['type'] != '交通'
           ? await locations
-              .fetchLocationById(act['locationId'])
+              .fetchLocationById(_fix(act['locationId']))
               .catchError((e) => throw e)
           : null;
+      if (location != null) await location.loadImage();
       // Note that ChangeNotifier serves the purpose of signaling the UI
       // to rebuild when some values changed, but not signaling some objects
       // to refresh in memory when some other object changed. Therefore, you
@@ -303,10 +334,10 @@ class Trips extends ChangeNotifier {
       // but do so later when building a UI widget for an Activity.
       activities.add(Activity(
         location: location,
-        locationId: act['locationId'],
+        locationId: _fix(act['locationId']),
         startTime: DateTime.parse(act['startTime']),
         endTime: DateTime.parse(act['endTime']),
-        cost: act['cost'],
+        cost: (act['cost'] as num).toDouble(),
         type: LocationTypeExtension.fromString(act['type']),
         name: act['name'],
         remarks: act['remarks'],
