@@ -59,6 +59,7 @@ class TripSmartSerializer(serializers.ModelSerializer):
 
         activities = []
         init_startTime = datetime.combine(validated_data['startDate'], time(9, 0, 0))
+        duration_days = validated_data['duration']
         trip_days = 0
         print(init_startTime)
 
@@ -99,6 +100,9 @@ class TripSmartSerializer(serializers.ModelSerializer):
             if end_time.hour > 19:
                 # 时间过晚，后续活动添加到下一天
                 trip_days += 1
+                # 行程时长数量超过duration字段限制，后续地点舍弃
+                if trip_days > duration_days - 1:
+                    break
                 if next_location_obj is not None:
                     curr_startTime = init_startTime + timedelta(days=trip_days)
                 continue
