@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from UserAuth.models import UserModel
 from UserBehavior.models import UserBehaviorModel
+from Utils.geocode import get_geocode
 
 
 class UserBehaviorSerializer(serializers.ModelSerializer):
@@ -14,12 +15,14 @@ class UserBehaviorSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBehaviorModel
         fields = ['id', 'username', 'siteId', 'behaviorType', 'behaviorBool',
-                  'behaviorWeight', 'contextTime', 'contextLocation']
+                  'behaviorWeight', 'contextTime']
 
     def create(self, validated_data):
         user_obj = UserModel.objects.filter(username=validated_data.pop('username')).first()
         site_obj = LocationModel.objects.filter(id=validated_data.pop('siteId')).first()
 
-        behavior = UserBehaviorModel.objects.create(user=user_obj,site=site_obj,**validated_data)
+        geocode = get_geocode(site_obj.address)
+
+        behavior = UserBehaviorModel.objects.create(user=user_obj, site=site_obj, contextLocation=geocode, **validated_data)
         return behavior
 
