@@ -14,7 +14,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>vibration.xcscheme</key>
+		<key>shared_preferences_ios.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

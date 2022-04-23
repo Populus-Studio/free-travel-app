@@ -22,7 +22,7 @@ class Activity extends ChangeNotifier {
   final double cost; // CNY
   String remarks;
 
-  Location location;
+  Location? location;
   // following fields are the same as in Location object
   final LocationType type;
   final String name; // See reserved names at the end.
@@ -41,11 +41,25 @@ class Activity extends ChangeNotifier {
     required this.name,
     required this.remarks,
     required this.duration,
-    required this.location,
+    this.location,
     this.tripId,
     this.id,
     this.destinationId,
   });
+
+  Map toJson() => {
+        'locationId': locationId,
+        'startTime': startTime.toIso8601String(),
+        'endTime': endTime.toIso8601String(),
+        'name': name,
+        'type': type.toChineseString(),
+        'duration': duration,
+        'cost': cost,
+        'remarks': remarks,
+        if (tripId != null) 'tripId': tripId,
+        if (id != null) 'id': id,
+        if (destinationId != null) 'destinationId': destinationId,
+      };
 }
 
 // Following are reserved names for transportation. Each matches an icon.

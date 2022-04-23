@@ -40,6 +40,37 @@ class Trips extends ChangeNotifier {
   List<Trip> _futureTrips = [];
   List<Trip> _recommendedTrips = [];
 
+  /// This method posts a locally generated Trip to the server. It could be used
+  /// to update a certain field in an existing trip or for testing purposes. It
+  /// posts a trip WITH an ID and does NOT expect the API to return a different
+  /// ID. Please see and differentiate with [createTrip()].
+  Future<void> postTrip(Trip trip) async {
+    final body = trip.toJson();
+    if (testMode) body.addAll({'status': 0});
+    final response = await http.post(Uri.http(Utils.authority, '/trip/'),
+        headers: Utils.authHeader..addAll(Utils.jsonHeader),
+        body: json.encode(body));
+    print(response.body);
+    if (response.statusCode == 201) {
+      _tripPool.removeWhere((t) => t.id == trip.id);
+      _tripPool.add(trip);
+      final body =
+          json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+      print('success! new trip id: ${body['data']['id']}');
+      return;
+    } else {
+      throw 'Error in postTrip(). Response was: ${response.body}';
+    }
+  }
+
+  /// This method creates an AI-scheduled trip based on a list of locations. It
+  /// is different from [postTrip()] which takes a locally generated Trip object
+  /// and uploads it the server. [postTrip()] is for updating trip info (e.g.
+  /// remarks, descriptions, etc.) and testing purposes. [createTrip()] expects
+  /// a server-side generated Trip with an server-side generated ID to be
+  /// returned by the API. It is THE method to use to create a new Trip that 1)
+  /// does not exist on the server nor locally, and 2) not for testing purposes.
+  /// If either 1) or 2) is not met, consider using [postTrip()].
   Future<Trip> createTrip({
     required String name,
     required String description,
@@ -49,65 +80,61 @@ class Trips extends ChangeNotifier {
     required DateTime endDate,
     required int duration,
     required List<String> locationIds,
-    required int totalCost,
     required String remarks,
   }) async {
-    if (testMode) {
-      // FIXME
-      return DummyData.dummyTrips[0];
-    }
-
+    // FIXME: A different API should be used here
     final response = await http.post(
-      Uri.http(Utils.authority, '/trip'),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+      Uri.http(Utils.authority, '/trip/new/'),
+      headers: Utils.authHeader..addAll(Utils.jsonHeader),
       body: json.encode(
         {
           'name': name,
+          'username': Utils.username,
           'description': description,
           'departureId': departureId,
           'numOfTourists': numOfTourists,
-          'startDate': startDate.toIso8601String(),
-          'endDate': endDate.toIso8601String(),
+          'startDate': startDate.toIso8601String().substring(0, 10),
+          'endDate': endDate.toIso8601String().substring(0, 10),
           'duration': duration,
           'remarks': remarks,
-          'locations': locationIds, // automatically encodes list of strings
+          'locationIds': locationIds, // automatically encodes list of strings
         },
       ),
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final body =
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-      final trip = await fromJsonBody(body);
+      final trip = await fromJsonBody(body['data']);
       _tripPool.add(trip);
       return trip;
     } else {
-      print(response.body);
-      print(response.body);
-      throw 'error in createTrip(). Response was: ${response.body}';
+      throw 'Error in createTrip(). Response was: ${response.body}';
     }
   }
 
-  /// This method returns a trip of a specific ID.
-  Future<Trip> fetchTripById(String id) async {
-    if (testMode) {
+  /// This method returns a trip of a specific ID. Set 'test: false' to disable
+  /// global test mode.
+  Future<Trip> fetchTripById(String id, {test = true}) async {
+    if (testMode && test) {
       // FIXME
       return Future.delayed(
-          const Duration(seconds: 2), () => DummyData.dummyTrips[0]);
+          const Duration(seconds: 30), () => DummyData.dummyTrips[0]);
     }
 
     if (!_tripPool.any((trip) => trip.id == id)) {
       final response = await http.get(
         Uri.http(Utils.authority, '/trip/$id'),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+        headers: Utils.authHeader,
       );
       if (response.statusCode == 200) {
         final body =
             json.decode(const Utf8Decoder().convert(response.body.codeUnits));
-        final trip = await fromJsonBody(body).catchError((err) => throw err);
+        final trip =
+            await fromJsonBody(body['trip']).catchError((err) => throw err);
+        _tripPool.removeWhere((t) => t.id == trip.id);
         _tripPool.add(trip);
         return trip;
       } else {
-        print(response.body);
         throw 'error in fetchTripById Response was: ${response.body}';
       }
     } else {
@@ -127,54 +154,63 @@ class Trips extends ChangeNotifier {
     bool ongoing = false,
     bool future = false,
     bool recommended = false,
+    bool recent = false,
+    int num = 10,
   }) async {
-    if (testMode) {
-      // FIXME
-      return DummyData.dummyTrips;
-    }
+    // if (testMode) {
+    //   // FIXME
+    //   return [_tripPool[0], _tripPool[0], _tripPool[0]];
+    //   return Future.delayed(
+    //       const Duration(seconds: 1), () => DummyData.dummyTrips);
+    // }
 
     try {
       if (isFavorite) {
         if (_favoriteTrips.isEmpty) {
-          await updateList(isFavorite: true);
+          await updateList(num: num, isFavorite: true);
         } else {
-          updateList(isFavorite: true);
+          updateList(num: num, isFavorite: true);
         }
         return _favoriteTrips;
       }
       if (finished) {
         if (_finishedTrips.isEmpty) {
-          await updateList(finished: true);
+          await updateList(num: num, finished: true);
         } else {
-          updateList(finished: true);
+          updateList(num: num, finished: true);
         }
         return _finishedTrips;
       }
       if (ongoing) {
         if (_ongoingTrips.isEmpty) {
-          await updateList(ongoing: true);
+          await updateList(num: num, ongoing: true);
         } else {
-          updateList(ongoing: true);
+          updateList(num: num, ongoing: true);
         }
         return _ongoingTrips;
       }
       if (future) {
         if (_futureTrips.isEmpty) {
-          await updateList(future: true);
+          await updateList(num: num, future: true);
         } else {
-          updateList(future: true);
+          updateList(num: num, future: true);
         }
         return _futureTrips;
       }
-      if (recommended) {
-        if (_recommendedTrips.isEmpty) {
-          await updateList(recommended: true);
-        } else {
-          updateList(recommended: true);
-        }
-        return _recommendedTrips;
-      }
-    } catch (_) {
+      // return all trips by default
+      await updateList(num: num);
+      return _tripPool;
+      // if (recommended) {
+      //   if (_recommendedTrips.isEmpty) {
+      //     await updateList(num: num, recommended: true);
+      //   } else {
+      //     updateList(num: num, recommended: true);
+      //   }
+      //   return _recommendedTrips;
+      // }
+    } catch (_, stacktrace) {
+      print(_);
+      print(stacktrace);
       rethrow;
     }
     throw 'error in fetchTripByType(). Reason unknown.';
@@ -186,17 +222,28 @@ class Trips extends ChangeNotifier {
     bool ongoing = false,
     bool future = false,
     bool recommended = false,
+    String keywords = '',
+    int num = 10,
   }) async {
     bool updated = false;
+    // TODO: Use paging
     final response = await http.get(
-      Uri.http(Utils.authority, '/trip', {
-        if (isFavorite) 'isFavorite': 1,
-        if (finished) 'finished': 1,
-        if (ongoing) 'ongoing': 1,
-        if (future) 'future': 1,
-        if (recommended) 'recommended': 1,
-      }),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer ${Utils.token}'},
+      Uri.http(
+          Utils.authority,
+          '/trip/me/',
+          {
+            'isFavorite': isFavorite ? 1 : 0,
+            'finished': finished ? 1 : 0,
+            'ongoing': ongoing ? 1 : 0,
+            'future': future ? 1 : 0,
+            'recommended': recommended ? 1 : 0,
+            'keywords': keywords,
+            'page': 0,
+            'size': num,
+          }.map(
+            (key, value) => MapEntry(key, value.toString()),
+          )),
+      headers: Utils.authHeader,
     );
     if (response.statusCode == 200) {
       late final List<Trip> resultList;
@@ -210,11 +257,14 @@ class Trips extends ChangeNotifier {
         resultList = _futureTrips;
       } else if (recommended) {
         resultList = _recommendedTrips;
+      } else {
+        resultList = _tripPool;
       }
       final body =
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
+      final tripList = body['_embedded']['tripDtoList'];
       // add new trips to result list if they aren't there
-      for (var jsonTrip in body) {
+      for (var jsonTrip in tripList) {
         late final Trip trip;
         if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
           // add to pool first
@@ -230,19 +280,23 @@ class Trips extends ChangeNotifier {
           }
         }
       }
-      // remove deprecated trips in result list
-      for (Trip trip in resultList) {
-        bool isDeprecated = true;
-        for (var jsonTrip in body) {
-          if (jsonTrip['id'] == trip.id) {
-            isDeprecated = false;
-          }
-        }
-        if (isDeprecated) {
-          resultList.remove(trip);
-          updated = true;
-        }
-      }
+      // FIXME: remove deprecated trips in result list
+      // ERROR: Concurrent iteration and modification is not okay!!
+      // SOLUTION: store new trips in a temp list, and then remove deprecated
+      // from old list before adding all trips from temp list to old list, which
+      // is resultList.
+      // for (Trip trip in resultList) {
+      //   bool isDeprecated = true;
+      //   for (var jsonTrip in tripList) {
+      //     if (jsonTrip['id'] == trip.id) {
+      //       isDeprecated = false;
+      //     }
+      //   }
+      //   if (isDeprecated) {
+      //     resultList.remove(trip);
+      //     updated = true;
+      //   }
+      // }
       if (updated) notifyListeners();
     } else {
       print(response.body);
@@ -250,12 +304,29 @@ class Trips extends ChangeNotifier {
     }
   }
 
+  /// This is a temp solution to a back-end bug.
+  String _fix(dynamic qqc) {
+    if (qqc is String && qqc.length > 1 && qqc[1] == "'") {
+      qqc = qqc.replaceAll(RegExp(r"'"), '');
+    } else if (qqc is num) {
+      qqc = '$qqc';
+    }
+    return qqc;
+  }
+
   Future<Trip> fromJsonBody(dynamic body) async {
     final List<Activity> activities = [];
-    for (var act in (body['activities'] as List<dynamic>)) {
-      final location = await locations
-          .fetchLocationById(act['id'])
-          .catchError((e) => throw e);
+    int totalCost = 0;
+    // See toJson() in Trip class for explanation for this anomaly.
+    // TODO: Remove _fix
+    for (var act in (json.decode(_fix(body['activities'])) as List<dynamic>)) {
+      totalCost += (act['cost'] as num).toInt();
+      final location = act['type'] != '交通'
+          ? await locations
+              .fetchLocationById(_fix(act['locationId']))
+              .catchError((e) => throw e)
+          : null;
+      if (location != null) await location.loadImage();
       // Note that ChangeNotifier serves the purpose of signaling the UI
       // to rebuild when some values changed, but not signaling some objects
       // to refresh in memory when some other object changed. Therefore, you
@@ -263,10 +334,10 @@ class Trips extends ChangeNotifier {
       // but do so later when building a UI widget for an Activity.
       activities.add(Activity(
         location: location,
-        locationId: act['id'],
+        locationId: _fix(act['locationId']),
         startTime: DateTime.parse(act['startTime']),
         endTime: DateTime.parse(act['endTime']),
-        cost: act['cost'],
+        cost: (act['cost'] as num).toDouble(),
         type: LocationTypeExtension.fromString(act['type']),
         name: act['name'],
         remarks: act['remarks'],
@@ -274,19 +345,33 @@ class Trips extends ChangeNotifier {
       ));
     }
     final Trip trip = Trip(
-      id: body['id'],
+      id: body['id'].toString(),
       name: body['name'],
       description: body['description'],
-      departureId: body['departureId'],
-      numOfTourists: body['numOfTourists'],
+      departureId:
+          body['departureId'] ?? 0, // FIXME: this is due to a back-end bug
+      numOfTourists: body['numOfTourists'] ?? 1,
       startDate: DateTime.parse(body['startDate']),
       endDate: DateTime.parse(body['endDate']),
       duration: body['duration'],
       activities: activities,
-      totalCost: body['totalCost'],
+      totalCost: totalCost,
       remarks: body['remarks'],
+      isFavorite: body['isFavorite'],
+      username: body['username'] ?? !body['isRecommend']
+          ? Utils.username
+          : '', // FIXME: also back-end bug
     );
     return trip;
+  }
+
+  void clearAllCache() {
+    _tripPool.clear();
+    _favoriteTrips.clear();
+    _finishedTrips.clear();
+    _futureTrips.clear();
+    _ongoingTrips.clear();
+    _recommendedTrips.clear();
   }
 }
 
@@ -298,7 +383,7 @@ class Trips extends ChangeNotifier {
 /// 3. On instantiating activities, fetch locations according to their ids.
 /// 4. On instantiating locations, fetch destinations according to their ids.
 /// Also, destination fetching can wait, more important are the first 3 steps.
-/// 
+///
 /// TODO: Write APIs to implement these functionalities.
 ///
 /// II. Memory Management
@@ -327,4 +412,3 @@ class Trips extends ChangeNotifier {
 /// 2. Simple key-values like prefrences can be stored using "get_storage" or
 /// "shared_preferences".
 /// 3. Downloaded files like images can be managed via "flutter_cache_manager".
-

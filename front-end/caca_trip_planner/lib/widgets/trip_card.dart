@@ -8,7 +8,7 @@ import '../providers/location.dart';
 import '../utils.dart';
 
 class TripCard extends StatefulWidget {
-  final id;
+  final String id;
   const TripCard({required this.id, Key? key}) : super(key: key);
 
   @override
@@ -18,114 +18,190 @@ class TripCard extends StatefulWidget {
 class _TripCardState extends State<TripCard> {
   late final h = MediaQuery.of(context).size.height;
   late final w = MediaQuery.of(context).size.width;
-  late final rh = h / Utils.h13pm;
+  late final rh = h / Utils.h13pm; // This widget is not subject to rh!!
   late final rw = w / Utils.w13pm;
   late final Future<Trip> _future;
   late final Location _coverLocation;
+  late final String _imageHeroTag = widget.id + 'image-normal';
 
   Future<Trip> loadData() async {
     final trip = await Provider.of<Trips>(context, listen: false)
-        .fetchTripById(widget.id);
-    await trip.activities
-        .firstWhere((a) => a.locationId == trip.coverLocationId)
-        .location
-        .loadImage();
-    _coverLocation = trip.activities
-        .firstWhere((a) => a.locationId == trip.coverLocationId)
-        .location;
+        .fetchTripById(widget.id, test: false)
+        .catchError((err) {
+      String msg = '';
+      if ((err as String).contains('Signature')) msg = '请重新登录';
+      Utils.showMaterialAlertDialog(
+          context, '获取行程失败', Text('行程 ID：${widget.id}\n错误信息：$err\n$msg'));
+      throw err;
+    });
+    await trip.getCoverLocation().loadImage();
+    _coverLocation = trip.getCoverLocation();
     return trip;
   }
 
   @override
   void initState() {
-    _future = loadData();
+    if (widget.id.isNotEmpty) {
+      _future = loadData();
+    }
+    ;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.id.isEmpty) return WaitingCard(rw: rw);
+
     return FutureBuilder<Trip>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final trip = snapshot.data!; // this is definitely not null
             return GestureDetector(
-              onTap: () {
+              onTap: () async {
+                for (var act in trip.activities) {
+                  await act.location?.loadImage();
+                }
                 Navigator.of(context)
-                    .pushNamed(TripScreen.routeName, arguments: trip.id);
+                    .pushNamed(TripScreen.routeName, arguments: {
+                  'trip': trip,
+                  'imageHeroTag': _imageHeroTag,
+                });
               },
-              child: Container(
-                height: 120 * rh,
-                width: 380 * rw,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: _coverLocation.palette!.color,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 5,
-                      spreadRadius: 2,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 8.0,
+                child: Container(
+                  height: 120 * rh, // Sometimes we don't need to use rh.
+                  width: 380 * rw,
+                  // width: 380 * rw,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: _coverLocation.palette!.color,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 190 * rw,
+                          padding: EdgeInsets.symmetric(horizontal: 15 * rw),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                trip.name,
+                                style: Theme.of(context).textTheme.headline2,
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                '${trip.activities.where((a) => a.type != LocationType.transportation).length} 个游玩点 | ${trip.startDate.toChineseString()}',
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 120,
+                          width: 190 * rw,
+                          child: Hero(
+                            tag: _imageHeroTag,
+                            child: Image(
+                              image: trip.getCoverImage().image,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          } else if (!snapshot.hasError) {
+            return WaitingCard(rw: rw);
+          } else {
+            return const Center();
+          }
+        });
+  }
+}
+
+class WaitingCard extends StatelessWidget {
+  const WaitingCard({
+    Key? key,
+    required this.rw,
+  }) : super(key: key);
+
+  final double rw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 8.0,
+      child: Container(
+        height: 120,
+        width: 380 * rw,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.black38,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 190 * rw,
+                padding: EdgeInsets.symmetric(horizontal: 15 * rw),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(color: Colors.white10),
+                        child: SizedBox(
+                          height: 18,
+                          width: 150 * rw,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(color: Colors.white10),
+                        child: SizedBox(
+                          height: 15,
+                          width: 200 * rw,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 190 * rw,
-                        padding: EdgeInsets.fromLTRB(10 * rw, 0, 0, 0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              trip.name,
-                              style: Theme.of(context).textTheme.headline2,
-                            ),
-                            SizedBox(height: 5 * rh),
-                            Text(
-                              '${trip.activities.length} 个游玩点 | ${trip.startDate.toChineseString()}',
-                              style: Theme.of(context).textTheme.headline3,
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 120 * rh,
-                        width: 190 * rw,
-                        child: Image(
-                          image: trip.getCoverImage().image,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+              DecoratedBox(
+                decoration: const BoxDecoration(color: Colors.white10),
+                child: SizedBox(
+                  height: 120,
+                  width: 190 * rw,
                 ),
               ),
-            );
-          } else {
-            return Container(
-              height: 120 * rh,
-              width: 380 * rw,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 5,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: const CircularProgressIndicator.adaptive(),
-              ),
-            );
-          }
-        });
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

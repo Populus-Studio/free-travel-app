@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 /// A widget that makes it easy to execute a [Future] from a StatelessWidget.
+/// Source: GitHub
 class Futuristic<T> extends StatefulWidget {
   /// Function that returns the [Future] to execute. Not the [Future] itself.
   final AsyncValueGetter<T> futureBuilder;

@@ -1,4 +1,11 @@
+import 'dart:convert';
+
+import 'package:cacatripplanner/helpers/dummy_data.dart';
 import 'package:cacatripplanner/providers/trips.dart';
+import 'package:cacatripplanner/screens/my_screen.dart';
+import 'package:cacatripplanner/screens/plan_screen.dart';
+import 'package:cacatripplanner/screens/tabs_screen.dart';
+import 'package:cacatripplanner/screens/test_screen.dart';
 import 'package:cacatripplanner/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,13 +56,13 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.indigo,
             backgroundColor: const Color.fromRGBO(255, 254, 229, 1),
           ),
-          fontFamily: 'Raleway',
+          // fontFamily: 'Raleway',
           textTheme: ThemeData.light().textTheme.copyWith(
                 bodyText1: const TextStyle(
-                  color: Color.fromRGBO(20, 51, 51, 1),
+                  color: Colors.white,
                 ),
                 bodyText2: const TextStyle(
-                  color: Color.fromRGBO(20, 51, 51, 1),
+                  color: Colors.white,
                 ),
                 caption: const TextStyle(
                   fontFamily: 'RobotoCondensed',
@@ -73,13 +80,13 @@ class MyApp extends StatelessWidget {
                   color: Colors.white,
                 ),
                 headline3: const TextStyle(
-                  fontSize: 17,
+                  fontSize: 16,
                   color: Color.fromRGBO(255, 255, 255, 0.8),
                 ),
                 // TODO: Add textTheme for: heading1
               ),
         ),
-        home: const MainScreen(),
+        home: const TabsScreen(),
         routes: {
           SignupScreen.routeName: (context) => const SignupScreen(),
           MainScreen.routeName: (context) => const MainScreen(),
@@ -87,6 +94,10 @@ class MyApp extends StatelessWidget {
               const LoginViaUsernameScreen(),
           SelectScreen.routeName: (context) => const SelectScreen(),
           TripScreen.routeName: (context) => const TripScreen(),
+          TabsScreen.routeName: (context) => const TabsScreen(),
+          MyScreen.routeName: (context) => const MyScreen(),
+          PlanScreen.routeName: (context) => const PlanScreen(),
+          TestScreen.routeName: (context) => const TestScreen(),
         },
       ),
     );
@@ -94,3 +105,7 @@ class MyApp extends StatelessWidget {
 }
 
 // 发布安卓APK： flutter build apk --split-per-abi
+// Find SHA1: in /android, execute ./gradlew signingReport
+// Find package ID: android/app/src/main/AndroidManifest.xml
+// 高德地图iOS key：4e476f4114795793a2f757f8c4b8823e
+// 高德地图Android key：5004019091f8700a3c091433c50e6fb9
