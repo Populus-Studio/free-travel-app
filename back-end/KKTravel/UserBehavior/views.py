@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.permissions import AllowAny
 
 from UserAuth.models import UserModel
 from UserBehavior.serializers import UserBehaviorSerializer
@@ -7,7 +8,10 @@ from UserBehavior.models import UserBehaviorModel
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404
+from django.http import HttpResponse, StreamingHttpResponse
+from datetime import datetime
+import csv
+
 
 from Utils.paging import api_paging
 
@@ -36,3 +40,27 @@ class UserBehaviorSingleManager(APIView):
         behaviors_all = behaviors_all.order_by("-contextTime")
 
         return api_paging(behaviors_all, request, UserBehaviorSerializer, "UserBehavior")
+
+
+class UserBehaviorDataDownload(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response['Content-Disposition'] = "attachment;filename=userBehaviorLog.csv"
+        all_obj = UserBehaviorModel.objects.all()
+
+        writer = csv.writer(response)
+        writer.writerow(['user_id', 'time', 'latitude', 'longitude', 'location_id'])
+        for obj in all_obj:
+            user_id = "\'" + str(obj.user.id) + "\'"
+            print(user_id)
+            site_name = "\'" + str(obj.site.name) + "\'"
+            print(site_name)
+            timestamp = int(obj.contextTime.timestamp())
+            geo_str_pair = str(obj.contextLocation).split(',')
+            latitude = float(geo_str_pair[0])
+            longitude = float(geo_str_pair[1])
+            writer.writerow([user_id, timestamp, latitude, longitude, site_name])
+
+        return response

@@ -5,4 +5,5 @@ from UserBehavior import views
 urlpatterns = [
     path('user/behavior/', views.UserBehaviorGlobalManager.as_view()),
     path('user/<int:pk>/', views.UserBehaviorSingleManager.as_view()),
+    path('user/behavior/data/', views.UserBehaviorDataDownload.as_view()),
 ]

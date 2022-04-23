@@ -10,5 +10,7 @@ class UserBehaviorModel(models.Model):
     behaviorType = models.IntegerField(default=0)
     behaviorBool = models.BooleanField()
     behaviorWeight = models.FloatField()
+    # 记录访问时间
     contextTime = models.DateTimeField()
+    # 记录对应site地点的地理坐标
     contextLocation = models.TextField(blank=True)
