@@ -114,7 +114,7 @@ class Trips extends ChangeNotifier {
 
   /// This method returns a trip of a specific ID. Set 'test: false' to disable
   /// global test mode.
-  Future<Trip> fetchTripById(String id, {test = true}) async {
+  Future<Trip> fetchTripById(String id, {test = false}) async {
     if (testMode && test) {
       // FIXME
       return Future.delayed(
@@ -198,8 +198,7 @@ class Trips extends ChangeNotifier {
         return _futureTrips;
       }
       // return all trips by default
-      await updateList(num: num);
-      return _tripPool;
+      return await updateList(num: num);
       // if (recommended) {
       //   if (_recommendedTrips.isEmpty) {
       //     await updateList(num: num, recommended: true);
@@ -216,7 +215,7 @@ class Trips extends ChangeNotifier {
     throw 'error in fetchTripByType(). Reason unknown.';
   }
 
-  Future<void> updateList({
+  Future<List<Trip>> updateList({
     bool isFavorite = false,
     bool finished = false,
     bool ongoing = false,
@@ -226,6 +225,7 @@ class Trips extends ChangeNotifier {
     int num = 10,
   }) async {
     bool updated = false;
+    final List<Trip> ret = [];
     // TODO: Use paging
     final response = await http.get(
       Uri.http(
@@ -238,7 +238,7 @@ class Trips extends ChangeNotifier {
             'future': future ? 1 : 0,
             'recommended': recommended ? 1 : 0,
             'keywords': keywords,
-            'page': 0,
+            'page': 1,
             'size': num,
           }.map(
             (key, value) => MapEntry(key, value.toString()),
@@ -264,23 +264,34 @@ class Trips extends ChangeNotifier {
           json.decode(const Utf8Decoder().convert(response.body.codeUnits));
       final tripList = body['_embedded']['tripDtoList'];
       // add new trips to result list if they aren't there
+      // FIXME: See below. This adding to the pool logic does not work either.
       for (var jsonTrip in tripList) {
-        late final Trip trip;
-        if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
-          // add to pool first
-          trip = await fromJsonBody(jsonTrip);
-          _tripPool.add(trip);
-          resultList.add(trip);
-          updated = true;
-        } else {
-          trip = _tripPool.firstWhere((t) => t.id == jsonTrip['id']);
-          if (!resultList.any((t) => t.id == jsonTrip['id'])) {
-            resultList.add(trip);
-            updated = true;
-          }
-        }
+        // if (!_tripPool.any((t) => t.id == (jsonTrip['id'] as int).toString())) {
+        //   print('id: ${(jsonTrip['id'] as int).toString()}');
+        //   late final Trip trip;
+        //   trip = await fromJsonBody(jsonTrip);
+        //   _tripPool.add(trip);
+        //   print('added! _tripPool.length: ${_tripPool.length}');
+        //   updated = true;
+        // }
+        // if (!_tripPool.any((t) => t.id == jsonTrip['id'])) {
+        //   // add to pool first
+        //   trip = await fromJsonBody(jsonTrip);
+        //   _tripPool.add(trip);
+        //   resultList.add(trip);
+        //   updated = true;
+        // } else {
+        //   trip = _tripPool.firstWhere((t) => t.id == jsonTrip['id']);
+        //   if (!resultList.any((t) => t.id == jsonTrip['id'])) {
+        //     resultList.add(trip);
+        //     updated = true;
+        //   }
+        // }
+        ret.add(await fromJsonBody(jsonTrip));
       }
       // FIXME: remove deprecated trips in result list
+      // TODO: After implementing this feature, remove clearALLCache() from the
+      // top of this method.
       // ERROR: Concurrent iteration and modification is not okay!!
       // SOLUTION: store new trips in a temp list, and then remove deprecated
       // from old list before adding all trips from temp list to old list, which
@@ -302,6 +313,7 @@ class Trips extends ChangeNotifier {
       print(response.body);
       throw 'error in updateList(). Response was: ${response.body}';
     }
+    return ret;
   }
 
   /// This is a temp solution to a back-end bug.

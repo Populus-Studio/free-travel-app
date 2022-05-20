@@ -125,8 +125,16 @@ class _SignupScreenState extends State<SignupScreen> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          title: const Text('注册'),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: Navigator.of(context).canPop()
+              ? IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () => Navigator.of(context).pop())
+              : null,
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16 * rw, vertical: 16 * rh),
@@ -135,6 +143,14 @@ class _SignupScreenState extends State<SignupScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  const Text(
+                    '注册',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 40,
+                      color: Colors.black87,
+                    ),
+                  ),
                   Image(
                     image: const AssetImage('assets/icons/icon.png'),
                     height: 160 * rh,

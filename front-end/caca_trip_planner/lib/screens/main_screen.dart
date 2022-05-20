@@ -38,9 +38,9 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // submit two tasks
     _recentTrips = Provider.of<Trips>(context, listen: false)
-        .fetchTripByType(recent: true, num: 3);
+        .fetchTripByType(recent: true, num: 4);
     _recommendedTrips = Provider.of<Trips>(context, listen: false)
-        .fetchTripByType(recommended: true, num: 3);
+        .fetchTripByType(recommended: true, num: 4);
     super.initState();
   }
 

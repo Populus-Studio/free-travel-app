@@ -24,10 +24,6 @@ class _TabsScreenState extends State<TabsScreen> {
   void initState() {
     _pages = [
       {
-        'name': '测试页',
-        'page': const TestScreen(),
-      },
-      {
         'name': '主页',
         'page': const MainScreen(),
       },
@@ -38,7 +34,11 @@ class _TabsScreenState extends State<TabsScreen> {
       {
         'name': '我的',
         'page': const MyScreen(),
-      }
+      },
+      {
+        'name': '测试页',
+        'page': const TestScreen(),
+      },
     ];
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) => Utils.isAuth
         ? null
